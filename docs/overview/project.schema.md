@@ -56,13 +56,12 @@ Configuración de agenda del profesional. Define cómo se generan los slots disp
 | `duracionSlot` | `Int` | Duración de cada turno en minutos (ej. 20, 30, 45) |
 | `horarioDesde` | `String` | Hora de inicio de atención (ej. "08:00") |
 | `horarioHasta` | `String` | Hora de fin de atención (ej. "18:00") |
-| `diasLaborables` | `String[]` | Días en que atiende (ej. `["lunes", "martes", "jueves"]`) |
 | `createdAt` | `DateTime` | Fecha de creación |
 | `updatedAt` | `DateTime` | Última actualización |
 
 **Decisiones:**
 - `horarioDesde` y `horarioHasta` se guardan como `String` en formato `"HH:mm"` para simplicidad. No se usan tipos `Time` de PostgreSQL para evitar complejidad de zonas horarias.
-- `diasLaborables` es un array de strings con los nombres de los días en español en minúscula. El domingo está excluido por defecto — si no aparece en el array, el calendario lo bloquea.
+- Por simplicidad del MVP, no se configuran días laborables en la base de datos. Se asume de lunes a sábado de forma fija. El domingo se renderiza en la UI pero se deshabilita la interacción (no es seleccionable).
 - Los slots **no se persisten**. Se generan dinámicamente en runtime combinando `horarioDesde`, `horarioHasta` y `duracionSlot`, y se filtran contra los turnos existentes del día.
 
 ---
@@ -116,8 +115,9 @@ Reserva de un slot de tiempo para un paciente con un profesional.
 **Decisiones:**
 - `horaInicio` y `horaFin` se guardan como `String` en formato `"HH:mm"` por las mismas razones que en `ConfiguracionProfesional`.
 - `horaFin` se calcula al crear el turno sumando `duracionSlot` a `horaInicio` y se persiste. Esto evita recalcular en cada consulta.
+- `fecha` se almacena como `DateTime`. Para evitar errores debido a los desfases de zona horaria (UTC vs hora local de Argentina), se normalizará siempre la fecha al inicio del día (`00:00:00.000Z` UTC) al guardar y buscar en la base de datos.
 - No existe campo `duracion` — la duración se infiere de `horaInicio` y `horaFin`.
-- La validación de solapamiento no es necesaria: el formulario solo muestra slots libres. Si un slot está tomado, no aparece como opción.
+- La validación de solapamiento no es necesaria al crear el turno tradicionalmente porque el formulario solo muestra slots libres. Sin embargo, al modificar la duración del slot (`duracionSlot` en `ConfiguracionProfesional`), se debe restringir el cambio si existen turnos pendientes activos programados en el futuro.
 
 ---
 
@@ -127,15 +127,14 @@ Feriados nacionales argentinos pre-cargados desde la API pública.
 | Campo | Tipo | Descripción |
 |---|---|---|
 | `id` | `String` (cuid) | ID interno |
-| `fecha` | `DateTime` | Fecha del feriado |
+| `fecha` | `DateTime` (unique) | Fecha del feriado (única para evitar duplicados) |
 | `nombre` | `String` | Nombre del feriado (ej. "Día de la Independencia") |
-| `año` | `Int` | Año al que pertenece el feriado |
 | `createdAt` | `DateTime` | Fecha de carga |
 
 **Decisiones:**
 - Sin relación con `Profesional` — los feriados son globales para todos.
-- La carga se hace una sola vez por año desde la API pública `https://nolaborables.com.ar/`.
-- El campo `año` permite filtrar feriados por año y detectar cuándo hay que cargar los del año siguiente.
+- La carga se hace de forma automática en segundo plano (ej. al iniciar la aplicación si no se detectan feriados en el año actual).
+- Se quita el campo `año` por ser redundante (se deduce de `fecha`). Para buscar feriados por año, se filtra por rango de fechas de ese año.
 - **Nunca se consulta la API en runtime.** El calendario y el chat leen siempre desde esta tabla.
 
 ---
@@ -203,7 +202,6 @@ model ConfiguracionProfesional {
   duracionSlot    Int
   horarioDesde    String
   horarioHasta    String
-  diasLaborables  String[]
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
@@ -238,9 +236,8 @@ model Turno {
 
 model Feriado {
   id        String   @id @default(cuid())
-  fecha     DateTime
+  fecha     DateTime @unique
   nombre    String
-  año       Int
   createdAt DateTime @default(now())
 }
 ```

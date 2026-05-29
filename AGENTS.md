@@ -12,11 +12,11 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Before starting any task, read these documents in order:
 
-1. `docs/project.overview.md` — what the project is, who it's for, stack and scope
-2. `docs/project.decisions.md` — architectural decisions already made, do not contradict them
-3. `docs/project.features.md` — feature list with MoSCoW priority and current status
-4. `docs/project.schema.md` — database models, types, relations and design decisions
-5. `docs/project.design.md` — UI decisions, color system, component behavior (when available)
+1. `docs/overview/project.overview.md` — what the project is, who it's for, stack and scope
+2. `docs/overview/project.decisions.md` — architectural decisions already made, do not contradict them
+3. `docs/overview/project.features.md` — feature list with MoSCoW priority and current status
+4. `docs/overview/project.schema.md` — database models, types, relations and design decisions
+5. `docs/design/design.typography.md` — UI decisions, typography system, component behavior (when available)
 
 ---
 
@@ -91,7 +91,7 @@ medical-appointments/
 
 ## 📝 Decision logging
 
-When you make a relevant technical or design decision during development, append it to `docs/project.decisions.md` using the existing ADR template at the bottom of that file. Do not skip this step — it is part of the development workflow.
+When you make a relevant technical or design decision during development, append it to `docs/overview/project.decisions.md` using the existing ADR template at the bottom of that file. Do not skip this step — it is part of the development workflow.
 
 A decision is relevant if it involves:
 - Choosing between two valid implementation approaches

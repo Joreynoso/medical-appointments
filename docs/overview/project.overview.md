@@ -64,26 +64,32 @@ MoSCoW decide el **orden de prioridad**. El desarrollo por features decide la **
 ## 6. Decisiones de diseño clave
 
 ### Slots fijos en lugar de duración libre
-El profesional configura una duración de slot única (ej. 30 minutos). El sistema genera automáticamente los bloques disponibles del día. Si un slot está ocupado, no aparece como opción. Esto elimina la posibilidad de que dos turnos se superpongan sin necesidad de validaciones complejas.
+El profesional configura una duración de slot única (ej. 30 minutos). El sistema genera automáticamente los bloques disponibles del día. Si un slot está ocupado, no aparece como opción. Esto elimina la posibilidad de que dos turnos se superpongan. Se restringe cambiar la duración de slots si hay turnos pendientes futuros.
 
-### Feriados pre-cargados en base de datos
-Los feriados argentinos se cargan una sola vez desde una API pública y se guardan en la base de datos. El calendario los pinta desde ahí. Nunca se consulta la API externa en tiempo de ejecución. Esto reduce latencia, dependencias externas y llamadas innecesarias.
+### Feriados pre-cargados y sincronización automática
+Los feriados nacionales se guardan en la tabla `Feriado` de la base de datos con un índice único para evitar duplicaciones. Su carga se realiza automáticamente en segundo plano en el arranque si no existen feriados cargados para el año en curso. Nunca se consulta la API de feriados en runtime.
 
 ### Soft delete en pacientes
-Los pacientes nunca se eliminan físicamente. Se desactivan. Esto preserva el historial de turnos y la integridad de los datos, lo cual es especialmente importante en un sistema de salud.
+Los pacientes nunca se eliminan físicamente. Se desactivan (`activo: false`). Esto preserva el historial de turnos y la integridad de los datos, lo cual es especialmente importante en un sistema de salud.
 
-### Chat con botones de acceso directo
-Las acciones más comunes del chat (ver turnos de hoy, consultar disponibilidad, ver feriados) se pueden ejecutar con un botón, sin escribir nada. Esto reduce llamadas innecesarias al LLM y evita problemas de interpretación de lenguaje natural en casos frecuentes.
+### Creación rápida de paciente en modal secundario
+Si el paciente no existe al momento de agendar, el profesional lo crea mediante un modal/diálogo rápido en la misma pantalla usando Server Actions. Al registrarse, se selecciona automáticamente en el formulario, evitando redirecciones y pérdidas de estado del calendario.
 
-### Historial de conversación limitado
-El LLM no tiene memoria entre sesiones. En cada request se envía un número limitado de mensajes anteriores para mantener contexto sin inflar el consumo de tokens. Las consultas de este sistema son lo suficientemente simples como para no necesitar conversaciones largas.
+### Domingos visibles pero deshabilitados en el calendario
+Los domingos se muestran en el calendario para conservar un diseño de rejilla tradicional, simétrico y profesional, pero la interacción está deshabilitada de forma que no sea posible agendar citas en ese día.
+
+### Sincronización Clerk bajo demanda (Lazy initialization)
+Para evitar la complejidad y los fallos de red de Clerk Webhooks en el desarrollo local, el profesional se registra en la base de datos local bajo demanda en su primer ingreso a través de un helper backend (`getCurrentProfesional`).
+
+### Chat con botones de acceso directo e historial acotado
+Las acciones comunes (ej: ver turnos de hoy) se ejecutan con botones directos sin llamar al LLM. Para preguntas de seguimiento que sí pasen por el LLM, el historial de contexto se limita a los últimos 6 mensajes (3 turnos) para un consumo óptimo de tokens.
 
 ---
 
 ## 7. Architecture Decision Records (ADR)
 
 ### ¿Qué son?
-Un ADR es una anotación breve que documenta una decisión técnica o de diseño: qué se decidió, por qué, y qué alternativas se descartaron.
+Anotaciones breves que documentan una decisión técnica o de diseño: qué se decidió, por qué, y qué alternativas se descartaron.
 
 ### ¿Para qué sirven en este proyecto?
 - Evitan contradicciones durante el desarrollo al tener las decisiones escritas.
@@ -97,10 +103,13 @@ Un ADR es una anotación breve que documenta una decisión técnica o de diseño
 | ADR-002 | Neon como base de datos |
 | ADR-003 | Clerk para autenticación |
 | ADR-004 | Slots fijos en lugar de duración libre |
-| ADR-005 | Feriados pre-cargados en base de datos |
+| ADR-005 | Feriados pre-cargados y sincronizados automáticamente en DB |
 | ADR-006 | Soft delete en pacientes |
-| ADR-007 | Flujo simple al crear paciente desde el modal |
-| ADR-008 | Límite de historial del chat (pendiente de definir) |
+| ADR-007 | Creación de paciente desde modal rápido (sub-diálogo) |
+| ADR-008 | Límite de historial del chat (últimos 6 mensajes / 3 turnos) |
+| ADR-009 | Sincronización de Clerk sin Webhooks (getCurrentProfesional) |
+| ADR-010 | Visibilidad de domingos bloqueados en el calendario |
+| ADR-011 | Restricción de cambio de duración de slot |
 
 ---
 

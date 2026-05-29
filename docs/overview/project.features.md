@@ -19,14 +19,14 @@
 ### FEATURE 2 — Modelo de datos base
 - [ ] Definir schema Prisma:
   - `Profesional` (vinculado al usuario de Clerk)
-  - `ConfiguracionProfesional` (duración del slot en minutos, horario de atención desde/hasta, días laborables)
-  - `Paciente` (nombre, teléfono, contacto, notas básicas, activo: boolean — soft delete desde el inicio)
-  - `Turno` (fecha, horaInicio, horaFin calculada, estado, paciente, profesional)
-  - `Feriado` (fecha, nombre, año)
+  - `ConfiguracionProfesional` (duración del slot en minutos, horario de atención desde/hasta)
+  - `Paciente` (nombre, teléfono, notas, activo: boolean — soft delete desde el inicio)
+  - `Turno` (fecha: DateTime, horaInicio, horaFin calculada, estado, paciente, profesional)
+  - `Feriado` (fecha: DateTime unique, nombre)
 - [ ] Correr migraciones
 - [ ] Seedear datos de prueba para desarrollar contra algo real
-- [ ] Carga inicial de feriados argentinos desde la API pública (guardados en tabla `Feriado`, no consultar en cada render)
-- [ ] Definir estrategia de actualización de feriados al cambiar de año (botón manual en configuración)
+- [ ] Carga inicial de feriados argentinos desde la API pública (guardados en tabla `Feriado`, no consultar en cada render) con un índice único en fecha para evitar duplicados
+- [ ] Sincronización automática de feriados del año actual en el arranque si la base está vacía (sin botones manuales)
 
 ---
 
@@ -45,8 +45,8 @@
 - [ ] Crear turno desde modal al clickear un bloque libre en el calendario:
   - Fecha y slot pre-cargados desde el click
   - Selector de paciente: Combobox con búsqueda integrada (filtra mientras se escribe)
-  - Al final del listado: opción fija "＋ Crear nuevo paciente" que redirige al formulario
-  - Al volver de crear el paciente, el profesional clickea el slot de nuevo y selecciona al paciente recién creado (flujo simple, sin estado persistido)
+  - Al final del listado: opción fija "＋ Crear nuevo paciente" que abre un sub-modal de creación rápida en la misma pantalla (con Server Action)
+  - Al crearse con éxito, se selecciona automáticamente el paciente en el selector sin perder el slot cliqueado
 - [ ] Modal de detalle al clickear un bloque ocupado:
   - Datos del turno (fecha, hora, estado)
   - Datos del paciente
@@ -60,8 +60,7 @@
 - [ ] Vista mensual navegable (mes anterior / mes siguiente)
 - [ ] Vista semanal navegable (semana anterior / semana siguiente)
   - Muestra los 7 días de la semana
-  - Domingo bloqueado visualmente por defecto
-  - Días no laborables bloqueados según `ConfiguracionProfesional`
+  - Domingo visible en el calendario para mantener la UI simétrica, pero bloqueado/deshabilitado para clicks o creación de turnos
 - [ ] Feriados pintados visualmente en ambas vistas (leídos desde tabla `Feriado`, sin llamadas externas)
 - [ ] Distinguir estados de turno con color (pendiente, confirmado, cancelado, ausente)
 - [ ] Click en bloque libre → modal de creación de turno (Feature 4)
@@ -73,7 +72,7 @@
 ### FEATURE 6 — Chat IA — Setup y tools base
 - [ ] Configurar Groq API en el proyecto
 - [ ] Definir system prompt base que contextualice al modelo como asistente de turnos médicos
-- [ ] Manejar historial de conversación: enviar N mensajes anteriores en cada request (limitar para no inflar tokens — definir tope, ej. últimos 10 mensajes)
+- [ ] Manejar historial de conversación: enviar últimos 6 mensajes (3 turnos completos) en cada request para mantener contexto sin inflar consumo de tokens
 - [ ] No llamar al LLM si una acción puede resolverse directamente con datos (los botones de acceso directo van a la tool sin pasar por el modelo)
 - [ ] Crear interfaz de chat (burbujas de mensajes, input de texto, scroll automático)
 - [ ] Botones de acceso directo visibles en el chat (disparan tools directamente sin interpretación de lenguaje natural):
@@ -111,7 +110,6 @@
 ---
 
 ### FEATURE 10 — Estados y flujo de turno mejorado
-- [ ] Historial de cambios de estado por turno
 - [ ] Distinguir claramente turno "ausente" del turno "cancelado" en la interfaz
 
 ---
@@ -140,11 +138,13 @@
 
 ## ⚫ WON'T HAVE — Fuera del MVP (documentar como mejoras futuras)
 
+- Historial/bitácora de cambios de estado de turnos (se conserva solo el estado actual)
+- Sincronización de Clerk mediante Webhooks (se usa inicialización lazy)
 - Notificaciones por mail o WhatsApp
 - Portal para pacientes (login propio, ver sus turnos)
 - Múltiples profesionales con roles y permisos
 - Historia clínica completa
-- Configuración de días laborables por profesional (el domingo está bloqueado por defecto; en el futuro el profesional define qué días atiende)
+- Configuración de días laborables por profesional (el domingo está bloqueado; en el futuro el profesional define qué días atiende)
 - Turno recurrente (repetir cada N semanas)
 
 ---
