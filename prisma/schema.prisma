@@ -1,0 +1,73 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EstadoTurno {
+  PENDIENTE
+  CONFIRMADO
+  CANCELADO
+  AUSENTE
+}
+
+model Profesional {
+  id            String                    @id @default(cuid())
+  clerkId       String                    @unique
+  nombre        String
+  email         String                    @unique
+  configuracion ConfiguracionProfesional?
+  pacientes     Paciente[]
+  turnos        Turno[]
+  createdAt     DateTime                  @default(now())
+  updatedAt     DateTime                  @updatedAt
+}
+
+model ConfiguracionProfesional {
+  id              String      @id @default(cuid())
+  profesionalId   String      @unique
+  profesional     Profesional @relation(fields: [profesionalId], references: [id])
+  duracionSlot    Int
+  horarioDesde    String
+  horarioHasta    String
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+}
+
+model Paciente {
+  id            String      @id @default(cuid())
+  profesionalId String
+  profesional   Profesional @relation(fields: [profesionalId], references: [id])
+  nombre        String
+  telefono      String?
+  notas         String?
+  activo        Boolean     @default(true)
+  turnos        Turno[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Turno {
+  id            String      @id @default(cuid())
+  profesionalId String
+  profesional   Profesional @relation(fields: [profesionalId], references: [id])
+  pacienteId    String
+  paciente      Paciente    @relation(fields: [pacienteId], references: [id])
+  fecha         DateTime
+  horaInicio    String
+  horaFin       String
+  estado        EstadoTurno @default(PENDIENTE)
+  notas         String?
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}
+
+model Feriado {
+  id        String   @id @default(cuid())
+  fecha     DateTime @unique
+  nombre    String
+  createdAt DateTime @default(now())
+}
