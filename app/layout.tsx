@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Instrument_Sans, Instrument_Serif, Fira_Code } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ThemeProvider } from "@/components/theme/theme-provider";
 import "./globals.css";
 
 const instrumentSans = Instrument_Sans({
@@ -35,7 +36,9 @@ export default function RootLayout({
         lang="es"
         className={`${instrumentSans.variable} ${instrumentSerif.variable} ${firaCode.variable} h-full antialiased`}
       >
-        <body className="min-h-full flex flex-col font-sans">{children}</body>
+        <body className="min-h-full flex flex-col font-sans">
+          <ThemeProvider>{children}</ThemeProvider>
+        </body>
       </html>
     </ClerkProvider>
   );

@@ -1,4 +1,4 @@
-import Image from "next/image";
+import { Camera } from "lucide-react";
 import Link from "next/link";
 
 export default function HeroSection() {
@@ -16,30 +16,27 @@ export default function HeroSection() {
             complicaciones, sin dobles agendas, sin esfuerzo.
           </p>
 
-          <div className="flex gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <Link
               href="/dashboard"
-              className="inline-flex px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium text-lg hover:opacity-90 transition-opacity"
+              className="inline-flex px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium text-lg hover:opacity-90 transition-opacity text-center"
             >
               Comenzar ahora
             </Link>
             <Link
               href="#"
-              className="inline-flex px-6 py-3 rounded-full border border-border text-foreground font-medium text-lg hover:bg-muted transition-colors"
+              className="inline-flex px-6 py-3 rounded-full border border-border text-foreground font-medium text-lg hover:bg-muted transition-colors text-center"
             >
               Más información
             </Link>
           </div>
         </div>
 
-        <div className="relative aspect-[4/3] w-full scale-[1.3]">
-          <Image
-            src="/images/landing_background.png"
-            alt="Profesional de la salud usando la aplicación"
-            fill
-            className="object-contain"
-            priority
-          />
+        <div className="relative aspect-[4/3] w-full scale-[1.3] flex items-center justify-center rounded-2xl border-2 border-dashed border-border bg-muted/30">
+          <div className="flex flex-col items-center gap-3 text-muted-foreground">
+            <Camera className="size-16 stroke-1" />
+            <span className="text-sm font-medium">Wireframe</span>
+          </div>
         </div>
       </div>
     </section>
