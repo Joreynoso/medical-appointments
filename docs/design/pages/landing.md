@@ -86,7 +86,7 @@
 
 ## Diseño y tema
 
-- **Tipografía:** Instrument Sans (sans), Instrument Serif (headings), Fira Code (mono)
+- **Tipografía:** DM Sans (sans), Georgia (headings), Fira Code (mono)
 - **Paleta:** Catppuccin — Latte (light) / Mocha (dark)
 - **Radius base:** `0.35rem`
 - **Idioma:** Español (es-AR)

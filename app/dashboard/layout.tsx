@@ -1,5 +1,6 @@
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
-import { DashboardHeader } from "@/components/dashboard/dashboard-header"
+import { Topbar } from "@/components/dashboard/topbar"
+import { PageHeader } from "@/components/dashboard/page-header"
 
 export default function DashboardLayout({
   children,
@@ -8,8 +9,9 @@ export default function DashboardLayout({
 }) {
   return (
     <DashboardShell>
-      <DashboardHeader />
-      <section className="content-area flex-1 overflow-y-auto px-8 pb-8">
+      <Topbar />
+      <PageHeader />
+      <section className="content-area flex-1 overflow-y-auto px-10 pb-10">
         {children}
       </section>
     </DashboardShell>

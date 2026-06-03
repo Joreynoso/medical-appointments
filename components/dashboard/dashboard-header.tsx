@@ -16,7 +16,7 @@ export function DashboardHeader() {
   return (
     <header className="dashboard-header flex items-center justify-between px-8 pt-8 pb-8">
       <div className="flex flex-col gap-1">
-        <h1 className="text-2xl font-semibold text-foreground">
+        <h1 className="text-xl font-serif text-foreground">
           {getGreeting()}, {user?.firstName || "Profesional"}
         </h1>
         <p className="text-sm text-muted-foreground">

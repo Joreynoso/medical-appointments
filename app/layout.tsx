@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import { Instrument_Sans, Instrument_Serif, Fira_Code } from "next/font/google";
+import { DM_Sans, Fira_Code } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { clerkAppearance } from "@/lib/clerk-appearance";
 import "./globals.css";
 
-const instrumentSans = Instrument_Sans({
+const dmSans = DM_Sans({
   variable: "--font-sans",
-  subsets: ["latin"],
-});
-
-const instrumentSerif = Instrument_Serif({
-  variable: "--font-serif",
-  weight: "400",
   subsets: ["latin"],
 });
 
@@ -31,10 +26,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={clerkAppearance}>
       <html
         lang="es"
-        className={`${instrumentSans.variable} ${instrumentSerif.variable} ${firaCode.variable} h-full antialiased`}
+        className={`${dmSans.variable} ${firaCode.variable} h-full antialiased`}
       >
         <body className="min-h-full flex flex-col font-sans">
           <ThemeProvider>{children}</ThemeProvider>

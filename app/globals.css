@@ -37,8 +37,8 @@
   --sidebar-accent-foreground: #ffffff;
   --sidebar-border: #bcc0cc;
   --sidebar-ring: #8839ef;
-  --font-sans: Instrument Sans, sans-serif;
-  --font-serif: Instrument Serif, serif;
+  --font-sans: DM Sans, sans-serif;
+  --font-serif: Georgia, serif;
   --font-mono: Fira Code, monospace;
   --radius: 0.35rem;
   --shadow-x: 0px;
@@ -92,8 +92,8 @@
   --sidebar-accent-foreground: #1e1e2e;
   --sidebar-border: #45475a;
   --sidebar-ring: #cba6f7;
-  --font-sans: Instrument Sans, sans-serif;
-  --font-serif: Instrument Serif, serif;
+  --font-sans: DM Sans, sans-serif;
+  --font-serif: Georgia, serif;
   --font-mono: Fira Code, monospace;
   --radius: 0.35rem;
   --shadow-x: 0px;
@@ -166,7 +166,7 @@
 }
 
 @theme inline {
-  --font-heading: var(--font-sans);
+  --font-heading: var(--font-serif);
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);

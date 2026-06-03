@@ -24,7 +24,7 @@ const colors = [
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="space-y-4">
-      <h2 className="text-xl font-serif text-foreground border-b border-border pb-2">{title}</h2>
+      <h2 className="text-lg font-serif text-foreground border-b border-border pb-2">{title}</h2>
       {children}
     </section>
   );
@@ -54,7 +54,7 @@ export default function ThemePage() {
 
       <div className="max-w-5xl mx-auto px-6 py-10 space-y-12">
         <header className="space-y-2">
-          <h1 className="text-3xl font-serif tracking-tight">Guía de Estilos</h1>
+          <h1 className="text-2xl font-serif tracking-tight">Guía de Estilos</h1>
           <p className="text-muted-foreground">
             Paleta completa del tema basada en Catppuccin Mocha (dark) / Latte (light).
             Todas las clases usan las variables CSS definidas en <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">globals.css</code>.
@@ -72,7 +72,7 @@ export default function ThemePage() {
         <Section title="Tipografía">
           <div className="grid md:grid-cols-3 gap-6">
             <div className="space-y-3 p-4 rounded-lg border border-border bg-card">
-              <p className="text-sm text-muted-foreground font-mono">font-sans (Instrument Sans)</p>
+              <p className="text-sm text-muted-foreground font-mono">font-sans (DM Sans)</p>
               <p className="text-base">Body text regular</p>
               <p className="text-sm text-muted-foreground">Body text muted</p>
               <p className="text-xs text-muted-foreground">Small / caption</p>
@@ -85,7 +85,7 @@ export default function ThemePage() {
               />
             </div>
             <div className="space-y-3 p-4 rounded-lg border border-border bg-card">
-              <p className="text-sm text-muted-foreground font-mono">font-serif (Instrument Serif)</p>
+              <p className="text-sm text-muted-foreground font-mono">font-serif (Georgia)</p>
               <h1 className="text-4xl font-serif">H1 Título</h1>
               <h2 className="text-3xl font-serif">H2 Título</h2>
               <h3 className="text-2xl font-serif">H3 Título</h3>

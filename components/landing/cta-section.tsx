@@ -30,7 +30,7 @@ export default function CtaSection() {
     <section id="demo" className="py-24 md:py-32">
       <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
-          <h2 className="text-4xl sm:text-5xl font-serif text-foreground leading-[1.1]">
+          <h2 className="text-3xl sm:text-4xl font-serif text-foreground leading-snug">
             Probá cómo funciona con
             <br />
             <span className="text-accent italic">lenguaje natural</span>

@@ -45,12 +45,12 @@ export function PageHeader() {
   if (!config) return null
 
   return (
-    <section className="page-header flex items-center justify-between px-8 py-6">
+    <section className="page-header flex items-center justify-between px-10 py-8">
       <div className="page-header-content">
-        <h1 className="text-2xl font-semibold text-foreground">
+        <h1 className="text-xl font-serif text-foreground">
           {config.title}
         </h1>
-        <p className="mt-1 text-sm text-muted-foreground">
+        <p className="mt-1.5 text-sm text-muted-foreground">
           {config.description}
         </p>
       </div>

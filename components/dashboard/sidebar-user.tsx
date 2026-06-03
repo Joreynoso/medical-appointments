@@ -1,7 +1,7 @@
 "use client"
 
 import { useUser, useClerk } from "@clerk/nextjs"
-import { LogOut } from "lucide-react"
+import { Camera, LogOut } from "lucide-react"
 
 export function SidebarUser() {
   const { user } = useUser()
@@ -16,7 +16,13 @@ export function SidebarUser() {
   ).toUpperCase()
 
   return (
-    <div className="sidebar-user shrink-0 px-4 pb-6 pt-4">
+    <div className="sidebar-user shrink-0 px-6 pb-6 pt-6">
+      <div className="mb-4 flex aspect-square w-full items-center justify-center rounded-xl border-2 border-dashed border-sidebar-border/40 bg-sidebar-accent/10">
+        <div className="flex flex-col items-center gap-1 text-sidebar-foreground/40">
+          <Camera className="size-8 stroke-1" />
+          <span className="text-xs font-medium">Wireframe</span>
+        </div>
+      </div>
       <div className="flex items-center gap-3">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-full bg-sidebar-primary/10 text-sm font-medium text-sidebar-primary">
           {initials}

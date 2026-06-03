@@ -2,8 +2,8 @@
 
 ## Sistema tipográfico
 
-- **Títulos** → `font-serif` (Instrument Serif, weight 400 regular únicamente)
-- **Contenido y párrafos** → `font-sans` (Instrument Sans)
+- **Títulos** → `font-serif` (Georgia, weight 400 regular únicamente)
+- **Contenido y párrafos** → `font-sans` (DM Sans)
 - **Código** → `font-mono` (Fira Code)
 
 ### Reglas

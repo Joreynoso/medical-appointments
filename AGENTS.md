@@ -12,6 +12,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 Before starting any task, read these documents in order:
 
+0. `docs/overview/rules.md` — **⚠️ mandatory read first**: golden rules for every agent
 1. `docs/overview/project.overview.md` — what the project is, who it's for, stack and scope
 2. `docs/overview/project.decisions.md` — architectural decisions already made, do not contradict them
 3. `docs/overview/project.features.md` — feature list with MoSCoW priority and current status
