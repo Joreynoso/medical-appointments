@@ -8,7 +8,7 @@ export default function HeroSection() {
         <div className="space-y-10">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-foreground leading-[1.05]">
             Tu agenda médica, potenciada con{" "}
-            <span className="text-accent italic">inteligencia artificial.</span>
+            <span className="text-primary italic">inteligencia artificial.</span>
           </h1>
 
           <p className="text-lg sm:text-xl text-muted-foreground max-w-lg">

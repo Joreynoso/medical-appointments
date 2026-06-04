@@ -236,6 +236,36 @@ Dado que los slots se generan dinámicamente en runtime y la hora de fin de los 
 
 ---
 
+## ADR-012 — Implementación de sincronización de feriados: lógica separada del `'use server'`
+
+**Fecha:** 2026-06-04
+**Estado:** Aceptada
+
+**Decisión:**
+La sincronización de feriados se implementó con dos capas separadas:
+1. **`lib/feriados.ts`** — lógica pura (sin `'use server'`): `sincronizarSiEsNecesario()` verifica si hay feriados del año actual y, si no, hace fetch a `https://api.argentinadatos.com/v1/feriados/{año}` y hace `upsert` de cada registro.
+2. **`lib/actions/feriados.ts`** — wrapper con `'use server'` que re-exporta la función para uso desde Client Components en el futuro.
+
+El auto-sync se dispara desde el layout del dashboard (`app/dashboard/layout.tsx`), que es un Server Component, importando directamente `sincronizarSiEsNecesario()` desde `lib/feriados.ts`.
+
+**Por qué:**
+- Server Components no necesitan el overhead de una Server Action para llamar lógica server-side — pueden importar funciones normales directamente.
+- Separar la lógica core del `'use server'` evita crear endpoints POST innecesarios cuando la función se usa solo desde Server Components, y mantiene la acción disponible por si en el futuro se necesita invocar desde un Client Component.
+- El layout del dashboard es el punto de entrada natural para lazy loading: si el profesional nunca carga el dashboard, no tiene sentido sincronizar feriados.
+
+**Alternativas descartadas:**
+- Toda la lógica dentro del `'use server'`: innecesario para Server Components, crea una ruta POST que nadie usa.
+- Toda la lógica en el layout: mezcla responsabilidades, difícil de reutilizar desde un Client Component.
+- Seed script independiente: requeriría ejecución manual, contradice el auto-sync del ADR-005.
+
+**Consecuencias:**
+- `lib/feriados.ts` puede ser importado directamente desde Server Components sin generar endpoints POST.
+- `lib/actions/feriados.ts` está listo para ser usado desde Client Components (chat, botones directos en el futuro).
+- La API externa solo se llama una vez por año gracias al pre-check con `count()` y al `upsert` por fecha única.
+- El auto-sync es transparente para el usuario — sin botones, sin UI, sin pantallas de carga.
+
+---
+
 ## 📝 Plantilla para nuevas entradas
 
 ```

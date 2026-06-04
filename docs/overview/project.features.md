@@ -25,8 +25,8 @@
   - `Feriado` (fecha: DateTime unique, nombre)
 - [ ] Correr migraciones
 - [ ] Seedear datos de prueba para desarrollar contra algo real
-- [ ] Carga inicial de feriados argentinos desde la API pública (guardados en tabla `Feriado`, no consultar en cada render) con un índice único en fecha para evitar duplicados
-- [ ] Sincronización automática de feriados del año actual en el arranque si la base está vacía (sin botones manuales)
+- [x] Carga inicial de feriados argentinos desde la API pública (guardados en tabla `Feriado`, no consultar en cada render) con un índice único en fecha para evitar duplicados
+- [x] Sincronización automática de feriados del año actual en el arranque si la base está vacía (sin botones manuales)
 
 ---
 

@@ -1,6 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
+import { usePageHeaderActions } from "@/components/dashboard/page-header-context"
 
 type PageConfig = {
   title: string
@@ -41,6 +42,7 @@ function findPageConfig(pathname: string): PageConfig | undefined {
 export function PageHeader() {
   const pathname = usePathname()
   const config = findPageConfig(pathname)
+  const { actions } = usePageHeaderActions()
 
   if (!config) return null
 
@@ -55,7 +57,7 @@ export function PageHeader() {
         </p>
       </div>
       <div className="page-header-actions flex items-center gap-3">
-        {/* Module-specific actions rendered by each page */}
+        {actions}
       </div>
     </section>
   )
