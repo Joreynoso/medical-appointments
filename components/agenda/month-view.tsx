@@ -2,14 +2,16 @@
 
 import { DayCard } from "@/components/agenda/day-card"
 import { getMonthGrid, getDayName, formatDateKey } from "@/components/agenda/calendar-utils"
+import type { TurnoData } from "@/lib/actions/turnos"
 
 type MonthViewProps = {
   year: number
   month: number
   feriados: Map<string, string>
+  turnosPorFecha: Map<string, TurnoData[]>
 }
 
-export function MonthView({ year, month, feriados }: MonthViewProps) {
+export function MonthView({ year, month, feriados, turnosPorFecha }: MonthViewProps) {
   const weeks = getMonthGrid(year, month)
 
   return (
@@ -29,12 +31,14 @@ export function MonthView({ year, month, feriados }: MonthViewProps) {
           {week.map((day) => {
             const key = formatDateKey(day.date)
             const holiday = feriados.get(key)
+            const turnosDelDia = turnosPorFecha.get(key) ?? []
             return (
               <DayCard
                 key={key}
                 day={day}
                 isHoliday={!!holiday}
                 holidayName={holiday}
+                turnos={turnosDelDia}
               />
             )
           })}

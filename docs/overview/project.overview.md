@@ -64,7 +64,7 @@ MoSCoW decide el **orden de prioridad**. El desarrollo por features decide la **
 ## 6. Decisiones de diseño clave
 
 ### Slots fijos en lugar de duración libre
-El profesional configura una duración de slot única (ej. 30 minutos). El sistema genera automáticamente los bloques disponibles del día. Si un slot está ocupado, no aparece como opción. Esto elimina la posibilidad de que dos turnos se superpongan. Se restringe cambiar la duración de slots si hay turnos pendientes futuros.
+El profesional configura una duración de slot única (ej. 30 minutos). El sistema genera automáticamente los bloques disponibles del día. Si un slot está ocupado, no aparece como opción. Esto elimina la posibilidad de que dos turnos se superpongan. Se restringe cambiar la duración de slots si hay turnos pendientes futuros. Una evolución futura contempla eliminar esta restricción y permitir duración completamente libre por turno (ver mejoras futuras).
 
 ### Feriados pre-cargados y sincronización automática
 Los feriados nacionales se guardan en la tabla `Feriado` de la base de datos con un índice único para evitar duplicaciones. Su carga se realiza automáticamente en segundo plano en el arranque si no existen feriados cargados para el año en curso. Nunca se consulta la API de feriados en runtime.
@@ -153,3 +153,4 @@ El uso de IA no reemplazó el criterio propio. Cada decisión fue evaluada, cues
 - Historia clínica básica por paciente
 - Turnos recurrentes
 - Integración con sistemas de pago
+- Agenda sin slots fijos — duración completamente libre para cada turno (tipo Google Calendar)

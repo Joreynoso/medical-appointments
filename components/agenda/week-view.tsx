@@ -2,13 +2,15 @@
 
 import { DayCard } from "@/components/agenda/day-card"
 import { getWeekDays, getDayName, formatDateKey } from "@/components/agenda/calendar-utils"
+import type { TurnoData } from "@/lib/actions/turnos"
 
 type WeekViewProps = {
   currentDate: Date
   feriados: Map<string, string>
+  turnosPorFecha: Map<string, TurnoData[]>
 }
 
-export function WeekView({ currentDate, feriados }: WeekViewProps) {
+export function WeekView({ currentDate, feriados, turnosPorFecha }: WeekViewProps) {
   const days = getWeekDays(currentDate)
 
   return (
@@ -27,12 +29,14 @@ export function WeekView({ currentDate, feriados }: WeekViewProps) {
         {days.map((day) => {
           const key = formatDateKey(day.date)
           const holiday = feriados.get(key)
+          const turnosDelDia = turnosPorFecha.get(key) ?? []
           return (
             <DayCard
               key={key}
               day={day}
               isHoliday={!!holiday}
               holidayName={holiday}
+              turnos={turnosDelDia}
             />
           )
         })}

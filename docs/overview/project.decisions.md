@@ -266,6 +266,59 @@ El auto-sync se dispara desde el layout del dashboard (`app/dashboard/layout.tsx
 
 ---
 
+## ADR-013 — Seed de datos de prueba con tsx + prisma.config.ts
+
+**Fecha:** 2026-06-05
+**Estado:** Aceptada
+
+**Decisión:**
+Se creó `prisma/seed.ts` con datos de prueba (1 profesional, 6 pacientes, 10 turnos) y `prisma.config.ts` para configurar el seed command. Se eliminó la clave `prisma` de `package.json`.
+
+**Por qué:**
+- `prisma/seed.ts` permite desarrollar y testear contra datos reales sin depender de la API de feriados o de datos manuales.
+- `prisma.config.ts` es el formato recomendado por Prisma (la clave en `package.json` está deprecada desde Prisma 6 y se eliminará en Prisma 7).
+- `tsx` permite ejecutar TypeScript directamente sin compilación previa.
+
+**Alternativas descartadas:**
+- Mantener `package.json#prisma.seed`: funciona en Prisma 6 pero emite warning de deprecación.
+- Usar `node` con JS plano: requiere mantener dos versiones del seed.
+- No crear seed: obliga a cargar datos manualmente en cada reset de base.
+
+**Consecuencias:**
+- `npx prisma db seed` (o el reset automático de `prisma migrate dev`) carga los datos de prueba.
+- El seed es idempotente: si ya hay datos, se salta.
+- `tsx` queda como devDependency del proyecto.
+- El profesional de prueba usa `clerkId: "user_2dev_placeholder"` que debe reemplazarse por un Clerk ID real para desarrollo.
+
+---
+
+## ADR-014 — getCurrentProfesional helper (Clerk lazy init)
+
+**Fecha:** 2026-06-05
+**Estado:** Aceptada
+
+**Decisión:**
+Se implementó `lib/profesional.ts` con la función `getCurrentProfesional()` que:
+1. Obtiene el `userId` de Clerk via `auth()`.
+2. Busca el `Profesional` en la DB por `clerkId`.
+3. Si no existe, crea el registro usando datos de la API de Clerk (nombre, email).
+
+**Por qué:**
+- ADR-009 ya definía esta estrategia pero nunca se implementó.
+- Es el punto de entrada para todas las consultas que necesitan identificar al profesional autenticado.
+- Evita webhooks de Clerk, manteniendo el desarrollo local simple.
+
+**Alternativas descartadas:**
+- Pasar `clerkId` desde el Server Component y buscar en DB: duplica lógica en cada página.
+- Webhooks de Clerk: complejidad innecesaria en desarrollo (ADR-009).
+
+**Consecuencias:**
+- Cualquier Server Action o Server Component puede importar `getCurrentProfesional()` para obtener el profesional autenticado.
+- El helper es lazy: solo crea el registro si es la primera vez que ingresa.
+- Se usa `CLERK_SECRET_KEY` desde `.env.local` para llamar a la API de Clerk.
+
+---
+
 ## 📝 Plantilla para nuevas entradas
 
 ```
