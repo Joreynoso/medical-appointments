@@ -17,25 +17,25 @@
 ---
 
 ### FEATURE 2 — Modelo de datos base
-- [ ] Definir schema Prisma:
+- [x] Definir schema Prisma:
   - `Profesional` (vinculado al usuario de Clerk)
   - `ConfiguracionProfesional` (duración del slot en minutos, horario de atención desde/hasta)
   - `Paciente` (nombre, teléfono, notas, activo: boolean — soft delete desde el inicio)
   - `Turno` (fecha: DateTime, horaInicio, horaFin calculada, estado, paciente, profesional)
   - `Feriado` (fecha: DateTime unique, nombre)
-- [ ] Correr migraciones
-- [ ] Seedear datos de prueba para desarrollar contra algo real
+- [x] Correr migraciones
+- [x] Seedear datos de prueba con `prisma/seed.ts` (1 profesional + usuario Clerk automático, 6 pacientes, 10 turnos)
 - [x] Carga inicial de feriados argentinos desde la API pública (guardados en tabla `Feriado`, no consultar en cada render) con un índice único en fecha para evitar duplicados
 - [x] Sincronización automática de feriados del año actual en el arranque si la base está vacía (sin botones manuales)
 
 ---
 
 ### FEATURE 3 — ABM de pacientes
-- [ ] Listar pacientes activos del profesional
-- [ ] Crear paciente (formulario con validación — nombre obligatorio, teléfono opcional)
-- [ ] Editar paciente
-- [ ] Desactivar paciente (soft delete — nunca borrar si tiene turnos históricos)
-- [ ] Búsqueda básica por nombre dentro del listado
+- [x] Listar pacientes activos del profesional
+- [x] Crear paciente (formulario con validación — nombre obligatorio, teléfono opcional)
+- [x] Editar paciente
+- [x] Desactivar paciente (soft delete — nunca borrar si tiene turnos históricos)
+- [x] Búsqueda básica por nombre dentro del listado
 
 ---
 
@@ -57,12 +57,12 @@
 ---
 
 ### FEATURE 5 — Vista de agenda (calendario)
-- [ ] Vista mensual navegable (mes anterior / mes siguiente)
-- [ ] Vista semanal navegable (semana anterior / semana siguiente)
+- [x] Vista mensual navegable (mes anterior / mes siguiente)
+- [x] Vista semanal navegable (semana anterior / semana siguiente)
   - Muestra los 7 días de la semana
   - Domingo visible en el calendario para mantener la UI simétrica, pero bloqueado/deshabilitado para clicks o creación de turnos
-- [ ] Feriados pintados visualmente en ambas vistas (leídos desde tabla `Feriado`, sin llamadas externas)
-- [ ] Distinguir estados de turno con color (pendiente, confirmado, cancelado, ausente)
+- [x] Feriados pintados visualmente en ambas vistas (leídos desde tabla `Feriado`, sin llamadas externas)
+- [x] Turnos visibles en el calendario con indicadores de color por estado (pendiente, confirmado, cancelado, ausente)
 - [ ] Click en bloque libre → modal de creación de turno (Feature 4)
 - [ ] Click en bloque ocupado → modal de detalle del turno (Feature 4)
 - [ ] Click en día del calendario mensual → navega a la vista semanal de esa semana
