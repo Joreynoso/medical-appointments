@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { UserButton, SignInButton, useUser } from "@clerk/nextjs";
+import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
 import { User, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
@@ -10,6 +10,12 @@ export default function Navbar() {
   const { user } = useUser();
   const isSignedIn = !!user;
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const initials = (
+    user?.firstName?.charAt(0) ||
+    user?.emailAddresses[0]?.emailAddress?.charAt(0) ||
+    "?"
+  ).toUpperCase();
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
@@ -51,7 +57,19 @@ export default function Navbar() {
                 Dashboard
               </Link>
               <ThemeToggle />
-              <UserButton />
+              <div className="relative flex items-center justify-center">
+                <UserButton
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: "size-8",
+                      userButtonAvatarImage: "opacity-0",
+                    },
+                  }}
+                />
+                <div className="pointer-events-none absolute inset-0 m-auto flex size-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
+                  {initials}
+                </div>
+              </div>
             </>
           )}
           <button
