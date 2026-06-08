@@ -17,6 +17,7 @@ type ModalMode = "crear" | "editar" | null
 
 export default function PacientesPage() {
   const [pacientes, setPacientes] = useState<PacienteListData[]>([])
+  const [filteredPacientes, setFilteredPacientes] = useState<PacienteListData[]>([])
   const [busqueda, setBusqueda] = useState("")
   const [loading, setLoading] = useState(true)
   const [modalOpen, setModalOpen] = useState(false)
@@ -26,11 +27,12 @@ export default function PacientesPage() {
   const [pacienteToDelete, setPacienteToDelete] = useState<PacienteListData | null>(null)
   const [submitting, setSubmitting] = useState(false)
 
-  const cargarPacientes = useCallback(async (buscar?: string) => {
+  const cargarPacientes = useCallback(async () => {
     setLoading(true)
     try {
-      const data = await listarPacientes(buscar || undefined)
+      const data = await listarPacientes()
       setPacientes(data)
+      setFilteredPacientes(data)
     } catch {
       toast.error("Error al cargar pacientes")
     } finally {
@@ -40,10 +42,35 @@ export default function PacientesPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      cargarPacientes(busqueda)
+      cargarPacientes()
     }, 300)
     return () => clearTimeout(timer)
-  }, [busqueda, cargarPacientes])
+  }, [cargarPacientes])
+
+  useEffect(() => {
+    if (!pacientes.length) return
+
+    const timer = setTimeout(() => {
+      if (!busqueda) {
+        setFilteredPacientes(pacientes)
+        return
+      }
+      const termino = busqueda
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+      setFilteredPacientes(
+        pacientes.filter((p) =>
+          p.nombre
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .includes(termino),
+        ),
+      )
+    }, 1000)
+    return () => clearTimeout(timer)
+  }, [busqueda, pacientes])
 
   function abrirCrear() {
     setModalMode("crear")
@@ -87,7 +114,7 @@ export default function PacientesPage() {
         toast.success("Paciente actualizado")
       }
       cerrarModal()
-      cargarPacientes(busqueda)
+      cargarPacientes()
     } catch {
       toast.error("Error al guardar paciente")
     } finally {
@@ -107,7 +134,7 @@ export default function PacientesPage() {
       toast.success("Paciente desactivado")
       setDeleteDialogOpen(false)
       setPacienteToDelete(null)
-      cargarPacientes(busqueda)
+      cargarPacientes()
     } catch {
       toast.error("Error al desactivar paciente")
     }
@@ -137,7 +164,7 @@ export default function PacientesPage() {
           <div className="flex items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">Cargando pacientes...</p>
           </div>
-        ) : pacientes.length === 0 ? (
+        ) : filteredPacientes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">
               {busqueda ? "No se encontraron pacientes" : "No hay pacientes registrados"}
@@ -168,7 +195,7 @@ export default function PacientesPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {pacientes.map((paciente) => (
+              {filteredPacientes.map((paciente) => (
                 <tr key={paciente.id} className="group hover:bg-muted/50">
                   <td className="px-4 py-3 text-sm font-medium text-foreground">
                     {paciente.nombre}

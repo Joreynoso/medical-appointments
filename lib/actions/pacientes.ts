@@ -13,20 +13,14 @@ export type PacienteListData = {
   updatedAt: Date
 }
 
-export async function listarPacientes(busqueda?: string): Promise<PacienteListData[]> {
+export async function listarPacientes(): Promise<PacienteListData[]> {
   const profesional = await getCurrentProfesional()
 
-  const where: Record<string, unknown> = {
-    profesionalId: profesional.id,
-    activo: true,
-  }
-
-  if (busqueda) {
-    where.nombre = { contains: busqueda, mode: "insensitive" }
-  }
-
   return prisma.paciente.findMany({
-    where,
+    where: {
+      profesionalId: profesional.id,
+      activo: true,
+    },
     orderBy: { nombre: "asc" },
     select: {
       id: true,

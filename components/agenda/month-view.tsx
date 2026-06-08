@@ -1,5 +1,6 @@
 "use client"
 
+import { cn } from "@/lib/utils"
 import { DayCard } from "@/components/agenda/day-card"
 import { getMonthGrid, getDayName, formatDateKey } from "@/components/agenda/calendar-utils"
 import type { TurnoData } from "@/lib/actions/turnos"
@@ -15,23 +16,24 @@ export function MonthView({ year, month, feriados, turnosPorFecha }: MonthViewPr
   const weeks = getMonthGrid(year, month)
 
   return (
-    <div className="space-y-1">
-      <div className="grid grid-cols-7 gap-1">
+    <div className="border border-border rounded-xl overflow-hidden">
+      <div className="grid grid-cols-7">
         {Array.from({ length: 7 }, (_, i) => (
           <div
             key={i}
-            className="px-2 py-2 text-center text-xs font-medium text-muted-foreground"
+            className="border-b border-border px-2 py-2 text-center text-xs font-medium text-muted-foreground"
           >
             {getDayName(i)}
           </div>
         ))}
       </div>
       {weeks.map((week, wi) => (
-        <div key={wi} className="grid grid-cols-7 gap-1">
-          {week.map((day) => {
+        <div key={wi} className="grid grid-cols-7">
+          {week.map((day, di) => {
             const key = formatDateKey(day.date)
             const holiday = feriados.get(key)
             const turnosDelDia = turnosPorFecha.get(key) ?? []
+            const isLastWeek = wi === weeks.length - 1
             return (
               <DayCard
                 key={key}
@@ -39,6 +41,11 @@ export function MonthView({ year, month, feriados, turnosPorFecha }: MonthViewPr
                 isHoliday={!!holiday}
                 holidayName={holiday}
                 turnos={turnosDelDia}
+                className={cn(
+                  "border-border",
+                  di !== 6 && "border-r",
+                  !isLastWeek && "border-b",
+                )}
               />
             )
           })}

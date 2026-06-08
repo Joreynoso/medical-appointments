@@ -2,11 +2,7 @@ import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 
 export async function getCurrentProfesional() {
-  const { userId } = await auth()
-
-  if (!userId) {
-    throw new Error("No hay sesión activa")
-  }
+  const { userId } = await auth.protect()
 
   let profesional = await prisma.profesional.findUnique({
     where: { clerkId: userId },
