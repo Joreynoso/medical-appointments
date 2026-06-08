@@ -1,5 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { Bot } from "lucide-react";
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface Message {
   role: "user" | "assistant";
@@ -25,10 +31,33 @@ const messages: Message[] = [
   },
 ];
 
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
 export default function CtaSection() {
+  const container = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.set(".chat-message", { opacity: 0, y: 20 });
+
+    gsap.to(".chat-message", {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      stagger: 0.15,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: container.current,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    ScrollTrigger.refresh();
+  }, { scope: container, dependencies: [] });
+
   return (
     <section id="demo" className="py-24 md:py-32">
-      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+      <div ref={container} className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
           <h2 className="text-3xl sm:text-4xl font-serif text-foreground leading-snug">
             Probá cómo funciona con
@@ -78,7 +107,7 @@ export default function CtaSection() {
             {messages.map((msg, i) => (
               <div
                 key={i}
-                className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+                className={`chat-message flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
               >
                 <div
                   className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed whitespace-pre-line ${

@@ -17,7 +17,7 @@ const estadoBar: Record<string, string> = {
   AUSENTE: "bg-gray-400",
 }
 
-const MAX_TURNOS_VISIBLES = 6
+const MAX_TURNOS_VISIBLES = 5
 
 type DayCardProps = {
   day: DayInfo
@@ -55,8 +55,11 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className }:
           </span>
         )}
         {visibles.map((t) => (
-          <div key={t.id} className="flex items-center gap-1 min-w-0">
-            <span className={cn("h-1.5 w-1.5 shrink-0 rounded", estadoBar[t.estado])} />
+          <div
+            key={t.id}
+            className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0"
+          >
+            <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
             <span className="truncate text-[10px] leading-snug text-foreground">
               {t.horaInicio} {t.paciente.nombre}
             </span>

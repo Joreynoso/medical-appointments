@@ -1,3 +1,12 @@
+"use client";
+
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
 const cards = [
   {
     icon: (
@@ -125,9 +134,31 @@ const cards = [
 ];
 
 export default function CardsSection() {
+  const container = useRef<HTMLDivElement>(null);
+  const grid = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.set(".card-item", { opacity: 0, y: 30 });
+
+    gsap.to(".card-item", {
+      opacity: 1,
+      y: 0,
+      duration: 0.6,
+      stagger: 0.12,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: container.current,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    ScrollTrigger.refresh();
+  }, { scope: container, dependencies: [] });
+
   return (
     <section id="caracteristicas" className="py-24">
-      <div className="max-w-7xl mx-auto px-6">
+      <div ref={container} className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-serif text-foreground">
             Todo lo que necesitás
@@ -138,11 +169,11 @@ export default function CardsSection() {
           </p>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div ref={grid} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {cards.map((card, i) => (
             <div
               key={i}
-              className="group border border-border rounded-xl p-8 transition-all hover:-translate-y-1 hover:shadow-lg hover:bg-card"
+              className="card-item group border border-border rounded-xl p-8 transition-all hover:-translate-y-1 hover:shadow-lg hover:bg-card"
             >
               <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-6">
                 {card.icon}

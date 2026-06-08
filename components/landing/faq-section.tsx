@@ -1,3 +1,12 @@
+"use client";
+
+import { useRef } from "react";
+import { useGSAP } from "@gsap/react";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
+
 const faqs = [
   {
     question: "¿Cómo funciona el sistema de agendamiento?",
@@ -27,9 +36,30 @@ const faqs = [
 ];
 
 export default function FaqSection() {
+  const container = useRef<HTMLDivElement>(null);
+
+  useGSAP(() => {
+    gsap.set(".faq-item", { opacity: 0, y: 20 });
+
+    gsap.to(".faq-item", {
+      opacity: 1,
+      y: 0,
+      duration: 0.5,
+      stagger: 0.1,
+      ease: "power2.out",
+      scrollTrigger: {
+        trigger: container.current,
+        start: "top 85%",
+        toggleActions: "play none none none",
+      },
+    });
+
+    ScrollTrigger.refresh();
+  }, { scope: container, dependencies: [] });
+
   return (
     <section id="faq" className="py-24">
-      <div className="max-w-3xl mx-auto px-6">
+      <div ref={container} className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-serif text-foreground">
             Preguntas frecuentes
@@ -43,7 +73,7 @@ export default function FaqSection() {
           {faqs.map((faq, i) => (
             <details
               key={i}
-              className="group border border-border rounded-xl overflow-hidden transition-shadow hover:shadow-sm hover:bg-card"
+              className="faq-item group border border-border rounded-xl overflow-hidden transition-shadow hover:shadow-sm hover:bg-card"
             >
               <summary className="flex items-center justify-between px-6 py-5 cursor-pointer text-foreground font-medium text-lg list-none">
                 {faq.question}

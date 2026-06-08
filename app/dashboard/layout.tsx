@@ -1,10 +1,10 @@
-import { sincronizarSiEsNecesario } from "@/lib/feriados"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { Topbar } from "@/components/dashboard/topbar"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { PageHeaderActionsProvider } from "@/components/dashboard/page-header-context"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "sonner"
+import { sincronizarSiEsNecesario } from "@/lib/feriados"
 
 export default async function DashboardLayout({
   children,
