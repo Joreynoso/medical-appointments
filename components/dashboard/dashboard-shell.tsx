@@ -12,7 +12,7 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       <Sidebar />
       <main
         className={cn(
-          "main-content flex flex-1 flex-col transition-[margin] duration-300",
+          "main-content flex flex-1 flex-col transition-[margin] duration-300 animate-content-enter",
           collapsed ? "ml-16" : "ml-64",
         )}
       >

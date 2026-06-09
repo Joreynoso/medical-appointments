@@ -1,7 +1,7 @@
 "use client"
 
 import { useUser, useClerk } from "@clerk/nextjs"
-import { Camera, LogOut } from "lucide-react"
+import { LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "./sidebar-context"
 
@@ -20,32 +20,15 @@ export function SidebarUser() {
       >
         <div
           className={cn(
-            "mb-4 rounded-xl border-2 border-dashed border-sidebar-border/40 bg-sidebar-accent/10",
-            collapsed ? "hidden" : "flex aspect-square w-full items-center justify-center",
+            "mb-4 rounded-xl overflow-hidden",
+            collapsed ? "hidden" : "block aspect-square w-full",
           )}
         >
-          <div className="flex flex-col items-center gap-1 text-sidebar-foreground/40">
-            <Camera className="size-8 stroke-1" />
-            <span className="text-xs font-medium">Wireframe</span>
-          </div>
-        </div>
-        <div
-          className={cn(
-            "flex items-center gap-3",
-            collapsed ? "flex-col" : "",
-          )}
-        >
-          <div className="size-8 rounded-full bg-sidebar-accent/20" />
-          <div
-            className={cn(
-              "min-w-0 flex-1 space-y-1.5 transition-all duration-300",
-              collapsed ? "hidden" : "block",
-            )}
-          >
-            <div className="h-3 w-24 rounded bg-sidebar-accent/20" />
-            <div className="h-2.5 w-32 rounded bg-sidebar-accent/20" />
-          </div>
-          <div className="size-8 rounded-lg bg-sidebar-accent/20" />
+          <img
+            src="/images/bg-dark.png"
+            alt="MedPilot preview"
+            className="object-cover w-full h-full"
+          />
         </div>
       </div>
     )
@@ -66,14 +49,15 @@ export function SidebarUser() {
     >
       <div
         className={cn(
-          "mb-4 rounded-xl border-2 border-dashed border-sidebar-border/40 bg-sidebar-accent/10",
-          collapsed ? "hidden" : "flex aspect-square w-full items-center justify-center",
+          "mb-4 rounded-xl overflow-hidden",
+          collapsed ? "hidden" : "block aspect-square w-full",
         )}
       >
-        <div className="flex flex-col items-center gap-1 text-sidebar-foreground/40">
-          <Camera className="size-8 stroke-1" />
-          <span className="text-xs font-medium">Wireframe</span>
-        </div>
+        <img
+          src="/images/bg-dark.png"
+          alt="MedPilot preview"
+          className="object-cover w-full h-full"
+        />
       </div>
       <div
         className={cn(

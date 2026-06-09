@@ -13,7 +13,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "sidebar fixed left-0 top-0 z-30 flex h-screen flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-300",
+        "sidebar fixed left-0 top-0 z-30 flex h-screen flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-300 animate-sidebar-enter",
         collapsed ? "w-16" : "w-64",
       )}
     >

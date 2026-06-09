@@ -164,6 +164,31 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+
+  --animate-sidebar-enter: sidebar-enter 0.4s ease-out;
+  --animate-content-enter: content-enter 0.5s ease-out;
+}
+
+@keyframes sidebar-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes content-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @layer base {
@@ -198,25 +223,25 @@
 }
 
 .dark .inverted-footer {
-  --background: #faf9f5;
+  --background: #c3c0b6;
   --foreground: #3d3929;
   --card: #faf9f5;
   --card-foreground: #141413;
   --popover: #ffffff;
   --popover-foreground: #28261b;
-  --primary: #c96442;
+  --primary: #3d3929;
   --primary-foreground: #ffffff;
   --secondary: #e9e6dc;
   --secondary-foreground: #535146;
   --muted: #ede9de;
-  --muted-foreground: #83827d;
+  --muted-foreground: #3d3929;
   --accent: #e9e6dc;
   --accent-foreground: #28261b;
   --destructive: #141413;
   --destructive-foreground: #ffffff;
-  --border: #dad9d4;
+  --border: #3d3929;
   --input: #b4b2a7;
-  --ring: #c96442;
+  --ring: #3d3929;
 }
 
 .text-inverted-bg {
@@ -224,5 +249,5 @@
 }
 
 .dark .text-inverted-bg {
-  color: #faf9f5;
+  color: var(--foreground);
 }

@@ -15,9 +15,15 @@ export function LandingAnimations() {
         gsap.registerPlugin(ScrollTrigger)
 
         gsap.fromTo(
-          ".hero-animate",
+          ".hero-text",
           { x: -60, opacity: 0 },
-          { x: 0, opacity: 1, duration: 1.1, ease: "power3.out", stagger: 0.2 },
+          { x: 0, opacity: 1, duration: 1.4, ease: "power3.out" },
+        )
+
+        gsap.fromTo(
+          ".hero-image",
+          { x: 60, opacity: 0 },
+          { x: 0, opacity: 1, duration: 1.4, ease: "power3.out" },
         )
 
         gsap.fromTo(
@@ -26,8 +32,8 @@ export function LandingAnimations() {
           {
             opacity: 1,
             y: 0,
-            duration: 0.9,
-            stagger: 0.12,
+            duration: 1.2,
+            stagger: 0.15,
             ease: "power2.out",
             scrollTrigger: { trigger: ".cards-grid", start: "top 85%", toggleActions: "play none none none" },
           },
@@ -39,8 +45,8 @@ export function LandingAnimations() {
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
-            stagger: 0.15,
+            duration: 1.0,
+            stagger: 0.2,
             ease: "power2.out",
             scrollTrigger: { trigger: ".chat-demo", start: "top 85%", toggleActions: "play none none none" },
           },
@@ -52,8 +58,8 @@ export function LandingAnimations() {
           {
             opacity: 1,
             y: 0,
-            duration: 0.8,
-            stagger: 0.1,
+            duration: 1.0,
+            stagger: 0.13,
             ease: "power2.out",
             scrollTrigger: { trigger: ".faq-list", start: "top 85%", toggleActions: "play none none none" },
           },
