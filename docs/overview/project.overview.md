@@ -159,3 +159,4 @@ El uso de IA no reemplazó el criterio propio. Cada decisión fue evaluada, cues
 - Turnos recurrentes
 - Integración con sistemas de pago
 - Agenda sin slots fijos — duración completamente libre para cada turno (tipo Google Calendar)
+- Widget de clima configurable: selección de ciudad desde la pantalla de Configuración para que el widget muestre el clima de la localidad elegida por el profesional
