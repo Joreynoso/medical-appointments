@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { User, Menu, X } from "lucide-react";
-import { ThemeToggle } from "@/components/theme/theme-toggle";
+
 
 const ClerkUser = dynamic(
   () => import("@/components/landing/clerk-user"),
@@ -42,7 +42,6 @@ export default function Navbar({ isSignedIn, initials }: NavbarProps) {
           <div className="flex items-center gap-4">
           {!isSignedIn ? (
             <>
-            <ThemeToggle />
             <Link
               href="/sign-in"
               className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
@@ -59,7 +58,6 @@ export default function Navbar({ isSignedIn, initials }: NavbarProps) {
               >
                 Dashboard
               </Link>
-              <ThemeToggle />
               <ClerkUser initials={initials} />
             </>
           )}
