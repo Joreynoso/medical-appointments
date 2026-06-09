@@ -1,6 +1,6 @@
+import { auth } from "@clerk/nextjs/server"
 import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { Topbar } from "@/components/dashboard/topbar"
-import { PageHeader } from "@/components/dashboard/page-header"
 import { PageHeaderActionsProvider } from "@/components/dashboard/page-header-context"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "sonner"
@@ -11,6 +11,7 @@ export default async function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
+  await auth.protect()
   await sincronizarSiEsNecesario()
 
   return (
@@ -18,8 +19,7 @@ export default async function DashboardLayout({
       <PageHeaderActionsProvider>
         <TooltipProvider>
         <Topbar />
-        <PageHeader />
-        <section className="content-area flex-1 overflow-y-auto px-10 pb-10">
+        <section className="content-area flex-1 overflow-y-auto">
           {children}
         </section>
         </TooltipProvider>

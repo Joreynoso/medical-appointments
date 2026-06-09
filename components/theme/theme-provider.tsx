@@ -24,10 +24,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>("light");
 
   useEffect(() => {
-    const initial = getInitialTheme();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTheme(initial);
-    document.documentElement.classList.toggle("dark", initial === "dark");
+    setTheme(document.documentElement.classList.contains("dark") ? "dark" : "light");
   }, []);
 
   const toggleTheme = () => {

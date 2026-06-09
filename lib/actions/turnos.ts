@@ -1,5 +1,6 @@
 "use server"
 
+import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentProfesional } from "@/lib/profesional"
 
@@ -15,7 +16,7 @@ export type TurnoData = {
   }
 }
 
-export async function getTurnosEnRango(desde: string, hasta: string): Promise<TurnoData[]> {
+export const getTurnosEnRango = cache(async (desde: string, hasta: string): Promise<TurnoData[]> => {
   const profesional = await getCurrentProfesional()
 
   const turnos = await prisma.turno.findMany({
@@ -43,4 +44,4 @@ export async function getTurnosEnRango(desde: string, hasta: string): Promise<Tu
     ...t,
     fecha: t.fecha.toISOString().slice(0, 10),
   }))
-}
+})

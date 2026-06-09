@@ -1,12 +1,13 @@
 "use client"
 
-import { useState, useEffect, useCallback, useMemo } from "react"
+import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { MonthView } from "@/components/agenda/month-view"
 import { WeekView } from "@/components/agenda/week-view"
 import { CalendarToolbar } from "@/components/agenda/calendar-toolbar"
 import { usePageHeaderActions } from "@/components/dashboard/page-header-context"
 import { addMonths, addWeeks } from "@/components/agenda/calendar-utils"
 import { getFeriadosEnRango } from "@/lib/actions/feriados"
+import { getTurnosEnRango } from "@/lib/actions/turnos"
 import type { TurnoData } from "@/lib/actions/turnos"
 
 type AgendaClientProps = {
@@ -17,6 +18,7 @@ type AgendaClientProps = {
 export function AgendaClient({ initialFeriados, initialTurnos }: AgendaClientProps) {
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week">("month")
+  const loadedRange = useRef<{ desde: string; hasta: string }>({ desde: "", hasta: "" })
   const [feriados, setFeriados] = useState(() => {
     const map = new Map<string, string>()
     for (const f of initialFeriados) {
@@ -49,23 +51,44 @@ export function AgendaClient({ initialFeriados, initialTurnos }: AgendaClientPro
     }
   }, [feriados])
 
+  const ensureTurnos = useCallback(async (date: Date) => {
+    const year = date.getFullYear()
+    const month = date.getMonth()
+    const desde = new Date(year, month - 1, 1).toISOString().slice(0, 10)
+    const hasta = new Date(year, month + 2, 0).toISOString().slice(0, 10)
+
+    if (loadedRange.current.desde <= desde && loadedRange.current.hasta >= hasta) return
+
+    const data = await getTurnosEnRango(desde, hasta)
+    setTurnos((prev) => {
+      const existing = new Map<string, TurnoData>()
+      for (const t of prev) existing.set(t.id, t)
+      for (const t of data) existing.set(t.id, t)
+      return Array.from(existing.values())
+    })
+    loadedRange.current = { desde, hasta }
+  }, [])
+
   const handlePrev = useCallback(() => {
     const next = viewMode === "month" ? addMonths(currentDate, -1) : addWeeks(currentDate, -1)
     ensureFeriados(next.getFullYear())
+    ensureTurnos(next)
     setCurrentDate(next)
-  }, [currentDate, viewMode, ensureFeriados])
+  }, [currentDate, viewMode, ensureFeriados, ensureTurnos])
 
   const handleNext = useCallback(() => {
     const next = viewMode === "month" ? addMonths(currentDate, 1) : addWeeks(currentDate, 1)
     ensureFeriados(next.getFullYear())
+    ensureTurnos(next)
     setCurrentDate(next)
-  }, [currentDate, viewMode, ensureFeriados])
+  }, [currentDate, viewMode, ensureFeriados, ensureTurnos])
 
   const handleToday = useCallback(() => {
     const today = new Date()
     ensureFeriados(today.getFullYear())
+    ensureTurnos(today)
     setCurrentDate(today)
-  }, [ensureFeriados])
+  }, [ensureFeriados, ensureTurnos])
 
   const { setActions } = usePageHeaderActions()
 

@@ -1,5 +1,6 @@
 "use server"
 
+import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 import { getCurrentProfesional } from "@/lib/profesional"
 import { revalidatePath } from "next/cache"
@@ -13,7 +14,7 @@ export type PacienteListData = {
   updatedAt: Date
 }
 
-export async function listarPacientes(): Promise<PacienteListData[]> {
+export const listarPacientes = cache(async (): Promise<PacienteListData[]> => {
   const profesional = await getCurrentProfesional()
 
   return prisma.paciente.findMany({
@@ -31,7 +32,7 @@ export async function listarPacientes(): Promise<PacienteListData[]> {
       updatedAt: true,
     },
   })
-}
+})
 
 export async function crearPaciente(data: { nombre: string; telefono?: string }) {
   const profesional = await getCurrentProfesional()

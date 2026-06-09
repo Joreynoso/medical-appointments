@@ -1,7 +1,4 @@
-"use client"
-
-import { usePathname } from "next/navigation"
-import { usePageHeaderActions } from "@/components/dashboard/page-header-context"
+import { PageHeaderActionsClient } from "./page-header-actions-client"
 
 type PageConfig = {
   title: string
@@ -39,25 +36,26 @@ function findPageConfig(pathname: string): PageConfig | undefined {
   return match ? pages[match] : undefined
 }
 
-export function PageHeader() {
-  const pathname = usePathname()
-  const config = findPageConfig(pathname)
-  const { actions } = usePageHeaderActions()
+type PageHeaderProps = {
+  title?: string
+  description?: string
+}
 
-  if (!config) return null
-
+export function PageHeader({ title, description }: PageHeaderProps) {
   return (
-    <section className="page-header flex items-center justify-between px-10 py-8">
+    <section className="page-header flex items-center justify-between py-8">
       <div className="page-header-content">
         <h1 className="text-xl font-serif text-foreground">
-          {config.title}
+          {title}
         </h1>
-        <p className="mt-1.5 text-sm text-muted-foreground">
-          {config.description}
-        </p>
+        {description && (
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {description}
+          </p>
+        )}
       </div>
       <div className="page-header-actions flex items-center gap-3">
-        {actions}
+        <PageHeaderActionsClient />
       </div>
     </section>
   )

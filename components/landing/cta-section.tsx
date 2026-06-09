@@ -1,11 +1,5 @@
-"use client";
-
 import Link from "next/link";
 import { Bot } from "lucide-react";
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 interface Message {
   role: "user" | "assistant";
@@ -31,33 +25,10 @@ const messages: Message[] = [
   },
 ];
 
-gsap.registerPlugin(useGSAP, ScrollTrigger);
-
 export default function CtaSection() {
-  const container = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    gsap.set(".chat-message", { opacity: 0, y: 20 });
-
-    gsap.to(".chat-message", {
-      opacity: 1,
-      y: 0,
-      duration: 0.5,
-      stagger: 0.15,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: container.current,
-        start: "top 85%",
-        toggleActions: "play none none none",
-      },
-    });
-
-    ScrollTrigger.refresh();
-  }, { scope: container, dependencies: [] });
-
   return (
     <section id="demo" className="py-24 md:py-32">
-      <div ref={container} className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+      <div className="max-w-7xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
         <div className="space-y-8">
           <h2 className="text-3xl sm:text-4xl font-serif text-foreground leading-snug">
             Probá cómo funciona con
@@ -88,7 +59,7 @@ export default function CtaSection() {
           </div>
         </div>
 
-        <div className="border border-border rounded-2xl bg-card p-4 sm:p-6 shadow-lg max-w-md mx-auto w-full">
+        <div className="chat-demo border border-border rounded-2xl bg-card p-4 sm:p-6 shadow-lg max-w-md mx-auto w-full">
           <div className="flex items-center gap-3 pb-4 border-b border-border mb-4">
             <div className="size-9 rounded-full bg-primary/10 flex items-center justify-center">
               <Bot className="size-5 text-primary" />

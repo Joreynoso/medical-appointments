@@ -1,11 +1,7 @@
-"use client";
+"use client"
 
-import { useRef } from "react";
-import { useGSAP } from "@gsap/react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(useGSAP, ScrollTrigger);
+import { useState, useId } from "react"
+import { cn } from "@/lib/utils"
 
 const faqs = [
   {
@@ -33,33 +29,15 @@ const faqs = [
     answer:
       "Sí, podés sincronizar tus turnos con Google Calendar, Outlook o iCal. Recibís recordatorios automáticos para no olvidar ninguna cita.",
   },
-];
+]
 
 export default function FaqSection() {
-  const container = useRef<HTMLDivElement>(null);
-
-  useGSAP(() => {
-    gsap.set(".faq-item", { opacity: 0, y: 20 });
-
-    gsap.to(".faq-item", {
-      opacity: 1,
-      y: 0,
-      duration: 0.5,
-      stagger: 0.1,
-      ease: "power2.out",
-      scrollTrigger: {
-        trigger: container.current,
-        start: "top 85%",
-        toggleActions: "play none none none",
-      },
-    });
-
-    ScrollTrigger.refresh();
-  }, { scope: container, dependencies: [] });
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+  const baseId = useId()
 
   return (
     <section id="faq" className="py-24">
-      <div ref={container} className="max-w-3xl mx-auto px-6">
+      <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-serif text-foreground">
             Preguntas frecuentes
@@ -69,36 +47,65 @@ export default function FaqSection() {
           </p>
         </div>
 
-        <div className="space-y-4">
-          {faqs.map((faq, i) => (
-            <details
-              key={i}
-              className="faq-item group border border-border rounded-xl overflow-hidden transition-shadow hover:shadow-sm hover:bg-card"
-            >
-              <summary className="flex items-center justify-between px-6 py-5 cursor-pointer text-foreground font-medium text-lg list-none">
-                {faq.question}
-                <span className="shrink-0 ml-4 text-muted-foreground transition-transform duration-200 group-open:rotate-45">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+        <div className="faq-list space-y-4">
+          {faqs.map((faq, i) => {
+            const isOpen = openIndex === i
+            const contentId = `${baseId}-faq-${i}`
+            return (
+              <div
+                key={i}
+                className={cn(
+                  "faq-item border border-border rounded-xl overflow-hidden transition-shadow hover:shadow-sm hover:bg-card",
+                )}
+              >
+                <button
+                  type="button"
+                  onClick={() => setOpenIndex(isOpen ? null : i)}
+                  aria-expanded={isOpen}
+                  aria-controls={contentId}
+                  className={cn(
+                    "flex w-full items-center justify-between px-6 py-5 text-foreground font-medium text-lg transition-colors duration-200",
+                    isOpen && "bg-muted/50",
+                  )}
+                >
+                  {faq.question}
+                  <span
+                    className={cn(
+                      "shrink-0 ml-4 text-muted-foreground transition-transform duration-300 ease-in-out",
+                      isOpen && "rotate-45",
+                    )}
                   >
-                    <line x1="12" y1="5" x2="12" y2="19" />
-                    <line x1="5" y1="12" x2="19" y2="12" />
-                  </svg>
-                </span>
-              </summary>
-              <div className="px-6 pb-5 text-muted-foreground leading-relaxed">
-                {faq.answer}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <line x1="12" y1="5" x2="12" y2="19" />
+                      <line x1="5" y1="12" x2="19" y2="12" />
+                    </svg>
+                  </span>
+                </button>
+                <div
+                  id={contentId}
+                  role="region"
+                  className="grid transition-all duration-300 ease-in-out"
+                  style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
+                >
+                  <div className="overflow-hidden">
+                    <div className="px-6 pb-5 pt-2 text-muted-foreground leading-relaxed">
+                      {faq.answer}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </details>
-          ))}
+            )
+          })}
         </div>
       </div>
     </section>

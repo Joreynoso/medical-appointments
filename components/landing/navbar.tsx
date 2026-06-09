@@ -2,20 +2,22 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
+import dynamic from "next/dynamic";
 import { User, Menu, X } from "lucide-react";
 import { ThemeToggle } from "@/components/theme/theme-toggle";
 
-export default function Navbar() {
-  const { user } = useUser();
-  const isSignedIn = !!user;
-  const [mobileOpen, setMobileOpen] = useState(false);
+const ClerkUser = dynamic(
+  () => import("@/components/landing/clerk-user"),
+  { ssr: false },
+)
 
-  const initials = (
-    user?.firstName?.charAt(0) ||
-    user?.emailAddresses[0]?.emailAddress?.charAt(0) ||
-    "?"
-  ).toUpperCase();
+type NavbarProps = {
+  isSignedIn: boolean
+  initials: string
+}
+
+export default function Navbar({ isSignedIn, initials }: NavbarProps) {
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-border">
@@ -41,12 +43,13 @@ export default function Navbar() {
           {!isSignedIn ? (
             <>
             <ThemeToggle />
-            <SignInButton>
-              <button className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity cursor-pointer">
-                <User className="size-4" />
-                Ingresar
-              </button>
-            </SignInButton>
+            <Link
+              href="/sign-in"
+              className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-primary text-primary-foreground text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              <User className="size-4" />
+              Ingresar
+            </Link>
             </>
           ) : (
             <>
@@ -57,19 +60,7 @@ export default function Navbar() {
                 Dashboard
               </Link>
               <ThemeToggle />
-              <div className="relative flex items-center justify-center">
-                <UserButton
-                  appearance={{
-                    elements: {
-                      userButtonAvatarBox: "size-8",
-                      userButtonAvatarImage: "opacity-0",
-                    },
-                  }}
-                />
-                <div className="pointer-events-none absolute inset-0 m-auto flex size-8 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
-                  {initials}
-                </div>
-              </div>
+              <ClerkUser initials={initials} />
             </>
           )}
           <button

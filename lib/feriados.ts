@@ -1,3 +1,4 @@
+import { cache } from "react"
 import { prisma } from "@/lib/prisma"
 
 interface FeriadoAPI {
@@ -35,7 +36,7 @@ export async function sincronizarFeriadosDesdeAPI(año: number) {
   return feriados.length
 }
 
-export async function sincronizarSiEsNecesario() {
+export const sincronizarSiEsNecesario = cache(async () => {
   const año = new Date().getFullYear()
 
   const existentes = await prisma.feriado.count({
@@ -49,4 +50,4 @@ export async function sincronizarSiEsNecesario() {
   const sincronizados = await sincronizarFeriadosDesdeAPI(año)
 
   return { sincronizados, yaCargados: false, año }
-}
+})

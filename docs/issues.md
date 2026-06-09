@@ -29,3 +29,5 @@ Al ejecutar `npx shadcn@latest init --defaults`, el comando sobrescribe `app/glo
 
 ### Lección aprendida
 **Siempre hacer backup de `globals.css` antes de ejecutar `shadcn init`.** Alternativamente, ejecutar el init en un proyecto limpio y solo copiar los archivos de componentes (`components/ui/` y `lib/utils.ts`) sin dejar que sobrescriba el CSS.
+
+---
