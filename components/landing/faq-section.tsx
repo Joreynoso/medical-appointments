@@ -55,7 +55,7 @@ export default function FaqSection() {
               <div
                 key={i}
                 className={cn(
-                  "faq-item border border-border rounded-xl overflow-hidden transition-shadow hover:shadow-sm hover:bg-card",
+                  "faq-item border border-border rounded-xl overflow-hidden transition-all hover:shadow-sm hover:bg-card hover:border-primary/30",
                 )}
               >
                 <button

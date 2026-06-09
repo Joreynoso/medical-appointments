@@ -34,7 +34,7 @@ export const listarPacientes = cache(async (): Promise<PacienteListData[]> => {
   })
 })
 
-export async function crearPaciente(data: { nombre: string; telefono?: string }) {
+export async function crearPaciente(data: { nombre: string; telefono?: string; notas?: string }) {
   const profesional = await getCurrentProfesional()
 
   const paciente = await prisma.paciente.create({
@@ -42,6 +42,7 @@ export async function crearPaciente(data: { nombre: string; telefono?: string })
       profesionalId: profesional.id,
       nombre: data.nombre,
       telefono: data.telefono ?? null,
+      notas: data.notas ?? null,
     },
   })
 

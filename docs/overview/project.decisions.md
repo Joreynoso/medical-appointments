@@ -339,6 +339,29 @@ Unificar el comportamiento de la pantalla de carga (loading states) de las rutas
 
 ---
 
+## ADR-016 — Rediseño del Footer (Tema Invertido y 500px)
+
+**Fecha:** 2026-06-09
+**Estado:** Aceptada
+
+**Decisión:**
+Reformular el diseño del footer para que use colores invertidos de forma automática en función del tema actual del sitio (tema oscuro cuando el sitio está en claro, y tema claro cuando el sitio está en oscuro) a través de redefiniciones de variables CSS de `app/globals.css` en la clase `.inverted-footer`. Además, ampliar la altura a un mínimo de 500px, adaptando un diseño multi-columna moderno y responsive.
+
+**Por qué:**
+- La inversión de colores en el footer resalta la separación visual de la landing page y le otorga un aire de diseño de alta gama y editorial.
+- Un footer de 500px de altura ofrece espacio para una estructura informativa rica (enlaces, redes sociales, marca) en lugar de un área vacía, mejorando la estética general.
+- Utilizar variables CSS heredadas en la clase `.inverted-footer` permite que todos los componentes hijos adopten los colores correctos de manera nativa sin duplicar clases condicionales de React o hooks del cliente.
+
+**Alternativas descartadas:**
+- Footer de 500px vacío de contenido: mala estética y desperdicio de espacio en pantalla.
+- Clases condicionales de React basadas en JS para inversión de colores: requiere forzar un Client Component o pasar el estado del tema por props, lo que rompe el flujo estático limpio.
+
+**Consecuencias:**
+- El componente `Footer` hereda las propiedades invertidas a través de la clase `.inverted-footer`.
+- La landing page cuenta con un pie de página de proporciones profesionales y diseño premium en todas las resoluciones.
+
+---
+
 ## 📝 Plantilla para nuevas entradas
 
 ```

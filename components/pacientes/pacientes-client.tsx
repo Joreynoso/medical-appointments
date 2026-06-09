@@ -1,7 +1,7 @@
 "use client"
 
-import { useState, useCallback } from "react"
-import { Search, Plus, Pencil, Trash2 } from "lucide-react"
+import { useState, useCallback, useEffect } from "react"
+import { Search, Plus, Pencil, Trash2, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Dialog, AlertDialog } from "@base-ui/react"
@@ -19,6 +19,8 @@ type PacientesClientProps = {
   initialPacientes: PacienteListData[]
 }
 
+const ITEMS_PER_PAGE = 7
+
 function normalize(text: string) {
   return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 }
@@ -32,10 +34,25 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [pacienteToDelete, setPacienteToDelete] = useState<PacienteListData | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
 
   const filteredPacientes = !busqueda
     ? pacientes
     : pacientes.filter((p) => normalize(p.nombre).includes(normalize(busqueda)))
+
+  const totalPages = Math.max(1, Math.ceil(filteredPacientes.length / ITEMS_PER_PAGE))
+  const startIdx = (currentPage - 1) * ITEMS_PER_PAGE
+  const paginatedPacientes = filteredPacientes.slice(startIdx, startIdx + ITEMS_PER_PAGE)
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages)
+    }
+  }, [totalPages])
+
+  function cambiarPagina(page: number) {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)))
+  }
 
   const cargarPacientes = useCallback(async () => {
     try {
@@ -75,11 +92,16 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
         return
       }
 
+      const notas = formData.get("notas") as string
+
       if (modalMode === "crear") {
-        await crearPaciente({ nombre: nombre.trim(), telefono: telefono?.trim() || undefined })
+        await crearPaciente({
+          nombre: nombre.trim(),
+          telefono: telefono?.trim() || undefined,
+          notas: notas?.trim() || undefined,
+        })
         toast.success("Paciente creado")
       } else if (modalMode === "editar" && selectedPaciente) {
-        const notas = formData.get("notas") as string
         await actualizarPaciente(selectedPaciente.id, {
           nombre: nombre.trim(),
           telefono: telefono?.trim() || undefined,
@@ -123,10 +145,36 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
             type="text"
             placeholder="Buscar paciente..."
             value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
+            onChange={(e) => {
+              setBusqueda(e.target.value)
+              setCurrentPage(1)
+            }}
             className="h-9 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50"
           />
         </div>
+        {filteredPacientes.length > ITEMS_PER_PAGE && (
+          <div className="flex items-center gap-1">
+            <Button
+              variant="outline"
+              size="icon-lg"
+              disabled={currentPage === 1}
+              onClick={() => cambiarPagina(currentPage - 1)}
+            >
+              <ChevronLeft className="size-4" />
+            </Button>
+            <Button
+              variant="outline"
+              size="icon-lg"
+              disabled={currentPage === totalPages}
+              onClick={() => cambiarPagina(currentPage + 1)}
+            >
+              <ChevronRight className="size-4" />
+            </Button>
+            <span className="ml-1 min-w-[80px] text-center text-sm font-medium text-foreground">
+              Página {currentPage} de {totalPages}
+            </span>
+          </div>
+        )}
         <Button size="lg" onClick={abrirCrear}>
           <Plus className="size-4" />
           Nuevo paciente
@@ -165,7 +213,7 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filteredPacientes.map((paciente) => (
+              {paginatedPacientes.map((paciente) => (
                 <tr key={paciente.id} className="group hover:bg-muted/50">
                   <td className="px-4 py-3 text-sm font-medium text-foreground">
                     {paciente.nombre}
@@ -203,8 +251,8 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
 
       <Dialog.Root open={modalOpen} onOpenChange={setModalOpen}>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 bg-black/40" />
-          <Dialog.Popup className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Backdrop className="fixed inset-0 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+          <Dialog.Popup className="fixed inset-0 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
               <div className="mb-6 flex items-center justify-between">
                 <Dialog.Title className="text-lg font-serif text-foreground">
@@ -217,8 +265,8 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
                 </button>
               </div>
 
-              <form action={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
+              <form action={handleSubmit} className="space-y-5">
+                <div className="space-y-1.5">
                   <label htmlFor="nombre" className="text-sm font-medium text-foreground">
                     Nombre <span className="text-destructive">*</span>
                   </label>
@@ -227,12 +275,13 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
                     name="nombre"
                     type="text"
                     required
+                    disabled={submitting}
                     defaultValue={selectedPaciente?.nombre ?? ""}
                     placeholder="Nombre completo"
-                    className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50"
+                    className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
                   />
                 </div>
-                <div className="space-y-2">
+                <div className="space-y-1.5">
                   <label htmlFor="telefono" className="text-sm font-medium text-foreground">
                     Teléfono
                   </label>
@@ -240,32 +289,41 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
                     id="telefono"
                     name="telefono"
                     type="tel"
+                    disabled={submitting}
                     defaultValue={selectedPaciente?.telefono ?? ""}
                     placeholder="+54 11 1234-5678"
-                    className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50"
+                    className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
                   />
                 </div>
-                {modalMode === "editar" && (
-                  <div className="space-y-2">
-                    <label htmlFor="notas" className="text-sm font-medium text-foreground">
-                      Notas
-                    </label>
-                    <textarea
-                      id="notas"
-                      name="notas"
-                      rows={3}
-                      defaultValue={selectedPaciente?.notas ?? ""}
-                      placeholder="Notas internas..."
-                      className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50"
-                    />
-                  </div>
-                )}
+                <div className="space-y-1.5">
+                  <label htmlFor="notas" className="text-sm font-medium text-foreground">
+                    Notas <span className="text-muted-foreground font-normal">(opcional)</span>
+                  </label>
+                  <textarea
+                    id="notas"
+                    name="notas"
+                    rows={3}
+                    disabled={submitting}
+                    defaultValue={selectedPaciente?.notas ?? ""}
+                    placeholder="Notas internas..."
+                    className="w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
+                  />
+                </div>
                 <div className="flex justify-end gap-3 pt-2">
                   <Button type="button" variant="outline" disabled={submitting} onClick={cerrarModal}>
                     Cancelar
                   </Button>
                   <Button type="submit" disabled={submitting}>
-                    {submitting ? "Guardando..." : modalMode === "crear" ? "Crear paciente" : "Guardar cambios"}
+                    {submitting ? (
+                      <>
+                        <Loader2 className="size-4 animate-spin" />
+                        Guardando...
+                      </>
+                    ) : modalMode === "crear" ? (
+                      "Crear paciente"
+                    ) : (
+                      "Guardar cambios"
+                    )}
                   </Button>
                 </div>
               </form>
@@ -276,8 +334,8 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
 
       <AlertDialog.Root open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialog.Portal>
-          <AlertDialog.Backdrop className="fixed inset-0 bg-black/40" />
-          <AlertDialog.Popup className="fixed inset-0 flex items-center justify-center p-4">
+          <AlertDialog.Backdrop className="fixed inset-0 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+          <AlertDialog.Popup className="fixed inset-0 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg">
               <AlertDialog.Title className="text-lg font-serif text-foreground">
                 Desactivar paciente

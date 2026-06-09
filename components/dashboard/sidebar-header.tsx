@@ -17,7 +17,7 @@ export function SidebarHeader() {
       )}
     >
       <div className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary shrink-0">
-        <Calendar className="size-5 text-sidebar-primary-foreground" />
+        <Calendar className="size-5 text-primary" />
       </div>
       <span
         className={cn(
@@ -25,7 +25,7 @@ export function SidebarHeader() {
           collapsed ? "w-0 opacity-0" : "w-auto opacity-100",
         )}
       >
-        Medical Appointments
+        MedPilot
       </span>
     </Link>
   )

@@ -110,6 +110,11 @@ Anotaciones breves que documentan una decisión técnica o de diseño: qué se d
 | ADR-009 | Sincronización de Clerk sin Webhooks (getCurrentProfesional) |
 | ADR-010 | Visibilidad de domingos bloqueados en el calendario |
 | ADR-011 | Restricción de cambio de duración de slot |
+| ADR-012 | Implementación de sincronización de feriados: lógica separada del 'use server' |
+| ADR-013 | Seed de datos de prueba con tsx + prisma.config.ts |
+| ADR-014 | Helper getCurrentProfesional (Clerk lazy init) |
+| ADR-015 | Unificación de la carga de páginas en el dashboard |
+| ADR-016 | Rediseño del Footer (Tema Invertido y 500px) |
 
 ---
 
