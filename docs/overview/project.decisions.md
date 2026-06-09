@@ -317,6 +317,26 @@ Se implementó `lib/profesional.ts` con la función `getCurrentProfesional()` qu
 - El helper es lazy: solo crea el registro si es la primera vez que ingresa.
 - Se usa `CLERK_SECRET_KEY` desde `.env.local` para llamar a la API de Clerk.
 
+## ADR-015 — Unificación de la carga de páginas en el dashboard
+
+**Fecha:** 2026-06-08
+**Estado:** Aceptada
+
+**Decisión:**
+Unificar el comportamiento de la pantalla de carga (loading states) de las rutas del dashboard (`/pacientes` y `/agenda`) bajo la convención nativa de Next.js mediante archivos `loading.tsx` a nivel de ruta. Se reemplazó la carga parcial con `<Suspense>` interno dentro de `agenda/page.tsx` por un Server Component asíncrono puro que delega el estado de carga al manejador de Next.js, mostrando el mismo mensaje unificado ("Cargando datos...") y diseño centrado en el viewport.
+
+**Por qué:**
+- Mantener consistencia visual y de comportamiento en la transición entre las secciones del dashboard.
+- Reducir la duplicidad de componentes de carga específicos (como "Cargando agenda..." y "Cargando pacientes...") en favor de un diseño genérico y consistente.
+- Simplificar el código de los Server Components eliminando wrappers `<Suspense>` innecesarios cuando el comportamiento deseado de carga es a nivel de página completa.
+
+**Alternativas descartadas:**
+- Carga interna por sección con `<Suspense>` (mantener header fijo): se descartó para evitar la inconsistencia con `/pacientes` y otras páginas secundarias que ya utilizan la transición de página completa, y para evitar el boilerplate de extraer el contenido en componentes hijo sólo con propósitos de Suspense.
+
+**Consecuencias:**
+- La navegación hacia `/agenda` y `/pacientes` muestra la pantalla de carga nativa de Next.js (`loading.tsx`) con un layout consistente centrado.
+- Ambos archivos `loading.tsx` tienen una implementación idéntica.
+
 ---
 
 ## 📝 Plantilla para nuevas entradas

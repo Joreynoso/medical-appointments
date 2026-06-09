@@ -1,4 +1,3 @@
-import { Suspense } from "react"
 import { getFeriadosEnRango } from "@/lib/actions/feriados"
 import { getTurnosEnRango } from "@/lib/actions/turnos"
 import { AgendaClient } from "@/components/agenda/agenda-client"
@@ -15,7 +14,7 @@ function getMonthRange(date: Date) {
   }
 }
 
-async function AgendaContent() {
+export default async function AgendaPage() {
   const now = new Date()
   const año = now.getFullYear()
   const { desde, hasta } = getMonthRange(now)
@@ -28,18 +27,10 @@ async function AgendaContent() {
     getTurnosEnRango(desde, hasta),
   ])
 
-  return <AgendaClient initialFeriados={[...feriadosAñoActual, ...feriadosAnterior, ...feriadosSiguiente]} initialTurnos={turnos} />
-}
-
-export default function AgendaPage() {
   return (
     <div className="px-10 pb-10">
       <PageHeader title="Agenda" description="Gestiona tus turnos y disponibilidad" />
-      <Suspense fallback={<div className="flex items-center justify-center py-20">
-        <p className="text-sm text-muted-foreground">Cargando agenda...</p>
-      </div>}>
-        <AgendaContent />
-      </Suspense>
+      <AgendaClient initialFeriados={[...feriadosAñoActual, ...feriadosAnterior, ...feriadosSiguiente]} initialTurnos={turnos} />
     </div>
   )
 }
