@@ -199,23 +199,23 @@
 }
 
 .inverted-footer {
-  --background: var(--primary);
-  --foreground: var(--primary-foreground);
-  --card: var(--primary);
-  --card-foreground: var(--primary-foreground);
-  --popover: var(--primary);
-  --popover-foreground: var(--primary-foreground);
-  --secondary: var(--primary-foreground);
-  --secondary-foreground: var(--primary);
-  --muted: rgba(255, 255, 255, 0.15);
-  --muted-foreground: var(--primary-foreground);
-  --accent: rgba(255, 255, 255, 0.1);
-  --accent-foreground: var(--primary-foreground);
+  --background: #d97757;
+  --foreground: #1a1915;
+  --card: #d97757;
+  --card-foreground: #1a1915;
+  --popover: #d97757;
+  --popover-foreground: #1a1915;
+  --secondary: #1a1915;
+  --secondary-foreground: #d97757;
+  --muted: rgba(0, 0, 0, 0.08);
+  --muted-foreground: #1a1915;
+  --accent: rgba(0, 0, 0, 0.1);
+  --accent-foreground: #1a1915;
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-  --border: rgba(255, 255, 255, 0.2);
-  --input: rgba(255, 255, 255, 0.3);
-  --ring: var(--primary-foreground);
+  --border: rgba(0, 0, 0, 0.15);
+  --input: rgba(0, 0, 0, 0.2);
+  --ring: #1a1915;
 }
 
 

@@ -24,11 +24,12 @@
 ## Navbar
 
 - Sticky top, semi-transparent (`bg-background/80 backdrop-blur-sm`), 64px height
-- **Logo:** `Medical<span>Appointments</span>` (serif + accent), link a `/`
+- **Logo:** "MedPilot" (serif), link a `/`
 - **Enlaces desktop:** `#caracteristicas`, `#faq`, `#demo` (ocultos en mobile)
-- **Auth (Clerk `useUser`):**
-  - No logueado → botón "Ingresar" con `<SignInButton>`
-  - Logueado → link "Dashboard" (`/dashboard`) + `<UserButton />`
+- **Auth (Clerk):**
+  - No logueado → botón "Ingresar"
+  - Logueado → link "Dashboard" + `<ClerkUser>` con iniciales
+- Sin theme switcher — solo tema oscuro fijo
 
 ## Hero
 
@@ -79,14 +80,17 @@
 
 ## Footer
 
-- `border-t`, `py-8`, centrado
-- Marca + copyright "© 2026 — Todos los derechos reservados"
+- Fondo naranja (`--primary`) con texto oscuro (`--accent`)
+- Gigante "MedPilot" decorativo en `text-primary` sobre fondo oscuro general
+- Dos columnas: marca + descripción + enlaces sociales (GitHub, email) | navegación
+- Línea divisoria `border-border`, copyright y corazón decorativo
+- Sin theme switcher — solo tema oscuro fijo
 
 ---
 
 ## Diseño y tema
 
 - **Tipografía:** DM Sans (sans), Georgia (headings), Fira Code (mono)
-- **Paleta:** Catppuccin — Latte (light) / Mocha (dark)
-- **Radius base:** `0.35rem`
+- **Paleta:** Catppuccin Mocha (solo dark, sin switcher de tema)
+- **Radius base:** `0.5rem`
 - **Idioma:** Español (es-AR)

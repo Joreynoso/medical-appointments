@@ -60,12 +60,12 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 w-full border-t border-white/20 pt-8 mt-12 md:mt-0 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-foreground font-sans">
+        <div className="max-w-7xl mx-auto px-6 w-full border-t border-border pt-8 mt-12 md:mt-0 flex flex-col md:flex-row items-center justify-between gap-4 text-sm text-foreground font-sans">
           <p>
             &copy; {new Date().getFullYear()} MedPilot. Todos los derechos reservados.
           </p>
           <p className="flex items-center gap-1.5">
-            Hecho con <Heart className="size-4 text-primary-foreground fill-primary-foreground animate-pulse" /> para profesionales de la salud.
+            Hecho con <Heart className="size-4 text-accent-foreground fill-accent-foreground animate-pulse" /> para profesionales de la salud.
           </p>
         </div>
       </footer>

@@ -1,6 +1,6 @@
 # Dashboard Base — Arquitectura UI
 
-Layout base del dashboard: estructura, componentes y decisiones de diseño. No cubre contenido específico de cada módulo (calendarios, tablas, etc.).
+Layout base del dashboard: estructura, componentes y decisiones de diseño.
 
 ---
 
@@ -8,16 +8,20 @@ Layout base del dashboard: estructura, componentes y decisiones de diseño. No c
 
 ```
 app/dashboard/
-├── layout.tsx              ← DashboardShell + DashboardHeader + content area
-├── page.tsx                ← Home (vacío, contenido por módulo)
+├── layout.tsx              ← Topbar + PageHeaderActionsProvider + Content Area
+├── page.tsx                ← Home con PageHeader
 
 components/dashboard/
-├── dashboard-shell.tsx     ← Sidebar + Main Content
-├── dashboard-header.tsx    ← Saludo contextual + acciones (Client Component)
-├── sidebar.tsx             ← Compone header + nav + user
-├── sidebar-header.tsx      ← Logo + identidad visual
+├── dashboard-shell.tsx     ← SidebarProvider + Sidebar + Main Content
+├── sidebar-context.tsx     ← Contexto colapsable (SidebarProvider, useSidebar)
+├── sidebar.tsx             ← Compone sidebar-header + collapse btn + nav + user
+├── sidebar-header.tsx      ← Logo "MedPilot" + icono Calendar
 ├── sidebar-nav.tsx         ← Navegación (Client Component)
-├── sidebar-user.tsx        ← Avatar + nombre + logout (Client Component)
+├── sidebar-user.tsx        ← Avatar + preview image + nombre + logout (Client Component)
+├── topbar.tsx              ← Barra superior con botón "Nuevo turno"
+├── page-header.tsx         ← Título + descripción por ruta + slot de acciones
+├── page-header-context.tsx ← Contexto para inyectar acciones al header
+└── page-header-actions-client.tsx  ← Renderiza acciones injectadas
 ```
 
 ---
@@ -25,85 +29,78 @@ components/dashboard/
 ## Estructura general
 
 ```
-┌─────────────────────────────────────────────────┐
-│ Sidebar │ Main Content                          │
-│ (fija)  │ DashboardHeader                       │
-│ 256px   │  "Buenos días, Dr. Rodríguez"         │
-│         │  "Aquí tienes un resumen de tu ag."   │
-│         │                         🔔 🔍 [+Nuevo]│
-│         │                                       │
-│         │ Content Area (scroll)                 │
-└─────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────┐
+│ Sidebar  │ Topbar                         [+Nvo] │
+│ (colapsa │──────────────────────────────────────│
+│  64|256) │ PageHeader: Título + descripción     │
+│          │ Content Area (scroll)                │
+└──────────────────────────────────────────────────┘
 ```
-
-No hay Topbar ni PageHeader independientes. El encabezado es un único bloque `DashboardHeader` sin `border-bottom`, fusionado visualmente con el contenido.
 
 ---
 
-## DashboardShell
+## DashboardShell + SidebarProvider
 
 ```tsx
-<div className="dashboard-shell flex min-h-screen">
-  <Sidebar />
-  <main className="main-content ml-64 flex flex-1 flex-col">
-    {children}
-  </main>
-</div>
+<SidebarProvider>
+  <div className="dashboard-shell flex min-h-screen">
+    <Sidebar />
+    <main className={cn("main-content flex flex-1 flex-col", collapsed ? "ml-16" : "ml-64")}>
+      {children}
+    </main>
+  </div>
+</SidebarProvider>
 ```
 
-Sidebar fija de 256px + main content.
+Sidebar colapsable vía `sidebar-context` (toggle animado `duration-300`).
 
 ---
 
-## DashboardHeader (Client Component)
+## Topbar
 
 ```tsx
-<header className="dashboard-header flex items-center justify-between px-8 pt-8 pb-8">
-  <div className="flex flex-col gap-1">
-    <h1 className="text-2xl font-semibold text-foreground">
-      {getGreeting()}, {user?.firstName || "Profesional"}
-    </h1>
-    <p className="text-sm text-muted-foreground">
-      Aquí tienes un resumen de tu agenda de hoy.
-    </p>
-  </div>
-  <div className="flex items-center gap-2">
-    <button aria-label="Buscar"><Search className="size-4" /></button>
-    <button aria-label="Notificaciones"><Bell className="size-4" /></button>
-    <button className="rounded-full bg-primary px-5 py-2.5 ...">
-      <Plus className="size-4" /> Nuevo turno
-    </button>
-  </div>
+<header className="topbar flex h-16 shrink-0 items-center justify-end border-b border-border/60 bg-background px-8 gap-3">
+  <button className="...">+ Nuevo turno</button>
 </header>
 ```
 
-Saluda contextualmente según la hora. Sin icono decorativo tras el nombre. Acciones integradas en el mismo bloque.
+Solo el botón "Nuevo turno". Sin ThemeToggle — tema oscuro fijo.
+
+---
+
+## PageHeader + PageHeaderActionsProvider
+
+```tsx
+<section className="page-header flex items-center justify-between py-8">
+  <div>
+    <h1 className="text-xl font-serif text-foreground">{title}</h1>
+    <p className="mt-1.5 text-sm text-muted-foreground">{description}</p>
+  </div>
+  <div className="page-header-actions flex items-center gap-3">
+    <PageHeaderActionsClient />
+  </div>
+</section>
+```
+
+Config por ruta: titulo/descripción dinámicos según pathname. Las acciones (toolbars de agenda, etc.) se inyectan via `PageHeaderActionsContext`.
 
 ---
 
 ## Sidebar
 
-```tsx
-<aside className="sidebar fixed left-0 top-0 z-30 flex h-screen w-64 flex-col
-                border-r border-sidebar-border/50 bg-sidebar text-sidebar-foreground">
-  <SidebarHeader />
-  <SidebarNav />
-  <SidebarUser />
-</aside>
-```
-
-Única línea: `border-r` al 50%. Sin bordes internos entre header, nav y user.
+Colapsable: `w-64` → `w-16`. Botón circular toggle con `ChevronLeft` (rota 180° al colapsar).
 
 ### SidebarHeader
-Logo `size-9 rounded-xl` con icono `Calendar` + "Medical Appointments". `pt-7 pb-6`.
+Link a `/`. Logo `size-9 rounded-xl bg-sidebar-primary` con icono `Calendar` + nombre "MedPilot" (oculto al colapsar). `pt-7 pb-6`.
 
 ### SidebarNav (Client Component)
-Items tipo pill con `mx-2`. Estados:
+Items tipo pill. `mx-2` (expandido) / `mx-auto size-10` (colapsado).
+
 | Estado | Estilo |
 |---|---|
 | Default | `text-sidebar-foreground/60` |
 | Hover | `hover:bg-sidebar-accent/5 hover:text-sidebar-foreground` |
-| Active | `bg-primary/10 text-primary` (tint, no sólido) |
+| Active | `bg-primary/10 text-primary` |
 
 | Ruta | Label | Icono |
 |---|---|---|
@@ -114,46 +111,38 @@ Items tipo pill con `mx-2`. Estados:
 | `/dashboard/configuracion` | Configuración | Settings |
 
 ### SidebarUser (Client Component)
-Avatar `size-9 bg-primary/10` + nombre + email + logout (icono `LogOut` inline). Sin `border-t`.
+Preview image (`/images/bg-dark.png`) oculta al colapsar. Avatar circular `bg-primary` con iniciales + nombre + email + logout (`LogOut`). Estado sin sesión: solo preview image.
 
 ---
 
 ## Content Area
 
 ```tsx
-<section className="content-area flex-1 overflow-y-auto px-8 pb-8">
+<section className="content-area flex-1 overflow-y-auto">
   {children}
 </section>
 ```
 
-Sin `padding-top` (se funde con el header). Scroll solo aquí; sidebar y header fijos.
+Scroll solo aquí; sidebar y topbar fijos. Padding (`px-10 pb-10`) definido en cada page.
 
 ---
 
 ## Dashboard Home (page.tsx)
 
 ```tsx
-export default function DashboardPage() {
-  return <div className="space-y-10" />
-}
+<PageHeader title="MedPilot" description="Resumen de tu actividad" />
+<div className="space-y-10" />
 ```
-
-Home vacío como punto de partida. El contenido se agrega por módulo.
 
 ---
 
 ## Decisiones de diseño
 
-- **Sin Topbar** — el header es un bloque único integrado con el contenido.
-- **Bordes mínimos** — única línea del layout es `border-r` de la sidebar. Sin bordes internos ni entre header y contenido.
-- **Nav pills flotantes** — `mx-2` para que el active pill no toque los bordes.
+- **Sidebar colapsable** — ahorra espacio en pantallas chicas sin perder navegación.
+- **Topbar minimal** — solo acción principal, sin adornos ni theme switcher.
+- **PageHeader dinámico** — cada módulo inyecta sus acciones vía contexto.
+- **Nav pills flotantes** — `mx-2` para que el active pill no toque bordes.
 - **Active state con tint** — `bg-primary/10` en lugar de fondo sólido.
-- **Menos líneas, más aire** — espaciado generoso (`px-8`, `pb-8`, `gap-8`, `p-7`).
-- **Consistencia con landing** — mismas utilities de card, botón y hover en ambos.
-
----
-
-## Comportamiento
-
-- **Scroll** solo en content area; sidebar y header fijos.
-- **Navegación** reemplaza únicamente `<section class="content-area">`, manteniendo sidebar y header.
+- **Bordes mínimos** — única línea del layout es `border-r` de sidebar y `border-b` de topbar.
+- **Consistencia con landing** — mismas utilities de card, botón y hover.
+- **Solo tema oscuro** — sin ThemeToggle, sin lógica de tema claro.
