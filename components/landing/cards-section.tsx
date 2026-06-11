@@ -144,7 +144,7 @@ export default function CardsSection() {
               key={i}
               className="card-item group border border-border rounded-xl p-8 transition-all hover:shadow-lg hover:bg-card hover:border-primary/30"
             >
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-6">
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-6 transition-all duration-500 group-hover:bg-primary group-hover:text-primary-foreground">
                 {card.icon}
               </div>
               <h3 className="text-xl font-semibold text-foreground mb-3">

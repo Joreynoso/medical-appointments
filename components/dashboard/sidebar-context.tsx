@@ -6,13 +6,18 @@ const XL_BREAKPOINT = 1280
 
 type SidebarContext = {
   collapsed: boolean
+  expanded: boolean
   toggleCollapsed: () => void
+  mobileOpen: boolean
+  toggleMobileOpen: () => void
+  closeMobile: () => void
 }
 
 const SidebarContext = createContext<SidebarContext | undefined>(undefined)
 
 export function SidebarProvider({ children }: { children: ReactNode }) {
   const [collapsed, setCollapsed] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const userToggled = useRef(false)
 
   useEffect(() => {
@@ -30,6 +35,9 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
         setCollapsed(true)
         userToggled.current = false
       }
+      if (window.innerWidth >= 1024) {
+        setMobileOpen(false)
+      }
     }
     window.addEventListener("resize", handleResize)
     return () => window.removeEventListener("resize", handleResize)
@@ -40,8 +48,11 @@ export function SidebarProvider({ children }: { children: ReactNode }) {
     setCollapsed((prev) => !prev)
   }
 
+  const toggleMobileOpen = () => setMobileOpen((prev) => !prev)
+  const closeMobile = () => setMobileOpen(false)
+
   return (
-    <SidebarContext.Provider value={{ collapsed, toggleCollapsed }}>
+    <SidebarContext.Provider value={{ collapsed, expanded: !collapsed || mobileOpen, toggleCollapsed, mobileOpen, toggleMobileOpen, closeMobile }}>
       {children}
     </SidebarContext.Provider>
   )

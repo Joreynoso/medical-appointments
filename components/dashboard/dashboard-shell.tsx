@@ -13,7 +13,8 @@ function ShellInner({ children }: { children: React.ReactNode }) {
       <main
         className={cn(
           "main-content flex flex-1 flex-col transition-[margin] duration-300 animate-content-enter",
-          collapsed ? "ml-16" : "ml-64",
+          "ml-0",
+          collapsed ? "lg:ml-14" : "lg:ml-56",
         )}
       >
         {children}

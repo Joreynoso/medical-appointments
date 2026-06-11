@@ -88,18 +88,18 @@ export function Weather() {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 text-sm text-muted-foreground animate-pulse">
-        <div className="size-5 rounded-full bg-muted-foreground/20" />
-        <span>Cargando widget de clima...</span>
+      <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground animate-pulse">
+        <div className="size-4 md:size-5 rounded-full bg-muted-foreground/20" />
+        <span className="hidden sm:inline">Cargando widget de clima...</span>
       </div>
     )
   }
 
   if (error || !weather) {
     return (
-      <div className="flex items-center gap-2 text-sm text-destructive">
-        <CloudAlert className="size-5" />
-        <span>Error al cargar el clima</span>
+      <div className="flex items-center gap-2 text-xs md:text-sm text-destructive">
+        <CloudAlert className="size-4 md:size-5" />
+        <span className="hidden sm:inline">Error al cargar el clima</span>
       </div>
     )
   }
@@ -107,11 +107,11 @@ export function Weather() {
   const { Icon, label } = getWeatherConfig(weather.weatherCode)
 
   return (
-    <div className="flex items-center gap-2 text-sm">
-      <Icon className="size-5 text-primary" />
+    <div className="flex items-center gap-1.5 md:gap-2 text-xs md:text-sm">
+      <Icon className="size-4 md:size-5 text-primary" />
       <span className="font-medium">{weather.temperature}°</span>
-      <span className="text-muted-foreground">{label}</span>
-      <span className="text-muted-foreground">Catamarca</span>
+      <span className="hidden sm:inline text-muted-foreground">{label}</span>
+      <span className="hidden lg:inline text-muted-foreground">Catamarca</span>
     </div>
   )
 }

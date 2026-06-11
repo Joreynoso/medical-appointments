@@ -27,14 +27,13 @@ export function LandingAnimations() {
         )
 
         gsap.fromTo(
-          ".card-item",
-          { opacity: 0, y: 30 },
+          ".cards-grid",
+          { opacity: 0, y: 60 },
           {
             opacity: 1,
             y: 0,
-            duration: 1.2,
-            stagger: 0.15,
-            ease: "power2.out",
+            duration: 1.4,
+            ease: "power3.out",
             scrollTrigger: { trigger: ".cards-grid", start: "top 85%", toggleActions: "play none none none" },
           },
         )

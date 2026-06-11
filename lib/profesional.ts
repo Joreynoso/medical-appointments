@@ -23,6 +23,14 @@ export async function getCurrentProfesional() {
         clerkId: userId,
         nombre,
         email,
+        configuracion: {
+          create: {
+            duracionSlot: 30,
+            horarioDesde: "08:00",
+            horarioHasta: "19:00",
+            diasLaborables: [1, 2, 3, 4, 5, 6],
+          },
+        },
       },
       include: { configuracion: true },
     })

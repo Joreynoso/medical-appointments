@@ -33,6 +33,7 @@ model ConfiguracionProfesional {
   duracionSlot    Int
   horarioDesde    String
   horarioHasta    String
+  diasLaborables  Int[]       @default([1,2,3,4,5,6])
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }

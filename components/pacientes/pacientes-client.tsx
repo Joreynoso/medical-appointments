@@ -170,18 +170,22 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
             >
               <ChevronRight className="size-4" />
             </Button>
-            <span className="ml-1 min-w-[80px] text-center text-sm font-medium text-foreground">
-              Página {currentPage} de {totalPages}
+            <span className="ml-1 min-w-[60px] md:min-w-[80px] text-center text-xs md:text-sm font-medium text-foreground">
+              {currentPage}/{totalPages}
             </span>
           </div>
         )}
-        <Button size="lg" onClick={abrirCrear}>
+        <button
+          type="button"
+          onClick={abrirCrear}
+          className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground transition-all hover:opacity-90 size-9 md:size-auto md:px-5 md:py-2 md:gap-2"
+        >
           <Plus className="size-4" />
-          Nuevo paciente
-        </Button>
+          <span className="hidden md:inline text-sm font-medium">Nuevo paciente</span>
+        </button>
       </div>
 
-      <div className="rounded-lg border border-border">
+      <div className="hidden md:block rounded-lg border border-border">
         {filteredPacientes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">
@@ -246,6 +250,65 @@ export function PacientesClient({ initialPacientes }: PacientesClientProps) {
               ))}
             </tbody>
           </table>
+        )}
+      </div>
+
+      <div className="md:hidden grid grid-cols-1 gap-3">
+        {filteredPacientes.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-12">
+            <p className="text-sm text-muted-foreground">
+              {busqueda ? "No se encontraron pacientes" : "No hay pacientes registrados"}
+            </p>
+            {!busqueda && (
+              <button
+                type="button"
+                onClick={abrirCrear}
+                className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:opacity-90"
+              >
+                <Plus className="size-4" />
+                Crear primer paciente
+              </button>
+            )}
+          </div>
+        ) : (
+          paginatedPacientes.map((paciente) => (
+            <div
+              key={paciente.id}
+              className="rounded-lg border border-border bg-card p-4 min-h-[84px]"
+            >
+              <div className="flex items-start justify-between gap-2 h-full">
+                <div className="min-w-0 flex-1 flex flex-col justify-center">
+                  <p className="text-sm font-medium text-foreground truncate">
+                    {paciente.nombre}
+                  </p>
+                  <p className="mt-0.5 text-xs text-muted-foreground">
+                    {paciente.telefono || "—"}
+                  </p>
+                  <p className="mt-1.5 text-xs text-muted-foreground/70 line-clamp-2 min-h-[2.5em]">
+                    {paciente.notas || "\u00A0"}
+                  </p>
+                </div>
+                <div className="flex shrink-0 gap-1 items-start">
+                  <button
+                    type="button"
+                    onClick={() => abrirEditar(paciente)}
+                    className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
+                    aria-label="Editar"
+                  >
+                    <Pencil className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => confirmarEliminar(paciente)}
+                    className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-destructive transition-all"
+                    aria-label="Eliminar"
+                  >
+                    <Trash2 className="size-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))
         )}
       </div>
 

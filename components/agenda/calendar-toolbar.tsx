@@ -32,11 +32,12 @@ export function CalendarToolbar({
         </Button>
       </div>
 
-      <span className="min-w-[130px] text-center text-sm font-medium text-foreground">
+      <span className="min-w-[90px] md:min-w-[130px] text-center text-xs md:text-sm font-medium text-foreground">
         {formatMonthYear(currentDate)}
       </span>
 
-      <Button variant="outline" size="sm" onClick={onToday}>
+      <Button variant="outline" size="icon-sm" onClick={onToday} aria-label="Hoy" className="md:hidden" />
+      <Button variant="outline" size="sm" onClick={onToday} className="hidden md:inline-flex">
         <CalendarDays className="size-3.5" />
         Hoy
       </Button>

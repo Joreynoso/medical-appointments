@@ -1,23 +1,34 @@
 "use client"
 
-import { Plus } from "lucide-react"
+import { Menu, Plus } from "lucide-react"
 import { Weather } from "@/components/dashboard/weather"
 import { useCrearTurno } from "@/components/agenda/crear-turno-context"
+import { useSidebar } from "@/components/dashboard/sidebar-context"
 
 export function Topbar() {
   const { openCrearTurno } = useCrearTurno()
+  const { toggleMobileOpen } = useSidebar()
 
   return (
-    <header className="topbar flex h-16 shrink-0 items-center justify-end border-b border-border/60 bg-background px-8 gap-2.5">
-      <Weather />
+    <header className="topbar flex h-16 shrink-0 items-center border-b border-border/60 bg-background px-4 md:px-8 gap-2.5">
       <button
-        type="button"
-        onClick={openCrearTurno}
-        className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-primary px-5 py-2 text-sm font-medium text-primary-foreground transition-all hover:opacity-90"
+        onClick={toggleMobileOpen}
+        className="inline-flex size-9 items-center justify-center rounded-md hover:bg-muted -ml-1 md:-ml-2 lg:hidden"
+        aria-label="Abrir menú"
       >
-        <Plus className="size-4" />
-        Nuevo turno
+        <Menu className="size-5" />
       </button>
+      <div className="ml-auto flex items-center gap-2">
+        <Weather />
+        <button
+          type="button"
+          onClick={openCrearTurno}
+          className="inline-flex cursor-pointer items-center gap-1.5 md:gap-2 rounded-full bg-primary px-3 md:px-5 py-1.5 md:py-2 text-xs md:text-sm font-medium text-primary-foreground transition-all hover:opacity-90"
+        >
+          <Plus className="size-3.5 md:size-4" />
+          Nuevo turno
+        </button>
+      </div>
     </header>
   )
 }

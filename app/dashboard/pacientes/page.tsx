@@ -6,7 +6,7 @@ export default async function PacientesPage() {
   const initialPacientes = await listarPacientes()
 
   return (
-    <div className="px-10 pb-10">
+    <div className="px-4 md:px-10 pb-10">
       <PageHeader title="Pacientes" description="Administra tu lista de pacientes" />
       <PacientesClient initialPacientes={initialPacientes} />
     </div>

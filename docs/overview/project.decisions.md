@@ -420,6 +420,43 @@ Reemplazar los `<input type="date">` y `<input type="time">` nativos del navegad
 
 ---
 
+## ADR-019 — Configuración base por defecto + días laborables + horario dinámico en vistas
+
+**Fecha:** 2026-06-11
+**Estado:** Aceptada
+
+**Decisión:**
+1. **Config base auto-creada** al registrarse: cuando `getCurrentProfesional()` crea un nuevo `Profesional`, también crea `ConfiguracionProfesional` con defaults (`08:00–19:00`, 30 min, lun–sáb).
+2. **Campo `diasLaborables`** agregado al schema como `Int[]` con `@default([1,2,3,4,5,6])`. Domingo (0) hard-bloqueado: no aparece en UI, no se permite en validación server-side, no se puede agregar nunca.
+3. **Server Action `actualizarConfiguracion`** con validaciones:
+   - `duracionSlot` 10–120 min
+   - `horarioDesde < horarioHasta`
+   - `diasLaborables` min 1 día, sin domingo
+   - ADR-011: bloquea cambio de `duracionSlot` si hay turnos `PENDIENTE`/`CONFIRMADO` futuros
+   - Bloquea cambio de rango horario si hay turnos fuera del nuevo rango
+4. **Horario dinámico en WeekView**: reemplaza las constantes hardcodeadas `START_HOUR=7`/`END_HOUR=20` por props `horarioDesde`/`horarioHasta`. El grid semanal y las posiciones de turnos se calculan dinámicamente.
+5. **Días no laborables en vistas**: `DayCard`, `WeekView` y `MonthView` reciben `diasLaborables` como prop y aplican `bg-muted` visual.
+
+**Por qué:**
+- Sin config base, la app no puede generar slots ni validar turnos desde el primer login. Forzar al médico a configurar antes de usar es mala UX.
+- Los días laborables deben ser configurables (no todos atienden sábados), pero el domingo no es negociable como día no laborable.
+- Las vistas del calendario deben mutar visualmente según la configuración para ser consistentes.
+
+**Alternativas descartadas:**
+- Mantener domingo configurable: el usuario lo pidió explícitamente como hard-bloqueado.
+- Fetch de config en client-side (AgendaClient): mejor Server Component para evitar estado de carga.
+- Tres selects separados para día/mes/año: UX inferior al Popover+Calendar ya implementado (ADR-018).
+
+**Consecuencias:**
+- `getCurrentProfesional()` ahora siempre retorna un profesional con `configuracion` poblada.
+- `getConfiguracionHoraria()` ya no lanza error — siempre hay config.
+- Se eliminó `isSunday()` de `calendar-utils.ts` como dependencia en las vistas (reemplazado por `diasLaborables.includes()`).
+- `AgendaPage`, `AgendaClient`, `WeekView`, `MonthView`, `DayCard` ahora reciben `horarioDesde`, `horarioHasta`, `diasLaborables` como props.
+- El Calendar popover del modal usa `config.diasLaborables` para deshabilitar días.
+- Sección de configuración completa en `/dashboard/configuracion`.
+
+---
+
 ## 📝 Plantilla para nuevas entradas
 
 ```

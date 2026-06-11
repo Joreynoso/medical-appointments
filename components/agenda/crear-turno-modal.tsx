@@ -9,7 +9,7 @@ import { Dialog } from "@base-ui/react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "@/components/ui/calendar"
-import { crearTurno, getConfiguracionHoraria } from "@/lib/actions/turnos"
+import { crearTurno, getConfiguracionHoraria, type ConfigHoraria } from "@/lib/actions/turnos"
 import { crearPaciente } from "@/lib/actions/pacientes"
 
 type PacienteSimple = {
@@ -34,7 +34,7 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
   const [busquedaPaciente, setBusquedaPaciente] = useState("")
   const [selectedPaciente, setSelectedPaciente] = useState<PacienteSimple | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [config, setConfig] = useState<{ horarioDesde: string; horarioHasta: string; duracionSlot: number } | null>(null)
+  const [config, setConfig] = useState<ConfigHoraria | null>(null)
   const [popoverOpen, setPopoverOpen] = useState(false)
 
   const [showCrearPaciente, setShowCrearPaciente] = useState(false)
@@ -164,7 +164,13 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
                         setFecha(date)
                         setPopoverOpen(false)
                       }}
-                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                      disabled={(date) => {
+                        const hoy = new Date(new Date().setHours(0, 0, 0, 0))
+                        if (date < hoy) return true
+                        if (date.getDay() === 0) return true
+                        if (!config?.diasLaborables.includes(date.getDay())) return true
+                        return false
+                      }}
                       defaultMonth={fecha ?? new Date()}
                     />
                   </PopoverContent>

@@ -47,13 +47,21 @@ export const getTurnosEnRango = cache(async (desde: string, hasta: string): Prom
   }))
 })
 
-export async function getConfiguracionHoraria() {
+export type ConfigHoraria = {
+  horarioDesde: string
+  horarioHasta: string
+  duracionSlot: number
+  diasLaborables: number[]
+}
+
+export async function getConfiguracionHoraria(): Promise<ConfigHoraria> {
   const profesional = await getCurrentProfesional()
   if (!profesional.configuracion) throw new Error("No hay configuración de horario.")
   return {
     horarioDesde: profesional.configuracion.horarioDesde,
     horarioHasta: profesional.configuracion.horarioHasta,
     duracionSlot: profesional.configuracion.duracionSlot,
+    diasLaborables: profesional.configuracion.diasLaborables,
   }
 }
 
@@ -80,6 +88,7 @@ export async function crearTurno(input: CrearTurnoInput) {
 
   const diaSemana = fechaDate.getDay()
   if (diaSemana === 0) throw new Error("No se pueden crear turnos los domingos.")
+  if (!config.diasLaborables.includes(diaSemana)) throw new Error("No se pueden crear turnos en días no laborables.")
 
   const feriado = await prisma.feriado.findUnique({
     where: { fecha: fechaDate },

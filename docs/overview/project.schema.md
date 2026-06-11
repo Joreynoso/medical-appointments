@@ -56,12 +56,13 @@ Configuración de agenda del profesional. Define cómo se generan los slots disp
 | `duracionSlot` | `Int` | Duración de cada turno en minutos (ej. 20, 30, 45) |
 | `horarioDesde` | `String` | Hora de inicio de atención (ej. "08:00") |
 | `horarioHasta` | `String` | Hora de fin de atención (ej. "18:00") |
+| `diasLaborables` | `Int[]` | Array de días de la semana laborables (0=domingo…6=sábado). Default `[1,2,3,4,5,6]` |
 | `createdAt` | `DateTime` | Fecha de creación |
 | `updatedAt` | `DateTime` | Última actualización |
 
 **Decisiones:**
 - `horarioDesde` y `horarioHasta` se guardan como `String` en formato `"HH:mm"` para simplicidad. No se usan tipos `Time` de PostgreSQL para evitar complejidad de zonas horarias.
-- Por simplicidad del MVP, no se configuran días laborables en la base de datos. Se asume de lunes a sábado de forma fija. El domingo se renderiza en la UI pero se deshabilita la interacción (no es seleccionable).
+- `diasLaborables` se guarda como `Int[]` nativo de PostgreSQL. El domingo (0) está hard-bloqueado: no aparece en la UI y la validación server-side lo rechaza explícitamente.
 - Los slots **no se persisten**. Se generan dinámicamente en runtime combinando `horarioDesde`, `horarioHasta` y `duracionSlot`, y se filtran contra los turnos existentes del día.
 
 ---
@@ -202,6 +203,7 @@ model ConfiguracionProfesional {
   duracionSlot    Int
   horarioDesde    String
   horarioHasta    String
+  diasLaborables  Int[]       @default([1,2,3,4,5,6])
   createdAt       DateTime    @default(now())
   updatedAt       DateTime    @updatedAt
 }
@@ -251,3 +253,5 @@ model Feriado {
 - `horaFin` siempre se calcula al crear el turno, nunca se deja vacío.
 - Antes de correr cualquier migración, describir los cambios y esperar aprobación.
 - La tabla `Feriado` no tiene relación con `Profesional` — es global e intocable en runtime.
+- `diasLaborables` excluye domingo (0) — validado en UI y server. No se debe permitir nunca.
+- La config base se auto-crea al registrar un nuevo profesional. `getCurrentProfesional()` siempre retorna config poblada.

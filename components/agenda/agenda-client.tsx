@@ -9,7 +9,7 @@ import { useCrearTurno } from "@/components/agenda/crear-turno-context"
 import { addMonths, addWeeks } from "@/components/agenda/calendar-utils"
 import { getFeriadosEnRango } from "@/lib/actions/feriados"
 import { getTurnosEnRango } from "@/lib/actions/turnos"
-import type { TurnoData } from "@/lib/actions/turnos"
+import type { TurnoData, ConfigHoraria } from "@/lib/actions/turnos"
 
 type PacienteSimple = {
   id: string
@@ -20,12 +20,17 @@ type AgendaClientProps = {
   initialFeriados: Array<{ fecha: string; nombre: string }>
   initialTurnos: TurnoData[]
   initialPacientes: PacienteSimple[]
+  horarioDesde: string
+  horarioHasta: string
+  diasLaborables: number[]
 }
 
-export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes }: AgendaClientProps) {
+export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes, horarioDesde, horarioHasta, diasLaborables }: AgendaClientProps) {
   const { setPacientes, setRefreshRange, setOnTurnosChange } = useCrearTurno()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week">("month")
+  const [todayFlash, setTodayFlash] = useState(false)
+  const flashTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   const loadedRange = useRef<{ desde: string; hasta: string }>({ desde: "", hasta: "" })
   const [feriados, setFeriados] = useState(() => {
     const map = new Map<string, string>()
@@ -96,7 +101,16 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes 
     ensureFeriados(today.getFullYear())
     ensureTurnos(today)
     setCurrentDate(today)
+    setTodayFlash(true)
+    if (flashTimeout.current) clearTimeout(flashTimeout.current)
+    flashTimeout.current = setTimeout(() => setTodayFlash(false), 2000)
   }, [ensureFeriados, ensureTurnos])
+
+  useEffect(() => {
+    return () => {
+      if (flashTimeout.current) clearTimeout(flashTimeout.current)
+    }
+  }, [])
 
   const { setActions } = usePageHeaderActions()
 
@@ -138,12 +152,18 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes 
           month={currentDate.getMonth()}
           feriados={feriados}
           turnosPorFecha={turnosPorFecha}
+          diasLaborables={diasLaborables}
+          todayFlash={todayFlash}
         />
       ) : (
         <WeekView
           currentDate={currentDate}
           feriados={feriados}
           turnosPorFecha={turnosPorFecha}
+          horarioDesde={horarioDesde}
+          horarioHasta={horarioHasta}
+          diasLaborables={diasLaborables}
+          todayFlash={todayFlash}
         />
       )}
     </div>

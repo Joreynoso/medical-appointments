@@ -8,20 +8,20 @@ import { useSidebar } from "./sidebar-context"
 export function SidebarUser() {
   const { user } = useUser()
   const { signOut } = useClerk()
-  const { collapsed } = useSidebar()
+  const { collapsed, expanded } = useSidebar()
 
   if (!user) {
     return (
       <div
         className={cn(
           "sidebar-user shrink-0 transition-[padding] duration-300 animate-pulse",
-          collapsed ? "flex justify-center px-0 pb-4 pt-4" : "px-6 pb-6 pt-6",
+          expanded ? "px-6 pb-6 pt-6" : "flex justify-center px-0 pb-4 pt-4",
         )}
       >
         <div
           className={cn(
             "mb-4 rounded-xl overflow-hidden",
-            collapsed ? "hidden" : "block aspect-square w-full",
+            expanded ? "block aspect-square w-full" : "hidden",
           )}
         >
           <img
@@ -44,13 +44,13 @@ export function SidebarUser() {
     <div
       className={cn(
         "sidebar-user shrink-0 transition-[padding] duration-300",
-        collapsed ? "flex justify-center px-0 pb-4 pt-4" : "px-6 pb-6 pt-6",
+        expanded ? "px-6 pb-6 pt-6" : "flex justify-center px-0 pb-4 pt-4",
       )}
     >
       <div
         className={cn(
           "mb-4 rounded-xl overflow-hidden",
-          collapsed ? "hidden" : "block aspect-square w-full",
+          expanded ? "block aspect-square w-full" : "hidden",
         )}
       >
         <img
@@ -62,7 +62,7 @@ export function SidebarUser() {
       <div
         className={cn(
           "flex items-center gap-3",
-          collapsed ? "flex-col" : "",
+          expanded ? "" : "flex-col",
         )}
       >
         <div className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-medium text-primary-foreground">
@@ -71,7 +71,7 @@ export function SidebarUser() {
         <div
           className={cn(
             "min-w-0 flex-1 overflow-hidden transition-all duration-300",
-            collapsed ? "hidden" : "block",
+            expanded ? "block" : "hidden",
           )}
         >
           <p className="truncate text-sm font-medium text-sidebar-foreground">

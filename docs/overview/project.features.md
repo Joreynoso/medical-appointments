@@ -40,9 +40,9 @@
 ---
 
 ### FEATURE 4 — Gestión de turnos (modo tradicional)
-- [ ] Lógica de generación de slots: dado un día, generar todos los bloques disponibles según `ConfiguracionProfesional` (horario de atención + duración de slot)
+- [x] Lógica de generación de slots: dado un día, generar todos los bloques disponibles según `ConfiguracionProfesional` (horario de atención + duración de slot)
 - [ ] Mostrar solo slots libres al crear un turno (slots ocupados no aparecen como opción)
-- [x] Server Action `crearTurno` con validaciones (domingo, feriado, rango horario, sin superposición)
+- [x] Server Action `crearTurno` con validaciones (domingo, feriado, rango horario, días laborables, sin superposición)
 - [x] Botón global "Nuevo turno" en Topbar (disponible en todas las vistas del dashboard)
 - [x] Modal `CrearTurnoModal` con `@base-ui/react` Dialog:
   - Selector de fecha con shadcn Popover + Calendar (react-day-picker) y hora con `<select>` personalizado de slots del profesional
@@ -56,6 +56,20 @@
   - Acciones disponibles: cambiar estado, cancelar turno (con confirmación)
 - [ ] Estados del turno: pendiente → confirmado → cancelado / ausente
 - [ ] Cancelar turno con confirmación explícita antes de ejecutar
+
+### FEATURE 4B — Configuración del consultorio
+- [x] Página `/dashboard/configuracion` con formulario completo:
+  - Días laborables (lun–sáb, domingo hard-bloqueado, no aparece en UI)
+  - Horario de atención desde/hasta (select c/30 min, 06:00–22:00)
+  - Duración del turno (select 15–60 min)
+  - Botón guardar estilo `rounded-full bg-primary` (mismo que "Nuevo turno" en Topbar)
+  - Form en `rounded-lg border border-border p-6` (mismo estilo que tabla de pacientes)
+  - Contenedor `max-w-lg` alineado a la izquierda
+- [x] Server Action `actualizarConfiguracion` con validaciones (ADR-011 + rango horario)
+- [x] Config base auto-creada al registrarse (08:00–19:00, 30 min, lun–sáb)
+- [x] Campo `diasLaborables` en schema + migración
+- [x] Calendar popover del modal deshabilita días no laborables y domingos
+- [x] Vistas de calendario (WeekView, MonthView, DayCard) reaccionan visualmente a cambios en configuración
 
 ---
 
