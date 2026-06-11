@@ -108,9 +108,7 @@ export function Weather() {
 
   return (
     <div className="flex items-center gap-2 text-sm">
-      <span className="flex size-8 items-center justify-center rounded-lg bg-accent">
-        <Icon className="size-4 text-primary" />
-      </span>
+      <Icon className="size-5 text-primary" />
       <span className="font-medium">{weather.temperature}°</span>
       <span className="text-muted-foreground">{label}</span>
       <span className="text-muted-foreground">Catamarca</span>

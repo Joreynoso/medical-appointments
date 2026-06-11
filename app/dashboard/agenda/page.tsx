@@ -1,5 +1,6 @@
 import { getFeriadosEnRango } from "@/lib/actions/feriados"
 import { getTurnosEnRango } from "@/lib/actions/turnos"
+import { listarPacientes } from "@/lib/actions/pacientes"
 import { AgendaClient } from "@/components/agenda/agenda-client"
 import { PageHeader } from "@/components/dashboard/page-header"
 
@@ -18,19 +19,24 @@ export default async function AgendaPage() {
   const now = new Date()
   const año = now.getFullYear()
   const { desde, hasta } = getMonthRange(now)
-  const [[feriadosAñoActual, feriadosAnterior, feriadosSiguiente], turnos] = await Promise.all([
+  const [[feriadosAñoActual, feriadosAnterior, feriadosSiguiente], turnos, pacientes] = await Promise.all([
     Promise.all([
       getFeriadosEnRango(año),
       getFeriadosEnRango(año - 1),
       getFeriadosEnRango(año + 1),
     ]),
     getTurnosEnRango(desde, hasta),
+    listarPacientes(),
   ])
 
   return (
     <div className="px-10 pb-10">
       <PageHeader title="Agenda" description="Gestiona tus turnos y disponibilidad" />
-      <AgendaClient initialFeriados={[...feriadosAñoActual, ...feriadosAnterior, ...feriadosSiguiente]} initialTurnos={turnos} />
+      <AgendaClient
+        initialFeriados={[...feriadosAñoActual, ...feriadosAnterior, ...feriadosSiguiente]}
+        initialTurnos={turnos}
+        initialPacientes={pacientes}
+      />
     </div>
   )
 }

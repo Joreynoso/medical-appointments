@@ -17,7 +17,7 @@ const estadoBar: Record<string, string> = {
   AUSENTE: "bg-gray-400",
 }
 
-const MAX_TURNOS_VISIBLES = 5
+const MAX_TURNOS_VISIBLES = 4
 
 type DayCardProps = {
   day: DayInfo
@@ -60,15 +60,33 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className }:
             className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0"
           >
             <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
-            <span className="truncate text-[10px] leading-snug text-foreground">
+            <span className="truncate text-[11px] leading-snug text-foreground">
               {t.horaInicio} {t.paciente.nombre}
             </span>
           </div>
         ))}
         {restantes > 0 && (
-          <span className="text-[11px] leading-tight text-muted-foreground">
-            +{restantes} más
-          </span>
+          <Tooltip>
+            <TooltipTrigger render={
+              <div className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0 cursor-default">
+                <span className="h-2 w-2 shrink-0 rounded-sm bg-gray-400" />
+                <span className="truncate text-[11px] leading-snug text-muted-foreground">
+                  +{restantes} más
+                </span>
+              </div>
+            } />
+            <TooltipContent side="bottom" align="start" className="bg-popover text-popover-foreground border border-border p-2">
+              <div className="space-y-1.5">
+                {turnos.slice(MAX_TURNOS_VISIBLES).map((t) => (
+                  <div key={t.id} className="flex items-center gap-1 text-[11px] whitespace-nowrap">
+                    <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
+                    <span className="font-medium">{t.horaInicio}</span>
+                    <span className="text-muted-foreground">{t.paciente.nombre}</span>
+                  </div>
+                ))}
+              </div>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
     </button>

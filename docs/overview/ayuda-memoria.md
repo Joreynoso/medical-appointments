@@ -70,6 +70,8 @@ Problema / Necesidad
 | ADR-010 | **Domingos visibles** pero deshabilitados | UI simétrica, interacción bloqueada |
 | ADR-011 | **Restricción cambio duración slot** | No se permite si hay turnos pendientes futuros — evita solapamientos |
 | ADR-012 | **Lógica feriados separada** del `'use server'` | `lib/feriados.ts` (pura) + `lib/actions/feriados.ts` (wrapper) |
+| ADR-017 | **Modal crear turno global** via React Context | Botón "Nuevo turno" en Topbar + `CrearTurnoProvider` en layout |
+| ADR-018 | **Reemplazo inputs nativos** fecha/hora | shadcn Popover+Calendar + Select personalizado de slots |
 
 ---
 

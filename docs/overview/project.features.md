@@ -42,11 +42,14 @@
 ### FEATURE 4 — Gestión de turnos (modo tradicional)
 - [ ] Lógica de generación de slots: dado un día, generar todos los bloques disponibles según `ConfiguracionProfesional` (horario de atención + duración de slot)
 - [ ] Mostrar solo slots libres al crear un turno (slots ocupados no aparecen como opción)
-- [ ] Crear turno desde modal al clickear un bloque libre en el calendario:
-  - Fecha y slot pre-cargados desde el click
-  - Selector de paciente: Combobox con búsqueda integrada (filtra mientras se escribe)
-  - Al final del listado: opción fija "＋ Crear nuevo paciente" que abre un sub-modal de creación rápida en la misma pantalla (con Server Action)
-  - Al crearse con éxito, se selecciona automáticamente el paciente en el selector sin perder el slot cliqueado
+- [x] Server Action `crearTurno` con validaciones (domingo, feriado, rango horario, sin superposición)
+- [x] Botón global "Nuevo turno" en Topbar (disponible en todas las vistas del dashboard)
+- [x] Modal `CrearTurnoModal` con `@base-ui/react` Dialog:
+  - Selector de fecha con shadcn Popover + Calendar (react-day-picker) y hora con `<select>` personalizado de slots del profesional
+  - Selector de paciente con búsqueda integrada (filtra mientras se escribe)
+  - Opción fija "＋ Crear nuevo paciente" que abre formulario inline (invoca Server Action `crearPaciente`)
+  - Al crearse con éxito, se selecciona automáticamente el paciente en el selector
+- [ ] Crear turno desde modal al clickear un bloque libre en el calendario (fecha y slot pre-cargados)
 - [ ] Modal de detalle al clickear un bloque ocupado:
   - Datos del turno (fecha, hora, estado)
   - Datos del paciente

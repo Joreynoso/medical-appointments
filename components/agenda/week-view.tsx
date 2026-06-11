@@ -51,7 +51,7 @@ function TurnoBlock({ turno }: { turno: TurnoData }) {
   return (
     <div
       className={cn(
-        "absolute left-0.5 right-0.5 rounded-md border-l-2 bg-muted/50 px-1.5 py-0.5",
+        "absolute left-0.5 right-0.5 rounded-md border-l-2 bg-muted/50 px-2 py-1",
         "overflow-hidden cursor-pointer hover:opacity-90 transition-opacity",
         "pointer-events-auto",
         estadoBorder[turno.estado],
@@ -61,7 +61,7 @@ function TurnoBlock({ turno }: { turno: TurnoData }) {
         height: getTurnoHeight(turno.horaInicio, turno.horaFin),
       }}
     >
-      <div className="truncate text-[10px] leading-snug text-foreground">
+      <div className="truncate text-xs leading-snug text-foreground">
         <span className="font-medium">{turno.horaInicio}</span>{" "}
         {turno.paciente.nombre}
       </div>

@@ -5,17 +5,25 @@ import { MonthView } from "@/components/agenda/month-view"
 import { WeekView } from "@/components/agenda/week-view"
 import { CalendarToolbar } from "@/components/agenda/calendar-toolbar"
 import { usePageHeaderActions } from "@/components/dashboard/page-header-context"
+import { useCrearTurno } from "@/components/agenda/crear-turno-context"
 import { addMonths, addWeeks } from "@/components/agenda/calendar-utils"
 import { getFeriadosEnRango } from "@/lib/actions/feriados"
 import { getTurnosEnRango } from "@/lib/actions/turnos"
 import type { TurnoData } from "@/lib/actions/turnos"
 
+type PacienteSimple = {
+  id: string
+  nombre: string
+}
+
 type AgendaClientProps = {
   initialFeriados: Array<{ fecha: string; nombre: string }>
   initialTurnos: TurnoData[]
+  initialPacientes: PacienteSimple[]
 }
 
-export function AgendaClient({ initialFeriados, initialTurnos }: AgendaClientProps) {
+export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes }: AgendaClientProps) {
+  const { setPacientes, setRefreshRange, setOnTurnosChange } = useCrearTurno()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week">("month")
   const loadedRange = useRef<{ desde: string; hasta: string }>({ desde: "", hasta: "" })
@@ -91,6 +99,22 @@ export function AgendaClient({ initialFeriados, initialTurnos }: AgendaClientPro
   }, [ensureFeriados, ensureTurnos])
 
   const { setActions } = usePageHeaderActions()
+
+  useEffect(() => {
+    setPacientes(initialPacientes)
+  }, [initialPacientes, setPacientes])
+
+  useEffect(() => {
+    const year = currentDate.getFullYear()
+    const month = currentDate.getMonth()
+    const desde = new Date(year, month - 1, 1).toISOString().slice(0, 10)
+    const hasta = new Date(year, month + 2, 0).toISOString().slice(0, 10)
+    setRefreshRange(desde, hasta)
+  }, [currentDate, setRefreshRange])
+
+  useEffect(() => {
+    setOnTurnosChange((turnos) => setTurnos(turnos))
+  }, [setOnTurnosChange])
 
   useEffect(() => {
     setActions(
