@@ -2,8 +2,9 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <section className="flex-1 flex items-center">
-      <div className="max-w-7xl mx-auto px-6 py-12 md:py-32 grid md:grid-cols-[1fr_1.1fr] gap-12 md:gap-16 items-center">
+    <section className="flex-1 flex items-center relative overflow-hidden">
+      <div className="absolute inset-0 bg-grid pointer-events-none" />
+      <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 md:py-32 grid md:grid-cols-[1fr_1.1fr] gap-12 md:gap-16 items-center">
         <div className="hero-text space-y-10">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-foreground leading-[1.05]">
             Tu agenda médica, potenciada con{" "}

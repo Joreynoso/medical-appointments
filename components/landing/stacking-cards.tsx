@@ -1,7 +1,6 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { User } from "lucide-react"
 
 interface Testimonial {
   name: string
@@ -105,17 +104,15 @@ export default function StackingCards() {
         <div key={i} className="card-sticky sticky top-0 h-screen flex items-center justify-center">
           <div
             id={`stack-card-${i}`}
-            className="stack-card w-[900px] max-w-[90vw] border border-border rounded-2xl p-14 will-change-transform"
+            className="stack-card w-[624px] max-w-[90vw] border border-border rounded-2xl p-10 md:p-12 will-change-transform"
             style={{
               transformOrigin: "center center",
               background: "var(--card)",
               color: "var(--card-foreground)",
             }}
           >
-            <div className="flex items-center gap-5 mb-6">
-              <div className="size-16 rounded-full bg-muted flex items-center justify-center text-muted-foreground shrink-0">
-                <User className="size-7" />
-              </div>
+            <div className="flex items-center gap-5 mb-8">
+              <div className="size-16 rounded-full shrink-0 bg-primary"></div>
               <div>
                 <p className="text-xl font-semibold">
                   {t.name} {t.lastName}
@@ -123,7 +120,7 @@ export default function StackingCards() {
                 <p className="text-sm text-primary">{t.profession}</p>
               </div>
             </div>
-            <p className="text-muted-foreground leading-relaxed text-base">
+            <p className="text-muted-foreground leading-relaxed text-base md:text-lg">
               &ldquo;{t.opinion}&rdquo;
             </p>
           </div>
