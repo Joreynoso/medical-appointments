@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { Loader2, Search, Plus, X, Check, CalendarIcon, Clock } from "lucide-react"
 import { format } from "date-fns"
 import { es } from "date-fns/locale"
@@ -8,11 +8,19 @@ import { toast } from "sonner"
 import { Dialog } from "@base-ui/react"
 import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
-import { crearTurno, getConfiguracionHoraria, type ConfigHoraria } from "@/lib/actions/turnos"
+import { Calendar, CalendarDayButton } from "@/components/ui/calendar"
+import { crearTurno, getConfiguracionHoraria, getSlotsOcupadosEnFecha, type ConfigHoraria } from "@/lib/actions/turnos"
 import { crearPaciente } from "@/lib/actions/pacientes"
+import { getFeriadosEnRango } from "@/lib/actions/feriados"
 
 type PacienteSimple = {
+  id: string
+  nombre: string
+  telefono: string | null
+  obraSocialNombre: string | null
+}
+
+type ObraSocialSimple = {
   id: string
   nombre: string
 }
@@ -21,6 +29,7 @@ type CrearTurnoModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
   pacientes: PacienteSimple[]
+  obrasSociales: ObraSocialSimple[]
   onTurnoCreado: () => void
 }
 
@@ -28,7 +37,7 @@ function normalize(text: string) {
   return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 }
 
-export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }: CrearTurnoModalProps) {
+export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, onTurnoCreado }: CrearTurnoModalProps) {
   const [fecha, setFecha] = useState<Date>()
   const [horaInicio, setHoraInicio] = useState("")
   const [busquedaPaciente, setBusquedaPaciente] = useState("")
@@ -37,8 +46,30 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
   const [config, setConfig] = useState<ConfigHoraria | null>(null)
   const [popoverOpen, setPopoverOpen] = useState(false)
 
+  const [occupiedSlots, setOccupiedSlots] = useState<string[]>([])
+  const [feriados, setFeriados] = useState<Map<string, string>>(new Map())
+
+  useEffect(() => {
+    if (fecha) {
+      const fechaStr = format(fecha, "yyyy-MM-dd")
+      getSlotsOcupadosEnFecha(fechaStr).then(setOccupiedSlots).catch(() => setOccupiedSlots([]))
+    } else {
+      setOccupiedSlots([])
+    }
+  }, [fecha])
+
+  const holidayDates = useMemo(() => {
+    const dates: Date[] = []
+    for (const fechaStr of feriados.keys()) {
+      dates.push(new Date(fechaStr + "T00:00:00"))
+    }
+    return dates
+  }, [feriados])
+
   const [showCrearPaciente, setShowCrearPaciente] = useState(false)
   const [nuevoPacienteNombre, setNuevoPacienteNombre] = useState("")
+  const [nuevoPacienteTelefono, setNuevoPacienteTelefono] = useState("")
+  const [nuevoPacienteObraSocialId, setNuevoPacienteObraSocialId] = useState("")
   const [creandoPaciente, setCreandoPaciente] = useState(false)
 
   useEffect(() => {
@@ -46,6 +77,16 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
       getConfiguracionHoraria()
         .then(setConfig)
         .catch(() => {})
+      const año = new Date().getFullYear()
+      Promise.all([getFeriadosEnRango(año), getFeriadosEnRango(año + 1)])
+        .then(([actual, siguiente]) => {
+          const map = new Map<string, string>()
+          for (const f of [...actual, ...siguiente]) {
+            map.set(f.fecha, f.nombre)
+          }
+          setFeriados(map)
+        })
+        .catch(() => setFeriados(new Map()))
     }
   }, [open])
 
@@ -73,6 +114,8 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
     setSelectedPaciente(null)
     setShowCrearPaciente(false)
     setNuevoPacienteNombre("")
+    setNuevoPacienteTelefono("")
+    setNuevoPacienteObraSocialId("")
     setPopoverOpen(false)
   }
 
@@ -85,8 +128,18 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
     if (!nuevoPacienteNombre.trim()) return
     setCreandoPaciente(true)
     try {
-      const paciente = await crearPaciente({ nombre: nuevoPacienteNombre.trim() })
-      setSelectedPaciente({ id: paciente.id, nombre: paciente.nombre })
+      const paciente = await crearPaciente({
+        nombre: nuevoPacienteNombre.trim(),
+        telefono: nuevoPacienteTelefono.trim() || undefined,
+        obraSocialId: nuevoPacienteObraSocialId || undefined,
+      })
+      const obraSocialSel = obrasSociales.find((o) => o.id === nuevoPacienteObraSocialId)
+      setSelectedPaciente({
+        id: paciente.id,
+        nombre: paciente.nombre,
+        telefono: nuevoPacienteTelefono.trim() || null,
+        obraSocialNombre: obraSocialSel?.nombre ?? null,
+      })
       setShowCrearPaciente(false)
       setNuevoPacienteNombre("")
       setBusquedaPaciente("")
@@ -172,6 +225,21 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
                         return false
                       }}
                       defaultMonth={fecha ?? new Date()}
+                      modifiers={{ feriado: holidayDates }}
+                      modifiersClassNames={{ feriado: "!text-destructive" }}
+                      components={{
+                        DayButton: (props) => {
+                          const key = format(props.day.date, "yyyy-MM-dd")
+                          const nombre = feriados.get(key)
+                          return (
+                            <CalendarDayButton
+                              locale={es}
+                              title={nombre || undefined}
+                              {...props}
+                            />
+                          )
+                        },
+                      }}
                     />
                   </PopoverContent>
                 </Popover>
@@ -190,7 +258,7 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
                     className="h-9 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-10 text-sm text-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
                   >
                     <option value="">Seleccionar hora</option>
-                    {generarSlots().map((slot) => (
+                    {generarSlots().filter((slot) => !occupiedSlots.includes(slot)).map((slot) => (
                       <option key={slot} value={slot}>
                         {slot}
                       </option>
@@ -208,19 +276,58 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
                   Paciente <span className="text-destructive">*</span>
                 </label>
                 {showCrearPaciente ? (
-                  <div className="space-y-2">
-                    <div className="flex gap-2">
+                  <div className="space-y-3">
+                    <div className="space-y-1.5">
+                      <label htmlFor="nuevo-nombre" className="text-xs font-medium text-foreground">
+                        Nombre <span className="text-destructive">*</span>
+                      </label>
                       <input
+                        id="nuevo-nombre"
                         type="text"
-                        placeholder="Nombre del paciente"
+                        placeholder="Nombre completo"
                         value={nuevoPacienteNombre}
                         onChange={(e) => setNuevoPacienteNombre(e.target.value)}
                         disabled={creandoPaciente}
-                        className="h-9 flex-1 rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
+                        className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
                       />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label htmlFor="nuevo-telefono" className="text-xs font-medium text-foreground">
+                        Teléfono
+                      </label>
+                      <input
+                        id="nuevo-telefono"
+                        type="tel"
+                        placeholder="+54 11 1234-5678"
+                        value={nuevoPacienteTelefono}
+                        onChange={(e) => setNuevoPacienteTelefono(e.target.value)}
+                        disabled={creandoPaciente}
+                        className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <label htmlFor="nuevo-obra-social" className="text-xs font-medium text-foreground">
+                        Obra Social
+                      </label>
+                      <select
+                        id="nuevo-obra-social"
+                        value={nuevoPacienteObraSocialId}
+                        onChange={(e) => setNuevoPacienteObraSocialId(e.target.value)}
+                        disabled={creandoPaciente}
+                        className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
+                      >
+                        <option value="">Sin obra social</option>
+                        {obrasSociales.map((os) => (
+                          <option key={os.id} value={os.id}>
+                            {os.nombre}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex gap-2 pt-1">
                       <Button
                         type="button"
-                        size="icon-sm"
+                        size="sm"
                         disabled={!nuevoPacienteNombre.trim() || creandoPaciente}
                         onClick={handleCrearPaciente}
                       >
@@ -229,20 +336,18 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
                         ) : (
                           <Check className="size-4" />
                         )}
+                        Crear paciente
                       </Button>
                       <Button
                         type="button"
                         variant="ghost"
-                        size="icon-sm"
+                        size="sm"
                         disabled={creandoPaciente}
                         onClick={() => setShowCrearPaciente(false)}
                       >
-                        <X className="size-4" />
+                        Volver
                       </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                      Ingresá el nombre y confirmá para crear el paciente al instante.
-                    </p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -268,7 +373,12 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
                             key={p.id}
                             type="button"
                             onClick={() => {
-                              setSelectedPaciente(p)
+                              setSelectedPaciente({
+                                id: p.id,
+                                nombre: p.nombre,
+                                telefono: p.telefono,
+                                obraSocialNombre: p.obraSocialNombre,
+                              })
                               setBusquedaPaciente("")
                             }}
                             className={`w-full px-3 py-2 text-left text-sm transition-colors hover:bg-muted ${
@@ -292,13 +402,20 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, onTurnoCreado }
                     </div>
                     {selectedPaciente && !busquedaPaciente && (
                       <div className="flex items-center gap-2 rounded-lg border border-border bg-muted/30 px-3 py-2">
-                        <span className="text-sm font-medium text-foreground">
-                          {selectedPaciente.nombre}
-                        </span>
+                        <div className="min-w-0 flex-1">
+                          <span className="text-sm font-medium text-foreground">
+                            {selectedPaciente.nombre}
+                          </span>
+                          {(selectedPaciente.telefono || selectedPaciente.obraSocialNombre) && (
+                            <p className="text-xs text-muted-foreground truncate">
+                              {[selectedPaciente.telefono, selectedPaciente.obraSocialNombre].filter(Boolean).join(" · ")}
+                            </p>
+                          )}
+                        </div>
                         <button
                           type="button"
                           onClick={() => setSelectedPaciente(null)}
-                          className="ml-auto text-muted-foreground hover:text-foreground"
+                          className="text-muted-foreground hover:text-foreground"
                         >
                           <X className="size-3.5" />
                         </button>

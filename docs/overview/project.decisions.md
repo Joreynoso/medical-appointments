@@ -457,6 +457,71 @@ Reemplazar los `<input type="date">` y `<input type="time">` nativos del navegad
 
 ---
 
+## ADR-020 — Flujo de estados de turno: transiciones, visibilidad y slot libre
+
+**Fecha:** 2026-06-15
+**Estado:** Aceptada
+
+**Decisión:**
+Se implementa el flujo completo de estados del turno con las siguientes transiciones:
+- `PENDIENTE` → `CONFIRMADO` / `CANCELADO`
+- `CONFIRMADO` → `CANCELADO` / `AUSENTE`
+- `CANCELADO` / `AUSENTE` → `CONFIRMADO` (reagendar)
+
+Comportamiento por estado:
+- **CANCELADO**: el turno se oculta del calendario (vistas semanal y mensual) y su slot se libera, apareciendo como disponible para nuevo turno.
+- **AUSENTE**: el turno permanece visible en el calendario como registro de inasistencia (badge naranja), el slot NO se libera.
+- **PENDIENTE / CONFIRMADO**: ocupan el slot, no aparece como libre en `CrearTurnoModal`.
+
+La confirmación de cancelación es inline dentro del modal de detalle (botón "Cancelar turno" → se expanden botones "Sí, cancelar" / "No" dentro del mismo modal), reemplazando el enfoque anterior de AlertDialog anidado.
+
+**Por qué:**
+- El médico necesita poder cancelar y reagendar en el mismo slot sin perder el registro del turno original.
+- Ocultar CANCELADO evita ruido visual en la agenda.
+- Mantener AUSENTE visible permite al médico saber que el paciente no asistió.
+- La confirmación inline evita la mala UX de un diálogo anidado sobre otro modal.
+
+**Alternativas descartadas:**
+- AlertDialog para confirmación de cancelación: UX pobre al tener dos modales superpuestos.
+- Mostrar CANCELADO como ocupado: el médico no podría usar ese slot sin antes eliminar el turno.
+- Ocultar AUSENTE: se pierde el registro de inasistencia, que es información clínica relevante.
+
+**Consecuencias:**
+- `getSlotsOcupadosEnFecha()` filtra solo estados `PENDIENTE` y `CONFIRMADO` para determinar slots libres.
+- `getTurnosDelProfesionalEnRango()` retorna todos los turnos sin filtrar para el calendario, pero la vista filtra `CANCELADO` visualmente.
+- Se eliminaron los turnos existentes en DB (todos estaban en PENDIENTE) para probar el flujo completo desde cero.
+- El modal de detalle (`DetalleTurnoModal`) contiene la lógica de confirmación inline sin depender de componentes externos.
+
+---
+
+## ADR-021 — Modelo ObraSocial: ABM por profesional y relación con Paciente
+
+**Fecha:** 2026-06-15
+**Estado:** Aceptada
+
+**Decisión:**
+Se creó el modelo `ObraSocial` con FK a `Profesional` (per-profesional), soft delete (`activo`), y unique constraint `[profesionalId, nombre]`. Se agregó `obraSocialId` nullable a `Paciente` con FK `ON DELETE SET NULL` (al desactivar una obra social, los pacientes conservan su registro pero pierden la referencia). Se implementó ABM completo (página, Server Actions, componente cliente) replicando el patrón de Pacientes. Se pre-carga "Particular" por defecto en el seed.
+
+**Por qué:**
+- La obra social es conceptualmente del paciente, pero en un sistema multi-tenant sin admin global, el profesional necesita gestionar su propio catálogo de obras sociales (mismo patrón que Pacientes).
+- El soft delete y `SET NULL` preservan la integridad del historial de pacientes.
+- "Particular" pre-cargada evita que el profesional tenga que crearla manualmente en su primer uso.
+
+**Alternativas descartadas:**
+- ObraSocial global (sin FK a Profesional): requeriría admin global, no existe en el sistema.
+- ObraSocial como string libre en Paciente (sin modelo separado): imposibilita el ABM y la consistencia.
+- FK `ON DELETE RESTRICT` en Paciente: impediría desactivar obras sociales con pacientes asociados.
+
+**Consecuencias:**
+- Cada profesional tiene su propio catálogo de obras sociales.
+- El formulario de Paciente ahora incluye un `<select>` de obra social.
+- La tabla de pacientes muestra la obra social en desktop y mobile.
+- Se agregó ruta `/dashboard/obras-sociales` con navegación en el sidebar.
+- El seed crea "Particular" y la asigna a todos los pacientes de prueba.
+- La migración agregó las tablas y columnas sin downtime (columna nullable, tabla nueva).
+
+---
+
 ## 📝 Plantilla para nuevas entradas
 
 ```

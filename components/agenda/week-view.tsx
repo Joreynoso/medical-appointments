@@ -18,6 +18,7 @@ type WeekViewProps = {
   horarioHasta: string
   diasLaborables: number[]
   todayFlash: boolean
+  onTurnoClick?: (turno: TurnoData) => void
 }
 
 function parseTime(time: string): { hour: number; minute: number } {
@@ -46,7 +47,7 @@ const estadoBorder: Record<string, string> = {
   AUSENTE: "border-l-gray-400",
 }
 
-function TurnoBlock({ turno, startHour }: { turno: TurnoData; startHour: number }) {
+function TurnoBlock({ turno, startHour, onClick }: { turno: TurnoData; startHour: number; onClick?: () => void }) {
   return (
     <div
       className={cn(
@@ -59,6 +60,10 @@ function TurnoBlock({ turno, startHour }: { turno: TurnoData; startHour: number 
         top: getTurnoTop(turno.horaInicio, startHour),
         height: getTurnoHeight(turno.horaInicio, turno.horaFin, startHour),
       }}
+      onClick={onClick}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.() } }}
     >
       <div className="truncate text-xs leading-snug text-foreground">
         <span className="font-medium">{turno.horaInicio}</span>{" "}
@@ -68,7 +73,7 @@ function TurnoBlock({ turno, startHour }: { turno: TurnoData; startHour: number 
   )
 }
 
-export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, horarioHasta, diasLaborables, todayFlash }: WeekViewProps) {
+export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, horarioHasta, diasLaborables, todayFlash, onTurnoClick }: WeekViewProps) {
   const days = getWeekDays(currentDate)
   const startHour = parseInt(horarioDesde.split(":")[0])
   const endHour = parseInt(horarioHasta.split(":")[0])
@@ -179,8 +184,8 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
                   gridRow: `2 / ${rows + 2}`,
                 }}
               >
-                {turnosDelDia.map((turno) => (
-                  <TurnoBlock key={turno.id} turno={turno} startHour={startHour} />
+                {turnosDelDia.filter((t) => t.estado !== "CANCELADO").map((turno) => (
+                  <TurnoBlock key={turno.id} turno={turno} startHour={startHour} onClick={() => onTurnoClick?.(turno)} />
                 ))}
               </div>
             )

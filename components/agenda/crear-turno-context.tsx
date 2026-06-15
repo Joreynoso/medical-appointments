@@ -8,11 +8,19 @@ import type { TurnoData } from "@/lib/actions/turnos"
 type PacienteSimple = {
   id: string
   nombre: string
+  telefono: string | null
+  obraSocialNombre: string | null
+}
+
+type ObraSocialSimple = {
+  id: string
+  nombre: string
 }
 
 type CrearTurnoContextType = {
   openCrearTurno: () => void
   setPacientes: (pacientes: PacienteSimple[]) => void
+  setObrasSociales: (obrasSociales: ObraSocialSimple[]) => void
   setRefreshRange: (desde: string, hasta: string) => void
   setOnTurnosChange: (cb: (turnos: TurnoData[]) => void) => void
 }
@@ -20,6 +28,7 @@ type CrearTurnoContextType = {
 const CrearTurnoContext = createContext<CrearTurnoContextType>({
   openCrearTurno: () => {},
   setPacientes: () => {},
+  setObrasSociales: () => {},
   setRefreshRange: () => {},
   setOnTurnosChange: () => {},
 })
@@ -31,6 +40,7 @@ export function useCrearTurno() {
 export function CrearTurnoProvider({ children }: { children: ReactNode }) {
   const [modalOpen, setModalOpen] = useState(false)
   const [pacientes, setPacientes] = useState<PacienteSimple[]>([])
+  const [obrasSociales, setObrasSociales] = useState<ObraSocialSimple[]>([])
   const refreshRangeRef = useRef({ desde: "", hasta: "" })
   const onTurnosChangeRef = useRef<((turnos: TurnoData[]) => void) | null>(null)
 
@@ -56,6 +66,7 @@ export function CrearTurnoProvider({ children }: { children: ReactNode }) {
       value={{
         openCrearTurno: () => setModalOpen(true),
         setPacientes,
+        setObrasSociales,
         setRefreshRange,
         setOnTurnosChange,
       }}
@@ -65,6 +76,7 @@ export function CrearTurnoProvider({ children }: { children: ReactNode }) {
         open={modalOpen}
         onOpenChange={setModalOpen}
         pacientes={pacientes}
+        obrasSociales={obrasSociales}
         onTurnoCreado={handleTurnoCreado}
       />
     </CrearTurnoContext.Provider>

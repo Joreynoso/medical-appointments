@@ -21,6 +21,7 @@ model Profesional {
   email         String                    @unique
   configuracion ConfiguracionProfesional?
   pacientes     Paciente[]
+  obrasSociales ObraSocial[]
   turnos        Turno[]
   createdAt     DateTime                  @default(now())
   updatedAt     DateTime                  @updatedAt
@@ -38,10 +39,25 @@ model ConfiguracionProfesional {
   updatedAt       DateTime    @updatedAt
 }
 
+model ObraSocial {
+  id            String      @id @default(cuid())
+  profesionalId String
+  profesional   Profesional @relation(fields: [profesionalId], references: [id])
+  nombre        String
+  activo        Boolean     @default(true)
+  pacientes     Paciente[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([profesionalId, nombre])
+}
+
 model Paciente {
   id            String      @id @default(cuid())
   profesionalId String
   profesional   Profesional @relation(fields: [profesionalId], references: [id])
+  obraSocialId  String?
+  obraSocial    ObraSocial? @relation(fields: [obraSocialId], references: [id])
   nombre        String
   telefono      String?
   notas         String?

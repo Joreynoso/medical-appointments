@@ -10,6 +10,8 @@ export type PacienteListData = {
   nombre: string
   telefono: string | null
   notas: string | null
+  obraSocialId: string | null
+  obraSocial: { nombre: string } | null
   createdAt: Date
   updatedAt: Date
 }
@@ -28,13 +30,15 @@ export const listarPacientes = cache(async (): Promise<PacienteListData[]> => {
       nombre: true,
       telefono: true,
       notas: true,
+      obraSocialId: true,
+      obraSocial: { select: { nombre: true } },
       createdAt: true,
       updatedAt: true,
     },
   })
 })
 
-export async function crearPaciente(data: { nombre: string; telefono?: string; notas?: string }) {
+export async function crearPaciente(data: { nombre: string; telefono?: string; notas?: string; obraSocialId?: string }) {
   const profesional = await getCurrentProfesional()
 
   const paciente = await prisma.paciente.create({
@@ -43,6 +47,7 @@ export async function crearPaciente(data: { nombre: string; telefono?: string; n
       nombre: data.nombre,
       telefono: data.telefono ?? null,
       notas: data.notas ?? null,
+      obraSocialId: data.obraSocialId ?? null,
     },
   })
 
@@ -50,7 +55,7 @@ export async function crearPaciente(data: { nombre: string; telefono?: string; n
   return paciente
 }
 
-export async function actualizarPaciente(id: string, data: { nombre: string; telefono?: string; notas?: string }) {
+export async function actualizarPaciente(id: string, data: { nombre: string; telefono?: string; notas?: string; obraSocialId?: string | null }) {
   const profesional = await getCurrentProfesional()
 
   const paciente = await prisma.paciente.update({
@@ -59,6 +64,7 @@ export async function actualizarPaciente(id: string, data: { nombre: string; tel
       nombre: data.nombre,
       telefono: data.telefono ?? null,
       notas: data.notas ?? null,
+      obraSocialId: data.obraSocialId ?? null,
     },
   })
 

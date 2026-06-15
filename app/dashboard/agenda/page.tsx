@@ -1,6 +1,7 @@
 import { getFeriadosEnRango } from "@/lib/actions/feriados"
 import { getTurnosEnRango, getConfiguracionHoraria } from "@/lib/actions/turnos"
 import { listarPacientes } from "@/lib/actions/pacientes"
+import { listarObrasSociales } from "@/lib/actions/obras-sociales"
 import { AgendaClient } from "@/components/agenda/agenda-client"
 import { PageHeader } from "@/components/dashboard/page-header"
 
@@ -19,7 +20,7 @@ export default async function AgendaPage() {
   const now = new Date()
   const año = now.getFullYear()
   const { desde, hasta } = getMonthRange(now)
-  const [[feriadosAñoActual, feriadosAnterior, feriadosSiguiente], turnos, pacientes, config] = await Promise.all([
+  const [[feriadosAñoActual, feriadosAnterior, feriadosSiguiente], turnos, pacientes, obrasSociales, config] = await Promise.all([
     Promise.all([
       getFeriadosEnRango(año),
       getFeriadosEnRango(año - 1),
@@ -27,6 +28,7 @@ export default async function AgendaPage() {
     ]),
     getTurnosEnRango(desde, hasta),
     listarPacientes(),
+    listarObrasSociales(),
     getConfiguracionHoraria(),
   ])
 
@@ -36,7 +38,13 @@ export default async function AgendaPage() {
       <AgendaClient
         initialFeriados={[...feriadosAñoActual, ...feriadosAnterior, ...feriadosSiguiente]}
         initialTurnos={turnos}
-        initialPacientes={pacientes}
+        initialPacientes={pacientes.map((p) => ({
+          id: p.id,
+          nombre: p.nombre,
+          telefono: p.telefono,
+          obraSocialNombre: p.obraSocial?.nombre ?? null,
+        }))}
+        initialObrasSociales={obrasSociales.map((o) => ({ id: o.id, nombre: o.nombre }))}
         horarioDesde={config.horarioDesde}
         horarioHasta={config.horarioHasta}
         diasLaborables={config.diasLaborables}

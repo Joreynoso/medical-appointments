@@ -5,11 +5,12 @@ import { usePathname } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "./sidebar-context"
 import {
-  LayoutDashboard,
+  Home,
   Calendar,
   Users,
   MessageSquare,
   Settings,
+  Stethoscope,
   type LucideIcon,
 } from "lucide-react"
 
@@ -20,9 +21,10 @@ type NavItem = {
 }
 
 const navItems: NavItem[] = [
-  { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/dashboard", label: "Dashboard", icon: Home },
   { href: "/dashboard/agenda", label: "Agenda", icon: Calendar },
   { href: "/dashboard/pacientes", label: "Pacientes", icon: Users },
+  { href: "/dashboard/obras-sociales", label: "Obras Sociales", icon: Stethoscope },
   { href: "/dashboard/chat", label: "Chat IA", icon: MessageSquare },
   { href: "/dashboard/configuracion", label: "Configuración", icon: Settings },
 ]

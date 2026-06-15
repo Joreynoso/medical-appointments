@@ -6,19 +6,17 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Dialog, AlertDialog } from "@base-ui/react"
 import {
-  listarPacientes,
-  crearPaciente,
-  actualizarPaciente,
-  desactivarPaciente,
-} from "@/lib/actions/pacientes"
-import type { PacienteListData } from "@/lib/actions/pacientes"
+  listarObrasSociales,
+  crearObraSocial,
+  actualizarObraSocial,
+  desactivarObraSocial,
+} from "@/lib/actions/obras-sociales"
 import type { ObraSocialListData } from "@/lib/actions/obras-sociales"
 
 type ModalMode = "crear" | "editar" | null
 
-type PacientesClientProps = {
-  initialPacientes: PacienteListData[]
-  obrasSociales: ObraSocialListData[]
+type ObrasSocialesClientProps = {
+  initialObrasSociales: ObraSocialListData[]
 }
 
 const ITEMS_PER_PAGE = 7
@@ -27,24 +25,24 @@ function normalize(text: string) {
   return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 }
 
-export function PacientesClient({ initialPacientes, obrasSociales }: PacientesClientProps) {
-  const [pacientes, setPacientes] = useState<PacienteListData[]>(initialPacientes)
+export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClientProps) {
+  const [obrasSociales, setObrasSociales] = useState<ObraSocialListData[]>(initialObrasSociales)
   const [busqueda, setBusqueda] = useState("")
   const [modalOpen, setModalOpen] = useState(false)
   const [modalMode, setModalMode] = useState<ModalMode>(null)
-  const [selectedPaciente, setSelectedPaciente] = useState<PacienteListData | null>(null)
+  const [selectedObraSocial, setSelectedObraSocial] = useState<ObraSocialListData | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [pacienteToDelete, setPacienteToDelete] = useState<PacienteListData | null>(null)
+  const [obraSocialToDelete, setObraSocialToDelete] = useState<ObraSocialListData | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
 
-  const filteredPacientes = !busqueda
-    ? pacientes
-    : pacientes.filter((p) => normalize(p.nombre).includes(normalize(busqueda)))
+  const filtered = !busqueda
+    ? obrasSociales
+    : obrasSociales.filter((o) => normalize(o.nombre).includes(normalize(busqueda)))
 
-  const totalPages = Math.max(1, Math.ceil(filteredPacientes.length / ITEMS_PER_PAGE))
+  const totalPages = Math.max(1, Math.ceil(filtered.length / ITEMS_PER_PAGE))
   const startIdx = (currentPage - 1) * ITEMS_PER_PAGE
-  const paginatedPacientes = filteredPacientes.slice(startIdx, startIdx + ITEMS_PER_PAGE)
+  const paginated = filtered.slice(startIdx, startIdx + ITEMS_PER_PAGE)
 
   useEffect(() => {
     if (currentPage > totalPages) {
@@ -56,88 +54,74 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
     setCurrentPage(Math.max(1, Math.min(page, totalPages)))
   }
 
-  const cargarPacientes = useCallback(async () => {
+  const cargar = useCallback(async () => {
     try {
-      const data = await listarPacientes()
-      setPacientes(data)
+      const data = await listarObrasSociales()
+      setObrasSociales(data)
     } catch {
-      toast.error("Error al cargar pacientes")
+      toast.error("Error al cargar obras sociales")
     }
   }, [])
 
   function abrirCrear() {
     setModalMode("crear")
-    setSelectedPaciente(null)
+    setSelectedObraSocial(null)
     setModalOpen(true)
   }
 
-  function abrirEditar(paciente: PacienteListData) {
+  function abrirEditar(item: ObraSocialListData) {
     setModalMode("editar")
-    setSelectedPaciente(paciente)
+    setSelectedObraSocial(item)
     setModalOpen(true)
   }
 
   function cerrarModal() {
     setModalOpen(false)
     setModalMode(null)
-    setSelectedPaciente(null)
+    setSelectedObraSocial(null)
   }
 
   async function handleSubmit(formData: FormData) {
     setSubmitting(true)
     try {
       const nombre = formData.get("nombre") as string
-      const telefono = formData.get("telefono") as string
 
       if (!nombre?.trim()) {
         toast.error("El nombre es obligatorio")
         return
       }
 
-      const notas = formData.get("notas") as string
-      const obraSocialId = formData.get("obraSocialId") as string
-
       if (modalMode === "crear") {
-        await crearPaciente({
-          nombre: nombre.trim(),
-          telefono: telefono?.trim() || undefined,
-          notas: notas?.trim() || undefined,
-          obraSocialId: obraSocialId || undefined,
-        })
-        toast.success("Paciente creado")
-      } else if (modalMode === "editar" && selectedPaciente) {
-        await actualizarPaciente(selectedPaciente.id, {
-          nombre: nombre.trim(),
-          telefono: telefono?.trim() || undefined,
-          notas: notas?.trim() || undefined,
-          obraSocialId: obraSocialId || null,
-        })
-        toast.success("Paciente actualizado")
+        await crearObraSocial({ nombre: nombre.trim() })
+        toast.success("Obra social creada")
+      } else if (modalMode === "editar" && selectedObraSocial) {
+        await actualizarObraSocial(selectedObraSocial.id, { nombre: nombre.trim() })
+        toast.success("Obra social actualizada")
       }
       cerrarModal()
-      cargarPacientes()
+      cargar()
     } catch {
-      toast.error("Error al guardar paciente")
+      toast.error("Error al guardar obra social")
     } finally {
       setSubmitting(false)
     }
   }
 
-  function confirmarEliminar(paciente: PacienteListData) {
-    setPacienteToDelete(paciente)
+  function confirmarEliminar(item: ObraSocialListData) {
+    setObraSocialToDelete(item)
     setDeleteDialogOpen(true)
   }
 
   async function handleEliminar() {
-    if (!pacienteToDelete) return
+    if (!obraSocialToDelete) return
     try {
-      await desactivarPaciente(pacienteToDelete.id)
-      toast.success("Paciente desactivado")
+      await desactivarObraSocial(obraSocialToDelete.id)
+      toast.success("Obra social desactivada")
       setDeleteDialogOpen(false)
-      setPacienteToDelete(null)
-      cargarPacientes()
+      setObraSocialToDelete(null)
+      cargar()
     } catch {
-      toast.error("Error al desactivar paciente")
+      toast.error("Error al desactivar obra social")
     }
   }
 
@@ -148,7 +132,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
           <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
           <input
             type="text"
-            placeholder="Buscar paciente..."
+            placeholder="Buscar obra social..."
             value={busqueda}
             onChange={(e) => {
               setBusqueda(e.target.value)
@@ -157,7 +141,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
             className="h-9 w-full rounded-lg border border-border bg-background pl-9 pr-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50"
           />
         </div>
-        {filteredPacientes.length > ITEMS_PER_PAGE && (
+        {filtered.length > ITEMS_PER_PAGE && (
           <div className="flex items-center gap-1">
             <Button
               variant="outline"
@@ -186,20 +170,20 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
           className="inline-flex cursor-pointer items-center justify-center rounded-lg bg-primary text-primary-foreground transition-all hover:opacity-90 size-9 md:size-auto md:px-5 md:py-2 md:gap-2"
         >
           <Plus className="size-4" />
-          <span className="hidden md:inline text-sm font-medium">Nuevo paciente</span>
+          <span className="hidden md:inline text-sm font-medium">Nueva obra social</span>
         </button>
       </div>
 
       <div className="hidden md:block rounded-lg border border-border">
-        {filteredPacientes.length === 0 ? (
+        {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">
-              {busqueda ? "No se encontraron pacientes" : "No hay pacientes registrados"}
+              {busqueda ? "No se encontraron obras sociales" : "No hay obras sociales registradas"}
             </p>
             {!busqueda && (
               <Button variant="outline" className="mt-4" onClick={abrirCrear}>
                 <Plus className="size-4" />
-                Crear primer paciente
+                Crear primera obra social
               </Button>
             )}
           </div>
@@ -211,13 +195,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
                   Nombre
                 </th>
                 <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Teléfono
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Obra Social
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
-                  Notas
+                  Pacientes
                 </th>
                 <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Acciones
@@ -225,33 +203,27 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {paginatedPacientes.map((paciente) => (
-                <tr key={paciente.id} className="group hover:bg-muted/50">
+              {paginated.map((item) => (
+                <tr key={item.id} className="group hover:bg-muted/50">
                   <td className="px-4 py-3 text-sm font-medium text-foreground">
-                    {paciente.nombre}
+                    {item.nombre}
                   </td>
                   <td className="px-4 py-3 text-sm text-muted-foreground">
-                    {paciente.telefono || "—"}
-                  </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">
-                    {paciente.obraSocial?.nombre || "—"}
-                  </td>
-                  <td className="max-w-xs truncate px-4 py-3 text-sm text-muted-foreground">
-                    {paciente.notas || "—"}
+                    {item._count.pacientes}
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Button
                         variant="ghost"
                         size="icon-sm"
-                        onClick={() => abrirEditar(paciente)}
+                        onClick={() => abrirEditar(item)}
                       >
                         <Pencil className="size-4" />
                       </Button>
                       <Button
                         variant="ghost"
                         size="icon-sm"
-                        onClick={() => confirmarEliminar(paciente)}
+                        onClick={() => confirmarEliminar(item)}
                       >
                         <Trash2 className="size-4 text-destructive" />
                       </Button>
@@ -265,10 +237,10 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
       </div>
 
       <div className="md:hidden grid grid-cols-1 gap-3">
-        {filteredPacientes.length === 0 ? (
+        {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">
-              {busqueda ? "No se encontraron pacientes" : "No hay pacientes registrados"}
+              {busqueda ? "No se encontraron obras sociales" : "No hay obras sociales registradas"}
             </p>
             {!busqueda && (
               <button
@@ -277,35 +249,29 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
                 className="mt-4 inline-flex cursor-pointer items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-all hover:opacity-90"
               >
                 <Plus className="size-4" />
-                Crear primer paciente
+                Crear primera obra social
               </button>
             )}
           </div>
         ) : (
-          paginatedPacientes.map((paciente) => (
+          paginated.map((item) => (
             <div
-              key={paciente.id}
+              key={item.id}
               className="rounded-lg border border-border bg-card p-4 min-h-[84px]"
             >
               <div className="flex items-start justify-between gap-2 h-full">
                 <div className="min-w-0 flex-1 flex flex-col justify-center">
                   <p className="text-sm font-medium text-foreground truncate">
-                    {paciente.nombre}
+                    {item.nombre}
                   </p>
                   <p className="mt-0.5 text-xs text-muted-foreground">
-                    {paciente.telefono || "—"}
-                  </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {paciente.obraSocial?.nombre || "—"}
-                  </p>
-                  <p className="mt-1.5 text-xs text-muted-foreground/70 line-clamp-2 min-h-[2.5em]">
-                    {paciente.notas || "\u00A0"}
+                    {item._count.pacientes} paciente{(item._count.pacientes !== 1) ? "s" : ""}
                   </p>
                 </div>
                 <div className="flex shrink-0 gap-1 items-start">
                   <button
                     type="button"
-                    onClick={() => abrirEditar(paciente)}
+                    onClick={() => abrirEditar(item)}
                     className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-all"
                     aria-label="Editar"
                   >
@@ -313,7 +279,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
                   </button>
                   <button
                     type="button"
-                    onClick={() => confirmarEliminar(paciente)}
+                    onClick={() => confirmarEliminar(item)}
                     className="inline-flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-destructive transition-all"
                     aria-label="Eliminar"
                   >
@@ -333,7 +299,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
             <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
               <div className="mb-6 flex items-center justify-between">
                 <Dialog.Title className="text-lg font-serif text-foreground">
-                  {modalMode === "crear" ? "Nuevo paciente" : "Editar paciente"}
+                  {modalMode === "crear" ? "Nueva obra social" : "Editar obra social"}
                 </Dialog.Title>
                 <button type="button" onClick={cerrarModal} className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
                   <svg className="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -353,56 +319,9 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
                     type="text"
                     required
                     disabled={submitting}
-                    defaultValue={selectedPaciente?.nombre ?? ""}
-                    placeholder="Nombre completo"
+                    defaultValue={selectedObraSocial?.nombre ?? ""}
+                    placeholder="Ej: OSDE, Swiss Medical..."
                     className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="telefono" className="text-sm font-medium text-foreground">
-                    Teléfono
-                  </label>
-                  <input
-                    id="telefono"
-                    name="telefono"
-                    type="tel"
-                    disabled={submitting}
-                    defaultValue={selectedPaciente?.telefono ?? ""}
-                    placeholder="+54 11 1234-5678"
-                    className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="obraSocialId" className="text-sm font-medium text-foreground">
-                    Obra Social
-                  </label>
-                  <select
-                    id="obraSocialId"
-                    name="obraSocialId"
-                    disabled={submitting}
-                    defaultValue={selectedPaciente?.obraSocialId ?? ""}
-                    className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
-                  >
-                    <option value="">Sin obra social</option>
-                    {obrasSociales.map((os) => (
-                      <option key={os.id} value={os.id}>
-                        {os.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label htmlFor="notas" className="text-sm font-medium text-foreground">
-                    Notas <span className="text-muted-foreground font-normal">(opcional)</span>
-                  </label>
-                  <textarea
-                    id="notas"
-                    name="notas"
-                    rows={3}
-                    disabled={submitting}
-                    defaultValue={selectedPaciente?.notas ?? ""}
-                    placeholder="Notas internas..."
-                    className="w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
                   />
                 </div>
                 <div className="flex justify-end gap-3 pt-2">
@@ -416,7 +335,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
                         Guardando...
                       </>
                     ) : modalMode === "crear" ? (
-                      "Crear paciente"
+                      "Crear obra social"
                     ) : (
                       "Guardar cambios"
                     )}
@@ -434,13 +353,19 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
           <AlertDialog.Popup className="fixed inset-0 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg">
               <AlertDialog.Title className="text-lg font-serif text-foreground">
-                Desactivar paciente
+                Desactivar obra social
               </AlertDialog.Title>
               <AlertDialog.Description className="mt-2 text-sm text-muted-foreground">
-                ¿Estás seguro de desactivar a{" "}
-                <span className="font-medium text-foreground">{pacienteToDelete?.nombre}</span>?
+                ¿Estás seguro de desactivar{" "}
+                <span className="font-medium text-foreground">{obraSocialToDelete?.nombre}</span>?
                 <br />
-                Los turnos históricos se conservarán.
+                {obraSocialToDelete && obraSocialToDelete._count.pacientes > 0 && (
+                  <>
+                    <span className="mt-2 block text-destructive">
+                      {obraSocialToDelete._count.pacientes} paciente{(obraSocialToDelete._count.pacientes !== 1) ? "s" : ""} perder{(obraSocialToDelete._count.pacientes === 1) ? "á" : "án"} esta referencia.
+                    </span>
+                  </>
+                )}
               </AlertDialog.Description>
               <div className="mt-6 flex justify-end gap-3">
                 <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>

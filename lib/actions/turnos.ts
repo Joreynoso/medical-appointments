@@ -14,7 +14,43 @@ export type TurnoData = {
   paciente: {
     id: string
     nombre: string
+    telefono: string | null
+    notas: string | null
   }
+}
+
+export async function cambiarEstadoTurno(
+  turnoId: string,
+  nuevoEstado: "CONFIRMADO" | "CANCELADO" | "AUSENTE",
+) {
+  const profesional = await getCurrentProfesional()
+
+  const turno = await prisma.turno.findUnique({
+    where: { id: turnoId },
+    select: { estado: true, profesionalId: true },
+  })
+
+  if (!turno) throw new Error("Turno no encontrado")
+  if (turno.profesionalId !== profesional.id) throw new Error("No autorizado")
+
+  const transiciones: Record<string, string[]> = {
+    PENDIENTE: ["CONFIRMADO", "CANCELADO"],
+    CONFIRMADO: ["CANCELADO", "AUSENTE"],
+    CANCELADO: ["CONFIRMADO"],
+    AUSENTE: ["CONFIRMADO"],
+  }
+
+  const permitidos = transiciones[turno.estado]
+  if (!permitidos?.includes(nuevoEstado)) {
+    throw new Error(`No se puede cambiar el estado de "${turno.estado}" a "${nuevoEstado}"`)
+  }
+
+  await prisma.turno.update({
+    where: { id: turnoId },
+    data: { estado: nuevoEstado },
+  })
+
+  revalidatePath("/dashboard/agenda")
 }
 
 export const getTurnosEnRango = cache(async (desde: string, hasta: string): Promise<TurnoData[]> => {
@@ -35,7 +71,7 @@ export const getTurnosEnRango = cache(async (desde: string, hasta: string): Prom
       horaFin: true,
       estado: true,
       paciente: {
-        select: { id: true, nombre: true },
+        select: { id: true, nombre: true, telefono: true, notas: true },
       },
     },
     orderBy: { horaInicio: "asc" },
@@ -130,7 +166,7 @@ export async function crearTurno(input: CrearTurnoInput) {
       horaInicio: true,
       horaFin: true,
       estado: true,
-      paciente: { select: { id: true, nombre: true } },
+      paciente: { select: { id: true, nombre: true, telefono: true, notas: true } },
     },
   })
 
@@ -140,4 +176,17 @@ export async function crearTurno(input: CrearTurnoInput) {
     ...turno,
     fecha: turno.fecha.toISOString().slice(0, 10),
   }
+}
+
+export async function getSlotsOcupadosEnFecha(fecha: string): Promise<string[]> {
+  const profesional = await getCurrentProfesional()
+  const turnos = await prisma.turno.findMany({
+    where: {
+      profesionalId: profesional.id,
+      fecha: new Date(fecha + "T00:00:00"),
+      estado: { in: ["PENDIENTE", "CONFIRMADO"] },
+    },
+    select: { horaInicio: true },
+  })
+  return turnos.map((t) => t.horaInicio)
 }

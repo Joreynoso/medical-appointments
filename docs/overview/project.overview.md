@@ -75,6 +75,9 @@ Los pacientes nunca se eliminan físicamente. Se desactivan (`activo: false`). E
 ### Creación rápida de paciente en modal secundario
 Si el paciente no existe al momento de agendar, el profesional lo crea mediante un modal/diálogo rápido en la misma pantalla usando Server Actions. Al registrarse, se selecciona automáticamente en el formulario, evitando redirecciones y pérdidas de estado del calendario.
 
+### Obra Social como catálogo por profesional
+Cada profesional gestiona su propio listado de obras sociales (ABM completo). "Particular" se crea automáticamente. Cada paciente se vincula opcionalmente a una obra social, que se muestra en la tabla de pacientes y en el formulario de creación/edición. En el modal de creación rápida de paciente (desde la agenda) también se pueden ingresar teléfono y obra social.
+
 ### Domingos visibles pero deshabilitados en el calendario
 Los domingos se muestran en el calendario para conservar un diseño de rejilla tradicional, simétrico y profesional, pero la interacción está deshabilitada de forma que no sea posible agendar citas en ese día.
 
@@ -115,6 +118,11 @@ Anotaciones breves que documentan una decisión técnica o de diseño: qué se d
 | ADR-014 | Helper getCurrentProfesional (Clerk lazy init) |
 | ADR-015 | Unificación de la carga de páginas en el dashboard |
 | ADR-016 | Rediseño del Footer (Tema Invertido y 500px) |
+| ADR-017 | Modal global de creación de turno via React Context |
+| ADR-018 | Reemplazo de inputs nativos de fecha/hora por Popover+Calendar y Select personalizado |
+| ADR-019 | Configuración base por defecto + días laborables + horario dinámico en vistas |
+| ADR-020 | Flujo de estados de turno: transiciones, visibilidad y slot libre |
+| ADR-021 | Modelo ObraSocial: ABM por profesional y relación con Paciente |
 
 ---
 
@@ -123,6 +131,7 @@ Anotaciones breves que documentan una decisión técnica o de diseño: qué se d
 ### Qué hace la app
 - Gestión completa de turnos (crear, ver, cancelar, cambiar estado)
 - ABM de pacientes
+- ABM de obras sociales con "Particular" pre-cargada
 - Calendario mensual y semanal con feriados pintados
 - Chat con IA para consultas y acciones rápidas
 - Auth segura para el profesional
@@ -160,3 +169,4 @@ El uso de IA no reemplazó el criterio propio. Cada decisión fue evaluada, cues
 - Integración con sistemas de pago
 - Agenda sin slots fijos — duración completamente libre para cada turno (tipo Google Calendar)
 - Widget de clima configurable: selección de ciudad desde la pantalla de Configuración para que el widget muestre el clima de la localidad elegida por el profesional
+- Componente Select custom con `@base-ui/react/select` que aplique los colores de `globals.css` y reemplace los `<select>` nativos para eliminar el hover azul del dropdown en todos los browsers

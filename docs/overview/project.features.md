@@ -41,21 +41,23 @@
 
 ### FEATURE 4 — Gestión de turnos (modo tradicional)
 - [x] Lógica de generación de slots: dado un día, generar todos los bloques disponibles según `ConfiguracionProfesional` (horario de atención + duración de slot)
-- [ ] Mostrar solo slots libres al crear un turno (slots ocupados no aparecen como opción)
+- [x] Mostrar solo slots libres al crear un turno (slots ocupados con PENDIENTE/CONFIRMADO no aparecen; CANCELADO/AUSENTE sí están disponibles)
 - [x] Server Action `crearTurno` con validaciones (domingo, feriado, rango horario, días laborables, sin superposición)
 - [x] Botón global "Nuevo turno" en Topbar (disponible en todas las vistas del dashboard)
 - [x] Modal `CrearTurnoModal` con `@base-ui/react` Dialog:
   - Selector de fecha con shadcn Popover + Calendar (react-day-picker) y hora con `<select>` personalizado de slots del profesional
+  - Slots ocupados filtrados dinámicamente vía `getSlotsOcupadosEnFecha`
   - Selector de paciente con búsqueda integrada (filtra mientras se escribe)
-  - Opción fija "＋ Crear nuevo paciente" que abre formulario inline (invoca Server Action `crearPaciente`)
+  - Datos del paciente mostrados al seleccionarlo (nombre, teléfono, obra social)
+  - Opción fija "＋ Crear nuevo paciente" que abre formulario inline con nombre, teléfono y obra social (invoca Server Action `crearPaciente`)
   - Al crearse con éxito, se selecciona automáticamente el paciente en el selector
 - [ ] Crear turno desde modal al clickear un bloque libre en el calendario (fecha y slot pre-cargados)
-- [ ] Modal de detalle al clickear un bloque ocupado:
-  - Datos del turno (fecha, hora, estado)
-  - Datos del paciente
-  - Acciones disponibles: cambiar estado, cancelar turno (con confirmación)
-- [ ] Estados del turno: pendiente → confirmado → cancelado / ausente
-- [ ] Cancelar turno con confirmación explícita antes de ejecutar
+- [x] Modal de detalle al clickear un bloque ocupado (vista semanal):
+  - Datos del turno (fecha, hora, estado con badge)
+  - Datos del paciente (nombre, teléfono, notas si existen)
+  - Acciones: Confirmar, Cancelar (con confirmación inline), Marcar ausente
+- [x] Estados del turno: PENDIENTE → CONFIRMADO / CANCELADO; CONFIRMADO → CANCELADO / AUSENTE; CANCELADO/AUSENTE → CONFIRMADO
+- [x] Cancelar turno con confirmación inline dentro del mismo modal (sin AlertDialog anidado)
 
 ### FEATURE 4B — Configuración del consultorio
 - [x] Página `/dashboard/configuracion` con formulario completo:
@@ -73,6 +75,17 @@
 
 ---
 
+### FEATURE 4C — ABM de obras sociales
+- [x] Listar obras sociales activas del profesional (con contador de pacientes vinculados)
+- [x] Crear obra social (nombre obligatorio)
+- [x] Editar obra social
+- [x] Desactivar obra social (soft delete — FK `SET NULL` en pacientes vinculados)
+- [x] Búsqueda por nombre dentro del listado
+- [x] "Particular" auto-creada al listar si el profesional no tiene ninguna
+- [x] Vista responsive (tabla desktop + tarjetas mobile) mismo diseño que pacientes
+
+---
+
 ### FEATURE 5 — Vista de agenda (calendario)
 - [x] Vista mensual navegable (mes anterior / mes siguiente)
 - [x] Vista semanal navegable (semana anterior / semana siguiente)
@@ -81,7 +94,7 @@
 - [x] Feriados pintados visualmente en ambas vistas (leídos desde tabla `Feriado`, sin llamadas externas)
 - [x] Turnos visibles en el calendario con indicadores de color por estado (pendiente, confirmado, cancelado, ausente)
 - [ ] Click en bloque libre → modal de creación de turno (Feature 4)
-- [ ] Click en bloque ocupado → modal de detalle del turno (Feature 4)
+- [x] Click en bloque ocupado → modal de detalle del turno (Feature 4)
 - [ ] Click en día del calendario mensual → navega a la vista semanal de esa semana
 
 ---
@@ -127,7 +140,9 @@
 ---
 
 ### FEATURE 10 — Estados y flujo de turno mejorado
-- [ ] Distinguir claramente turno "ausente" del turno "cancelado" en la interfaz
+- [x] Distinguir claramente turno "ausente" del turno "cancelado" en la interfaz
+  - Ausente: badge naranja, visible en calendario (registro de inasistencia)
+  - Cancelado: badge rojo, oculto del calendario (slot se libera y aparece como disponible)
 
 ---
 
@@ -175,3 +190,4 @@
 - Los botones de acceso directo del chat disparan tools directamente — no pasan por el LLM innecesariamente.
 - La tabla `Feriado` es la única fuente de verdad para feriados en toda la app — nunca consultar la API externa en runtime.
 - Los slots se generan dinámicamente desde `ConfiguracionProfesional` — nunca guardar slots vacíos en la base de datos.
+- Los turnos CANCELADO se ocultan del calendario y el slot se libera para re-asignación. Los turnos AUSENTE permanecen visibles como registro de inasistencia.

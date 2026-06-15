@@ -102,6 +102,14 @@ async function main() {
   })
   console.log(`✓ Profesional creado: ${profesional.nombre}`)
 
+  const particular = await prisma.obraSocial.create({
+    data: {
+      profesionalId: profesional.id,
+      nombre: "Particular",
+    },
+  })
+  console.log("✓ Obra social 'Particular' creada")
+
   const pacientesData = [
     { nombre: "María García", telefono: "11-2345-6789" },
     { nombre: "Carlos López", telefono: "11-3456-7890" },
@@ -114,7 +122,7 @@ async function main() {
   const pacientes = await Promise.all(
     pacientesData.map((p) =>
       prisma.paciente.create({
-        data: { ...p, profesionalId: profesional.id },
+        data: { ...p, profesionalId: profesional.id, obraSocialId: particular.id },
       })
     ),
   )

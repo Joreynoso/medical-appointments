@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo, useRef } from "react"
 import { MonthView } from "@/components/agenda/month-view"
 import { WeekView } from "@/components/agenda/week-view"
 import { CalendarToolbar } from "@/components/agenda/calendar-toolbar"
+import { DetalleTurnoModal } from "@/components/agenda/detalle-turno-modal"
 import { usePageHeaderActions } from "@/components/dashboard/page-header-context"
 import { useCrearTurno } from "@/components/agenda/crear-turno-context"
 import { addMonths, addWeeks } from "@/components/agenda/calendar-utils"
@@ -14,19 +15,27 @@ import type { TurnoData, ConfigHoraria } from "@/lib/actions/turnos"
 type PacienteSimple = {
   id: string
   nombre: string
+  telefono: string | null
+  obraSocialNombre: string | null
+}
+
+type ObraSocialSimple = {
+  id: string
+  nombre: string
 }
 
 type AgendaClientProps = {
   initialFeriados: Array<{ fecha: string; nombre: string }>
   initialTurnos: TurnoData[]
   initialPacientes: PacienteSimple[]
+  initialObrasSociales: ObraSocialSimple[]
   horarioDesde: string
   horarioHasta: string
   diasLaborables: number[]
 }
 
-export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes, horarioDesde, horarioHasta, diasLaborables }: AgendaClientProps) {
-  const { setPacientes, setRefreshRange, setOnTurnosChange } = useCrearTurno()
+export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes, initialObrasSociales, horarioDesde, horarioHasta, diasLaborables }: AgendaClientProps) {
+  const { setPacientes, setObrasSociales, setRefreshRange, setOnTurnosChange } = useCrearTurno()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week">("month")
   const [todayFlash, setTodayFlash] = useState(false)
@@ -40,6 +49,8 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
     return map
   })
   const [turnos, setTurnos] = useState<TurnoData[]>(initialTurnos)
+  const [selectedTurno, setSelectedTurno] = useState<TurnoData | null>(null)
+  const [detailModalOpen, setDetailModalOpen] = useState(false)
 
   const turnosPorFecha = useMemo(() => {
     const map = new Map<string, TurnoData[]>()
@@ -106,6 +117,26 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
     flashTimeout.current = setTimeout(() => setTodayFlash(false), 2000)
   }, [ensureFeriados, ensureTurnos])
 
+  const handleTurnoClick = useCallback((turno: TurnoData) => {
+    setSelectedTurno(turno)
+    setDetailModalOpen(true)
+  }, [])
+
+  const handleTurnoUpdated = useCallback(async () => {
+    const year = currentDate.getFullYear()
+    const month = currentDate.getMonth()
+    const desde = new Date(year, month - 1, 1).toISOString().slice(0, 10)
+    const hasta = new Date(year, month + 2, 0).toISOString().slice(0, 10)
+    const data = await getTurnosEnRango(desde, hasta)
+    setTurnos((prev) => {
+      const map = new Map<string, TurnoData>()
+      for (const t of prev) map.set(t.id, t)
+      for (const t of data) map.set(t.id, t)
+      return Array.from(map.values())
+    })
+    loadedRange.current = { desde, hasta }
+  }, [currentDate])
+
   useEffect(() => {
     return () => {
       if (flashTimeout.current) clearTimeout(flashTimeout.current)
@@ -116,7 +147,8 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
 
   useEffect(() => {
     setPacientes(initialPacientes)
-  }, [initialPacientes, setPacientes])
+    setObrasSociales(initialObrasSociales)
+  }, [initialPacientes, setPacientes, initialObrasSociales, setObrasSociales])
 
   useEffect(() => {
     const year = currentDate.getFullYear()
@@ -145,6 +177,7 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
   }, [currentDate, viewMode, handlePrev, handleNext, handleToday, setActions])
 
   return (
+    <>
     <div className="space-y-6">
       {viewMode === "month" ? (
         <MonthView
@@ -154,6 +187,7 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
           turnosPorFecha={turnosPorFecha}
           diasLaborables={diasLaborables}
           todayFlash={todayFlash}
+          onTurnoClick={handleTurnoClick}
         />
       ) : (
         <WeekView
@@ -164,8 +198,19 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
           horarioHasta={horarioHasta}
           diasLaborables={diasLaborables}
           todayFlash={todayFlash}
+          onTurnoClick={handleTurnoClick}
         />
       )}
     </div>
+      <DetalleTurnoModal
+        turno={selectedTurno}
+        open={detailModalOpen}
+        onOpenChange={(open) => {
+          setDetailModalOpen(open)
+          if (!open) setSelectedTurno(null)
+        }}
+        onStatusChanged={handleTurnoUpdated}
+      />
+    </>
   )
 }

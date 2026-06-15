@@ -31,9 +31,10 @@ type DayCardProps = {
   className?: string
   diasLaborables: number[]
   flash?: boolean
+  onTurnoClick?: (turno: TurnoData) => void
 }
 
-export function DayCard({ day, isHoliday, holidayName, turnos = [], className, diasLaborables, flash }: DayCardProps) {
+export function DayCard({ day, isHoliday, holidayName, turnos = [], className, diasLaborables, flash, onTurnoClick }: DayCardProps) {
   const [maxVisibles, setMaxVisibles] = useState(TURNOS_2XL)
   const disabled = !isHoliday && !diasLaborables.includes(day.date.getDay())
 
@@ -51,8 +52,9 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
     return () => window.removeEventListener("resize", update)
   }, [])
 
-  const visibles = turnos.slice(0, maxVisibles)
-  const restantes = turnos.length - maxVisibles
+  const turnosVisibles = turnos.filter((t) => t.estado !== "CANCELADO")
+  const visibles = turnosVisibles.slice(0, maxVisibles)
+  const restantes = turnosVisibles.length - maxVisibles
 
   const card = (
     <button
@@ -84,19 +86,19 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
             </TooltipContent>
           </Tooltip>
         )}
-        {maxVisibles === 0 && turnos.length > 0 ? (
+        {maxVisibles === 0 && turnosVisibles.length > 0 ? (
           <Tooltip>
             <TooltipTrigger render={
               <div className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0 cursor-default">
                 <span className="h-2 w-2 shrink-0 rounded-sm bg-gray-400" />
                 <span className="truncate text-[10px] 2xl:text-[11px] leading-snug text-muted-foreground">
-                  {turnos.length} turnos
+                  {turnosVisibles.length} turnos
                 </span>
               </div>
             } />
             <TooltipContent side="bottom" align="start" className="bg-popover text-popover-foreground border border-border p-2">
               <div className="space-y-1.5">
-                {turnos.map((t) => (
+                {turnosVisibles.map((t) => (
                   <div key={t.id} className="flex items-center gap-1 text-[11px] whitespace-nowrap">
                     <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
                     <span className="font-medium">{t.horaInicio}</span>
@@ -111,7 +113,11 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
             {visibles.map((t) => (
               <div
                 key={t.id}
-                className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0"
+                className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={() => onTurnoClick?.(t)}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTurnoClick?.(t) } }}
               >
                 <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
                 <span className="truncate text-[10px] 2xl:text-[11px] leading-snug text-foreground">
@@ -131,7 +137,7 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
                 } />
                 <TooltipContent side="bottom" align="start" className="bg-popover text-popover-foreground border border-border p-2">
                   <div className="space-y-1.5">
-                    {turnos.slice(maxVisibles).map((t) => (
+                    {turnosVisibles.slice(maxVisibles).map((t) => (
                       <div key={t.id} className="flex items-center gap-1 text-[11px] whitespace-nowrap">
                         <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
                         <span className="font-medium">{t.horaInicio}</span>

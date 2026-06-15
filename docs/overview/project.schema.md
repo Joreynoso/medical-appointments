@@ -11,6 +11,10 @@ Profesional
     │
     ├──── ConfiguracionProfesional (1:1)
     │
+    ├──── ObraSocial (1:N)
+    │         │
+    │         └──── Paciente (1:N)
+    │
     ├──── Paciente (1:N)
     │         │
     │         └──── Turno (1:N)
@@ -67,6 +71,30 @@ Configuración de agenda del profesional. Define cómo se generan los slots disp
 
 ---
 
+### `ObraSocial`
+Obra social o prepaga que el profesional gestiona en su catálogo. Cada profesional tiene su propio listado.
+
+| Campo | Tipo | Descripción |
+|---|---|---|
+| `id` | `String` (cuid) | ID interno |
+| `profesionalId` | `String` | Referencia al profesional que la creó |
+| `nombre` | `String` | Nombre de la obra social (unique por profesional) |
+| `activo` | `Boolean` | Soft delete — `false` = desactivada |
+| `createdAt` | `DateTime` | Fecha de creación |
+| `updatedAt` | `DateTime` | Última actualización |
+
+**Relaciones:**
+- Pertenece a un `Profesional`
+- Tiene muchos `Paciente` (1:N)
+
+**Decisiones:**
+- Per-profesional: cada profesional gestiona su propio catálogo (mismo patrón que `Paciente`).
+- `@@unique([profesionalId, nombre])` evita duplicados de nombre por profesional.
+- "Particular" se auto-crea al listar obras sociales si el profesional no tiene ninguna.
+- Soft delete con `activo: false`. Al desactivar, los pacientes vinculados conservan su registro pero pierden la referencia (FK `ON DELETE SET NULL`).
+
+---
+
 ### `Paciente`
 Paciente dado de alta por el profesional. No tiene acceso al sistema.
 
@@ -74,6 +102,7 @@ Paciente dado de alta por el profesional. No tiene acceso al sistema.
 |---|---|---|
 | `id` | `String` (cuid) | ID interno |
 | `profesionalId` | `String` | Referencia al profesional que lo dio de alta |
+| `obraSocialId` | `String?` | Referencia a la obra social del paciente (opcional) |
 | `nombre` | `String` | Nombre completo |
 | `telefono` | `String?` | Teléfono de contacto (opcional) |
 | `notas` | `String?` | Notas internas del profesional (opcional) |
@@ -83,6 +112,7 @@ Paciente dado de alta por el profesional. No tiene acceso al sistema.
 
 **Relaciones:**
 - Pertenece a un `Profesional`
+- Pertenece a una `ObraSocial` (opcional)
 - Tiene muchos `Turno` (1:N)
 
 **Decisiones:**
@@ -90,6 +120,7 @@ Paciente dado de alta por el profesional. No tiene acceso al sistema.
 - Las consultas de listado siempre filtran por `activo: true` por defecto.
 - Los turnos históricos de un paciente desactivado se conservan íntegros.
 - `telefono` es opcional porque no todos los contextos lo requieren, pero se incluye desde el inicio por ser dato crítico en salud.
+- `obraSocialId` es opcional. Al desactivar una obra social, los pacientes quedan sin referencia (FK `SET NULL`) pero no se pierden.
 
 ---
 
@@ -191,6 +222,7 @@ model Profesional {
   email         String                    @unique
   configuracion ConfiguracionProfesional?
   pacientes     Paciente[]
+  obrasSociales ObraSocial[]
   turnos        Turno[]
   createdAt     DateTime                  @default(now())
   updatedAt     DateTime                  @updatedAt
@@ -208,10 +240,25 @@ model ConfiguracionProfesional {
   updatedAt       DateTime    @updatedAt
 }
 
+model ObraSocial {
+  id            String      @id @default(cuid())
+  profesionalId String
+  profesional   Profesional @relation(fields: [profesionalId], references: [id])
+  nombre        String
+  activo        Boolean     @default(true)
+  pacientes     Paciente[]
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+
+  @@unique([profesionalId, nombre])
+}
+
 model Paciente {
   id            String      @id @default(cuid())
   profesionalId String
   profesional   Profesional @relation(fields: [profesionalId], references: [id])
+  obraSocialId  String?
+  obraSocial    ObraSocial? @relation(fields: [obraSocialId], references: [id])
   nombre        String
   telefono      String?
   notas         String?
@@ -248,10 +295,12 @@ model Feriado {
 
 ## Notas para el agente
 
-- Nunca eliminar registros de `Paciente` físicamente. Usar `activo: false`.
+- Nunca eliminar registros de `Paciente` ni `ObraSocial` físicamente. Usar `activo: false`.
 - Los slots no se guardan en la base de datos. Se generan en runtime.
 - `horaFin` siempre se calcula al crear el turno, nunca se deja vacío.
 - Antes de correr cualquier migración, describir los cambios y esperar aprobación.
 - La tabla `Feriado` no tiene relación con `Profesional` — es global e intocable en runtime.
 - `diasLaborables` excluye domingo (0) — validado en UI y server. No se debe permitir nunca.
 - La config base se auto-crea al registrar un nuevo profesional. `getCurrentProfesional()` siempre retorna config poblada.
+- "Particular" se auto-crea para cada profesional al listar obras sociales si no tiene ninguna.
+- `ObraSocial` tiene unique compuesto `[profesionalId, nombre]` — no crear duplicados.

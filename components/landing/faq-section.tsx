@@ -5,29 +5,34 @@ import { cn } from "@/lib/utils"
 
 const faqs = [
   {
-    question: "¿Cómo funciona el sistema de agendamiento?",
+    question: "¿Cómo funciona la gestión de turnos?",
     answer:
-      "Seleccionás al profesional, elegís un turno disponible y lo confirmás al instante. La IA optimiza los horarios para evitar superposiciones y maximizar la eficiencia de la agenda.",
+      "Podés administrar tu agenda de dos formas: desde un calendario visual donde creás, consultás y cancelás turnos directamente, o mediante un chat con IA que responde preguntas en lenguaje natural, como '¿qué turnos tengo mañana?' o '¿hay disponibilidad esta semana?'.",
   },
   {
-    question: "¿Es necesario registrarse para usarlo?",
+    question: "¿Los pacientes pueden sacar turnos por su cuenta?",
     answer:
-      "Sí, necesitás crear una cuenta gratuita para acceder al dashboard. El registro es rápido y podés gestionar todos tus turnos desde un solo lugar.",
+      "No. El sistema no tiene portal para pacientes. El único usuario sos vos, el profesional. Los pacientes los das de alta vos mismo dentro de la app al momento de agendar un turno, sin necesidad de que ellos tengan cuenta.",
   },
   {
-    question: "¿Puedo cancelar o reprogramar un turno?",
+    question: "¿Puedo crear un paciente mientras agendo un turno?",
     answer:
-      "Sí, desde tu perfil podés cancelar o reprogramar turnos con antelación. El sistema libera automáticamente el horario y te muestra nuevas opciones disponibles.",
+      "Sí. Si el paciente aún no está registrado, lo creás en el mismo formulario con un modal rápido. Al guardarlo, se selecciona automáticamente y seguís con la carga del turno sin perder lo que ya completaste.",
   },
   {
-    question: "¿Los datos médicos están protegidos?",
+    question: "¿Qué pasa si cancelo un turno?",
     answer:
-      "Absolutamente. Cumplimos con normativas de protección de datos. Toda la información se transmite cifrada y se almacena de forma segura.",
+      "El slot se libera automáticamente y vuelve a aparecer como disponible para otro paciente. Los turnos cancelados se ocultan del calendario, mientras que los pacientes ausentes quedan registrados visualmente para que tengas un control de inasistencias.",
   },
   {
-    question: "¿Integra con mi calendario personal?",
+    question: "¿Los datos de mis pacientes están protegidos?",
     answer:
-      "Sí, podés sincronizar tus turnos con Google Calendar, Outlook o iCal. Recibís recordatorios automáticos para no olvidar ninguna cita.",
+      "Sí. Toda la información se transmite cifrada y se almacena de forma segura. Los pacientes nunca se eliminan físicamente — solo se desactivan — para preservar el historial clínico y la integridad de los datos.",
+  },
+  {
+    question: "¿Puedo configurar mis horarios de atención?",
+    answer:
+      "Sí. Desde la sección de configuración definís tus días laborables, el horario de atención y la duración de cada turno. El sistema genera automáticamente los slots disponibles y evita superposiciones.",
   },
 ]
 
