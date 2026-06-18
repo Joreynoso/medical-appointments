@@ -2,13 +2,19 @@
 
 import { cn } from "@/lib/utils"
 import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/ui/tooltip"
+import {
   getWeekDays,
   getDayName,
   formatDateKey,
 } from "@/components/agenda/calendar-utils"
+import { TurnoBlock, HOUR_HEIGHT } from "@/components/agenda/turno-block"
+import { DayView } from "@/components/agenda/day-view"
+import { useMediaQuery } from "@/hooks/use-media-query"
 import type { TurnoData } from "@/lib/actions/turnos"
-
-const HOUR_HEIGHT = 56
 
 type WeekViewProps = {
   currentDate: Date
@@ -21,59 +27,23 @@ type WeekViewProps = {
   onTurnoClick?: (turno: TurnoData) => void
 }
 
-function parseTime(time: string): { hour: number; minute: number } {
-  const [h, m] = time.split(":").map(Number)
-  return { hour: h, minute: m }
-}
-
-function getMinutesFromStart(time: string, startHour: number): number {
-  const { hour, minute } = parseTime(time)
-  return (hour - startHour) * 60 + minute
-}
-
-function getTurnoTop(horaInicio: string, startHour: number): number {
-  return Math.max(0, getMinutesFromStart(horaInicio, startHour) * (HOUR_HEIGHT / 60))
-}
-
-function getTurnoHeight(horaInicio: string, horaFin: string, startHour: number): number {
-  const duration = getMinutesFromStart(horaFin, startHour) - getMinutesFromStart(horaInicio, startHour)
-  return Math.max(18, duration * (HOUR_HEIGHT / 60))
-}
-
-const estadoBorder: Record<string, string> = {
-  PENDIENTE: "border-l-amber-400",
-  CONFIRMADO: "border-l-emerald-500",
-  CANCELADO: "border-l-red-400",
-  AUSENTE: "border-l-gray-400",
-}
-
-function TurnoBlock({ turno, startHour, onClick }: { turno: TurnoData; startHour: number; onClick?: () => void }) {
-  return (
-    <div
-      className={cn(
-        "absolute left-0.5 right-0.5 rounded-md border-l-2 bg-muted/50 px-2 py-1",
-        "overflow-hidden cursor-pointer hover:opacity-90 transition-opacity",
-        "pointer-events-auto",
-        estadoBorder[turno.estado],
-      )}
-      style={{
-        top: getTurnoTop(turno.horaInicio, startHour),
-        height: getTurnoHeight(turno.horaInicio, turno.horaFin, startHour),
-      }}
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onClick?.() } }}
-    >
-      <div className="truncate text-xs leading-snug text-foreground">
-        <span className="font-medium">{turno.horaInicio}</span>{" "}
-        {turno.paciente.nombre}
-      </div>
-    </div>
-  )
-}
-
 export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, horarioHasta, diasLaborables, todayFlash, onTurnoClick }: WeekViewProps) {
+  const isDesktop = useMediaQuery("(min-width: 768px)")
+
+  if (!isDesktop) {
+    return (
+      <DayView
+        currentDate={currentDate}
+        feriados={feriados}
+        turnosPorFecha={turnosPorFecha}
+        horarioDesde={horarioDesde}
+        horarioHasta={horarioHasta}
+        diasLaborables={diasLaborables}
+        todayFlash={todayFlash}
+        onTurnoClick={onTurnoClick}
+      />
+    )
+  }
   const days = getWeekDays(currentDate)
   const startHour = parseInt(horarioDesde.split(":")[0])
   const endHour = parseInt(horarioHasta.split(":")[0])
@@ -126,9 +96,16 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
                   {day.dayNumber}
                 </div>
                 {holiday && (
-                  <div className="mt-0.5 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                    {holiday}
-                  </div>
+                  <Tooltip>
+                    <TooltipTrigger render={
+                      <div className="mt-0.5 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground truncate max-w-20">
+                        {holiday}
+                      </div>
+                    } />
+                    <TooltipContent side="top">
+                      {holiday}
+                    </TooltipContent>
+                  </Tooltip>
                 )}
               </div>
             )

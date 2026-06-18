@@ -39,7 +39,7 @@ export function SidebarNav() {
   const { collapsed, expanded } = useSidebar()
 
   return (
-    <nav className="sidebar-navigation flex-1 overflow-y-auto px-3 pt-4 pb-4 space-y-1">
+    <nav className={cn("sidebar-navigation flex-1 overflow-y-auto pt-4 pb-4 space-y-1", expanded ? "px-3" : "px-0")}>
       {navItems.map((item) => {
         const Icon = item.icon
         const active = isActivePath(pathname, item.href)
@@ -52,7 +52,7 @@ export function SidebarNav() {
               "nav-item flex items-center rounded-full text-sm font-medium transition-all",
               expanded
                 ? "mx-2 gap-3 px-4 py-2.5"
-                : "justify-center mx-auto size-10",
+                : "justify-center mx-auto size-9",
               active
                 ? "bg-primary/10 text-primary"
                 : "text-sidebar-foreground/60 hover:bg-sidebar-accent/5 hover:text-sidebar-foreground",

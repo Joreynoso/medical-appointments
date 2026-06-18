@@ -54,7 +54,7 @@ export function PageHeader({ title, description }: PageHeaderProps) {
           </p>
         )}
       </div>
-      <div className="page-header-actions flex items-center gap-3 self-end sm:self-auto">
+      <div className="page-header-actions flex flex-wrap items-center gap-3 self-end sm:self-auto w-full sm:w-auto justify-end">
         <PageHeaderActionsClient />
       </div>
     </section>

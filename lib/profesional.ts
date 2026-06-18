@@ -18,8 +18,9 @@ export async function getCurrentProfesional() {
     const email = clerkUser.email_addresses?.[0]?.email_address ?? ""
     const nombre = [clerkUser.first_name, clerkUser.last_name].filter(Boolean).join(" ") || email.split("@")[0]
 
-    profesional = await prisma.profesional.create({
-      data: {
+    profesional = await prisma.profesional.upsert({
+      where: { clerkId: userId },
+      create: {
         clerkId: userId,
         nombre,
         email,
@@ -32,6 +33,7 @@ export async function getCurrentProfesional() {
           },
         },
       },
+      update: { nombre },
       include: { configuracion: true },
     })
   }

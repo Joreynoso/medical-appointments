@@ -22,7 +22,7 @@ export function CalendarToolbar({
   onViewChange,
 }: CalendarToolbarProps) {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
       <div className="flex items-center gap-1">
         <Button variant="outline" size="icon-sm" onClick={onPrev} aria-label="Anterior">
           <ChevronLeft className="size-4" />
@@ -36,18 +36,20 @@ export function CalendarToolbar({
         {formatMonthYear(currentDate)}
       </span>
 
-      <Button variant="outline" size="icon-sm" onClick={onToday} aria-label="Hoy" className="md:hidden" />
+      <Button variant="outline" size="icon-sm" onClick={onToday} aria-label="Hoy" className="md:hidden">
+        <CalendarDays className="size-4" />
+      </Button>
       <Button variant="outline" size="sm" onClick={onToday} className="hidden md:inline-flex">
         <CalendarDays className="size-3.5" />
         Hoy
       </Button>
 
-      <div className="ml-1 flex overflow-hidden rounded-lg border border-border">
+      <div className="flex overflow-hidden rounded-lg border border-border max-sm:flex-1 sm:ml-1">
         <button
           type="button"
           onClick={() => onViewChange("month")}
           className={[
-            "px-3 py-1.5 text-xs font-medium transition-all",
+            "px-3 py-1.5 text-xs font-medium transition-all flex-1 sm:flex-none",
             viewMode === "month"
               ? "bg-primary text-primary-foreground"
               : "bg-background text-muted-foreground hover:text-foreground",
@@ -59,7 +61,7 @@ export function CalendarToolbar({
           type="button"
           onClick={() => onViewChange("week")}
           className={[
-            "px-3 py-1.5 text-xs font-medium transition-all",
+            "px-3 py-1.5 text-xs font-medium transition-all flex-1 sm:flex-none",
             viewMode === "week"
               ? "bg-primary text-primary-foreground"
               : "bg-background text-muted-foreground hover:text-foreground",

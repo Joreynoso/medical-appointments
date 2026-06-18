@@ -1,14 +1,16 @@
 "use client"
 
+import { useState } from "react"
 import { useUser, useClerk } from "@clerk/nextjs"
 import { LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { useSidebar } from "./sidebar-context"
+import { CerrarSesionModal } from "./cerrar-sesion-modal"
 
 export function SidebarUser() {
   const { user } = useUser()
-  const { signOut } = useClerk()
   const { collapsed, expanded } = useSidebar()
+  const [modalOpen, setModalOpen] = useState(false)
 
   if (!user) {
     return (
@@ -82,12 +84,13 @@ export function SidebarUser() {
           </p>
         </div>
         <button
-          onClick={() => signOut()}
+          onClick={() => setModalOpen(true)}
           className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
           aria-label="Cerrar sesión"
         >
           <LogOut className="size-4" />
         </button>
+        <CerrarSesionModal open={modalOpen} onOpenChange={setModalOpen} />
       </div>
     </div>
   )

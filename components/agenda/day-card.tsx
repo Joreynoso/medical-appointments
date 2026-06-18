@@ -2,11 +2,14 @@
 
 import { useEffect, useState } from "react"
 import { cn } from "@/lib/utils"
+import { X, CalendarDays } from "lucide-react"
+import { Dialog } from "@base-ui/react"
 import {
   Tooltip,
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
+import { getDayName, formatDateKey } from "@/components/agenda/calendar-utils"
 import type { DayInfo } from "@/components/agenda/calendar-utils"
 import type { TurnoData } from "@/lib/actions/turnos"
 
@@ -17,7 +20,7 @@ const estadoBar: Record<string, string> = {
   AUSENTE: "bg-gray-400",
 }
 
-const TURNOS_SM = 0
+const TURNOS_MOBILE = 0
 const TURNOS_MD = 1
 const TURNOS_LG = 2
 const TURNOS_XL = 3
@@ -34,15 +37,17 @@ type DayCardProps = {
   onTurnoClick?: (turno: TurnoData) => void
 }
 
+const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
+
 export function DayCard({ day, isHoliday, holidayName, turnos = [], className, diasLaborables, flash, onTurnoClick }: DayCardProps) {
   const [maxVisibles, setMaxVisibles] = useState(TURNOS_2XL)
+  const [modalOpen, setModalOpen] = useState(false)
   const disabled = !isHoliday && !diasLaborables.includes(day.date.getDay())
 
   useEffect(() => {
     const update = () => {
       const w = window.innerWidth
-      if (w < 768) setMaxVisibles(TURNOS_SM)
-      else if (w < 1024) setMaxVisibles(TURNOS_MD)
+      if (w < 1024) setMaxVisibles(TURNOS_MOBILE)
       else if (w < 1280) setMaxVisibles(TURNOS_LG)
       else if (w < 1536) setMaxVisibles(TURNOS_XL)
       else setMaxVisibles(TURNOS_2XL)
@@ -55,6 +60,9 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
   const turnosVisibles = turnos.filter((t) => t.estado !== "CANCELADO")
   const visibles = turnosVisibles.slice(0, maxVisibles)
   const restantes = turnosVisibles.length - maxVisibles
+  const hasManyTurnos = turnosVisibles.length > maxVisibles
+  const isMobileView = maxVisibles === TURNOS_MOBILE
+  const diaSemanaIdx = (day.date.getDay() + 6) % 7
 
   const card = (
     <button
@@ -86,46 +94,93 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
             </TooltipContent>
           </Tooltip>
         )}
-        {maxVisibles === 0 && turnosVisibles.length > 0 ? (
-          <Tooltip>
-            <TooltipTrigger render={
-              <div className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0 cursor-default">
-                <span className="h-2 w-2 shrink-0 rounded-sm bg-gray-400" />
-                <span className="truncate text-[10px] 2xl:text-[11px] leading-snug text-muted-foreground">
-                  {turnosVisibles.length} turnos
+
+        {isMobileView ? (
+          <>
+            {turnosVisibles.length > 0 && (
+              <div
+                className="flex items-center justify-center rounded-md bg-primary/15 px-2 py-1.5 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
+                onClick={(e) => { e.stopPropagation(); setModalOpen(true) }}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setModalOpen(true) } }}
+              >
+                <span className="text-xs font-bold text-primary leading-none">
+                  {turnosVisibles.length}
                 </span>
               </div>
-            } />
-            <TooltipContent side="bottom" align="start" className="bg-popover text-popover-foreground border border-border p-2">
-              <div className="space-y-1.5">
-                {turnosVisibles.map((t) => (
-                  <div key={t.id} className="flex items-center gap-1 text-[11px] whitespace-nowrap">
-                    <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
-                    <span className="font-medium">{t.horaInicio}</span>
-                    <span className="text-muted-foreground">{t.paciente.nombre}</span>
+            )}
+            <Dialog.Root open={modalOpen} onOpenChange={setModalOpen}>
+              <Dialog.Portal>
+                <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+                <Dialog.Popup className="fixed inset-0 z-50 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
+                  <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg max-h-[80vh] flex flex-col">
+                    <div className="mb-4 flex items-center justify-between shrink-0">
+                      <div className="flex items-center gap-2">
+                        <CalendarDays className="size-4 text-muted-foreground" />
+                        <Dialog.Title className="text-sm font-serif text-foreground">
+                          {getDayName(diaSemanaIdx)} {day.dayNumber}
+                        </Dialog.Title>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setModalOpen(false)}
+                        className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </div>
+                    <div className="space-y-1.5 overflow-y-auto">
+                      {turnosVisibles.map((t) => (
+                        <div
+                          key={t.id}
+                          className="flex items-center gap-2 rounded-md bg-muted/50 px-3 py-2 cursor-pointer hover:opacity-80 transition-opacity"
+                          onClick={() => { setModalOpen(false); onTurnoClick?.(t) }}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault()
+                              setModalOpen(false)
+                              onTurnoClick?.(t)
+                            }
+                          }}
+                        >
+                          <span className={cn("h-2.5 w-2.5 shrink-0 rounded-sm", estadoBar[t.estado])} />
+                          <span className="text-xs font-medium text-foreground">{t.horaInicio}</span>
+                          <span className="text-xs text-muted-foreground truncate">{t.paciente.nombre}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                ))}
-              </div>
-            </TooltipContent>
-          </Tooltip>
+                </Dialog.Popup>
+              </Dialog.Portal>
+            </Dialog.Root>
+          </>
         ) : (
           <>
             {visibles.map((t) => (
-              <div
-                key={t.id}
-                className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => onTurnoClick?.(t)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTurnoClick?.(t) } }}
-              >
-                <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
-                <span className="truncate text-[10px] 2xl:text-[11px] leading-snug text-foreground">
-                  {t.horaInicio} {t.paciente.nombre}
-                </span>
-              </div>
+              <Tooltip key={t.id}>
+                <TooltipTrigger render={
+                  <div
+                    className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => onTurnoClick?.(t)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTurnoClick?.(t) } }}
+                  >
+                    <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
+                    <span className="truncate text-[10px] 2xl:text-[11px] leading-snug text-foreground">
+                      {t.horaInicio} {t.paciente.nombre}
+                    </span>
+                  </div>
+                } />
+                <TooltipContent side="top">
+                  {t.horaInicio} — {t.paciente.nombre}
+                </TooltipContent>
+              </Tooltip>
             ))}
-            {restantes > 0 && (
+            {hasManyTurnos && (
               <Tooltip>
                 <TooltipTrigger render={
                   <div className="flex items-center gap-1 rounded-md bg-muted/50 px-2 py-1 min-w-0 cursor-default">
@@ -138,7 +193,14 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
                 <TooltipContent side="bottom" align="start" className="bg-popover text-popover-foreground border border-border p-2">
                   <div className="space-y-1.5">
                     {turnosVisibles.slice(maxVisibles).map((t) => (
-                      <div key={t.id} className="flex items-center gap-1 text-[11px] whitespace-nowrap">
+                      <div
+                        key={t.id}
+                        className="flex items-center gap-1 text-[11px] whitespace-nowrap cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => onTurnoClick?.(t)}
+                        role="button"
+                        tabIndex={0}
+                        onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); onTurnoClick?.(t) } }}
+                      >
                         <span className={cn("h-2 w-2 shrink-0 rounded-sm", estadoBar[t.estado])} />
                         <span className="font-medium">{t.horaInicio}</span>
                         <span className="text-muted-foreground">{t.paciente.nombre}</span>
@@ -153,15 +215,6 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
       </div>
     </button>
   )
-
-  if (day.isToday) {
-    return (
-      <Tooltip>
-        <TooltipTrigger render={card} />
-        <TooltipContent side="top">Hoy</TooltipContent>
-      </Tooltip>
-    )
-  }
 
   return card
 }
