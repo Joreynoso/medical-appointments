@@ -25,7 +25,7 @@ export function ChatMessages({ messages, isLoading }: ChatMessagesProps) {
     return (
       <div className="flex flex-1 items-center justify-center px-6">
         <p className="text-center text-sm text-muted-foreground">
-          Consultá tus turnos usando los botones de arriba o escribí una pregunta.
+          No hay mensajes todavía. Escribí algo o usá el botón 🔧.
         </p>
       </div>
     )

@@ -113,3 +113,34 @@ A decision is relevant if it involves:
 - Start a new feature before the current one is complete
 - Make changes outside the current feature scope without notifying the developer
 - Choose between two approaches without asking first
+
+---
+
+## 📋 Session state
+
+### Done
+- Feature 6: Chat IA setup + tools base (buscar_turnos, consultar_disponibilidad, modal global)
+- Feature 7: Chat IA tools de acción (crear_turno, cancelar_turno) con confirmación inline Sí/No
+- Feature 7 polish:
+  - ToolDropdown reemplazó Quick Actions (único botón 🔧)
+  - ChatOnboarding: tooltip con overlay oscuro, flecha apuntando al botón 🔧
+  - Onboarding oscurece solo el área del modal (bg-black/40), igual que el backdrop
+  - Responsive modal: fullscreen en mobile, con bordes en desktop
+  - Sin bordes separadores entre secciones (title, chat, actions)
+  - Mensaje vacío centrado verticalmente en el área de chat
+  - Botón "No volver a mostrar" y "Entendido" en fila horizontal
+  - Icono Wrench de lucide-react en tooltip (mismo que el botón)
+
+### Current feature
+- Feature 7 — completa y mergeada con polish UX
+
+### Next up
+- Feature 8 — Feriados en el chat (tool consultar_feriados)
+- Feature 9 — Filtros y mejoras en la agenda
+- Feature 13 — Tool de resumen diario
+
+### Key ADRs
+- ADR-022: Click en calendario movido a mejoras futuras
+- ADR-023: Chat como modal global
+- ADR-024: Confirmación destructiva en dos fases (validate → execute)
+- ADR-025: Onboarding tooltip con overlay transparente y toolButton como referencia

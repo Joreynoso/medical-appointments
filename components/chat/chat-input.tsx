@@ -6,9 +6,10 @@ import { Send } from "lucide-react"
 type ChatInputProps = {
   onSend: (message: string) => void
   disabled: boolean
+  toolButton?: React.ReactNode
 }
 
-export function ChatInput({ onSend, disabled }: ChatInputProps) {
+export function ChatInput({ onSend, disabled, toolButton }: ChatInputProps) {
   const [input, setInput] = useState("")
   const textareaRef = useRef<HTMLTextAreaElement>(null)
 
@@ -33,7 +34,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
   }
 
   return (
-    <div className="flex items-end gap-3 border-t border-border bg-background px-6 py-4">
+    <div className="flex items-end gap-3 bg-background px-6 pt-1 pb-4">
       <textarea
         ref={textareaRef}
         value={input}
@@ -44,6 +45,7 @@ export function ChatInput({ onSend, disabled }: ChatInputProps) {
         disabled={disabled}
         className="flex-1 resize-none rounded-lg border border-border bg-muted px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-50"
       />
+      {toolButton}
       <button
         onClick={handleSubmit}
         disabled={!input.trim() || disabled}

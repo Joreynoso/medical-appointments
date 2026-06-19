@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { User, Menu, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 
 const ClerkUser = dynamic(
@@ -72,8 +73,13 @@ export default function Navbar({ isSignedIn, initials }: NavbarProps) {
         </div>
       </div>
 
-      {mobileOpen && (
-        <div className="sm:hidden border-t border-border bg-background px-6 pb-4 pt-2 flex flex-col gap-3 text-sm text-muted-foreground">
+      <div
+        className={cn(
+          "sm:hidden overflow-hidden transition-all duration-300 ease-in-out",
+          mobileOpen ? "max-h-60 opacity-100" : "max-h-0 opacity-0",
+        )}
+      >
+        <div className="border-t border-border bg-background px-6 pb-4 pt-2 flex flex-col gap-3 text-sm text-muted-foreground">
           <Link
             href="#caracteristicas"
             onClick={() => setMobileOpen(false)}
@@ -105,7 +111,7 @@ export default function Navbar({ isSignedIn, initials }: NavbarProps) {
             </Link>
           )}
         </div>
-      )}
+      </div>
     </nav>
   );
 }

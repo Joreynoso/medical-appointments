@@ -114,11 +114,27 @@
 
 ## 🟡 SHOULD HAVE — Le da valor real al producto
 
-### FEATURE 7 — Chat IA — Tools de acción
-- [ ] Implementar tool: `crear_turno` desde lenguaje natural o desde botón directo
-- [ ] Implementar tool: `cancelar_turno` — accionada desde botón directo con el turno en contexto
-- [ ] Confirmación de acciones destructivas: botones Sí / No dentro del propio chat, no modal externo
-- [ ] Feedback claro en el chat cuando una acción se completó o falló
+### FEATURE 7 — Chat IA — Tools de acción + polish UX
+- [x] Implementar tool: `crear_turno` desde lenguaje natural:
+  - Búsqueda de paciente por nombre (coincidencia parcial, insensitive)
+  - Validación de slot (domingo, feriado, día laborable, rango horario, sin superposición)
+  - Si hay múltiples pacientes o turnos, el LLM pide clarificación
+  - Ejecución real tras confirmación del profesional
+- [x] Implementar tool: `cancelar_turno` desde lenguaje natural:
+  - Búsqueda de paciente + fecha
+  - Validación de existencia del turno activo
+  - Ejecución real tras confirmación del profesional
+- [x] Confirmación de acciones destructivas: botones Sí / No dentro del propio chat, no modal externo
+- [x] Feedback claro en el chat cuando una acción se completó o falló
+- [x] Polish UX:
+  - ToolDropdown reemplazó Quick Actions (único botón 🔧 con dropdown de 5 tools)
+  - ChatOnboarding: tooltip con overlay oscuro, flecha apuntando al botón 🔧
+  - Onboarding oscurece solo el área del modal (bg-black/40), igual que el backdrop
+  - Responsive modal: fullscreen en mobile, con bordes en desktop
+  - Sin bordes separadores entre secciones (title, chat, actions)
+  - Mensaje vacío centrado verticalmente en el área de chat
+  - Botón "No volver a mostrar" y "Entendido" en fila horizontal
+  - Icono Wrench de lucide-react en tooltip (mismo que el botón)
 
 ---
 

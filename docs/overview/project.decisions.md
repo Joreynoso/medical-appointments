@@ -572,6 +572,64 @@ El chat con IA se implementa como un modal global accesible desde un botón en l
 - El estado de la conversación (mensajes) se preserva entre aperturas del modal porque `ChatShell` permanece montado en el árbol de React.
 - La ruta `/dashboard/chat` existe como redirect para no romper bookmarks existentes.
 
+## ADR-024 — Confirmación de acciones destructivas en el chat
+
+**Fecha:** 2026-06-19
+**Estado:** Aceptada
+
+**Decisión:**
+Las tools destructivas del chat (`crear_turno`, `cancelar_turno`) usan un flujo de dos fases: primero `validate` (solo lectura), luego `execute` (escritura). El frontend muestra botones Sí/No inline en el chat para que el profesional confirme antes de persistir.
+
+**Por qué:**
+- Evita que el LLM ejecute acciones no deseadas sin supervisión humana.
+- El patrón de dos fases separa la validación (leer base, verificar disponibilidad) de la escritura.
+- Los botones inline mantienen al usuario dentro del chat, sin modales externos ni navegación.
+- El LLM formatea la confirmación con los datos relevantes (paciente, fecha, hora) antes de pedir el Sí/No.
+
+**Alternativas descartadas:**
+- Ejecutar directamente con confirmación solo en el prompt: inseguro, el LLM puede ignorar la instrucción.
+- Soportar `undo` posterior: más complejo de implementar, requiere bitácora de cambios.
+- Modales externos de confirmación: rompen el flujo del chat, sacan al usuario de contexto.
+
+**Consecuencias:**
+- Cada tool destructiva tiene dos métodos: `validate` (retorna `{ esValido, detalle }`) y `execute` (persiste).
+- La API route distingue tools destructivas por nombre en `destructiveToolNames`; en primera llamada solo valida, en segunda (tras confirmación) ejecuta.
+- El frontend mantiene estado `pendingConfirmation` con los argumentos de la tool; al rechazar, se limpia y se muestra mensaje de cancelación.
+- Las tools de solo lectura (`buscar_turnos`, `consultar_disponibilidad`) siguen el flujo directo.
+
+## ADR-025 — Onboarding tooltip con overlay y toolButton como referencia de posición
+
+**Fecha:** 2026-06-19
+**Estado:** Aceptada
+
+**Decisión:**
+El onboarding del chat se implementa como un tooltip flotante que:
+- Se renderiza dentro del modal del chat como overlay `absolute inset-0` con `bg-black/40` (misma opacidad que el `Dialog.Backdrop` del modal, evitando efecto "doble modal").
+- El tooltip card se posiciona justo encima del botón 🔧, con la flecha apuntando al centro del botón.
+- El botón 🔧 se renderiza dentro del onboarding en la misma posición que en `ChatInput` (con un spacer invisible a la derecha simulando el botón de enviar), manteniendo el layout idéntico al real.
+- "No volver a mostrar" es un botón secundario (no checkbox) que guarda `localStorage.setItem("chat_onboarding", "true")` y cierra.
+- "Entendido" solo cierra sin guardar flag.
+
+**Por qué:**
+- El tooltip debe estar anclado al botón 🔧 para que el usuario entienda visualmente a qué se refiere.
+- Renderizar el botón dentro del onboarding evita tener que coordinar dos árboles de React separados; la posición es exacta porque replica el layout de `ChatInput`.
+- Usar la misma opacidad que el backdrop evita acumular capas de oscuridad.
+- Botón "No volver a mostrar" es más simple que checkbox + botón "Entendido" — dos botones lado a lado, uno guarda flag, el otro no.
+- Icono `Wrench` de lucide-react en el tooltip (mismo que el botón) refuerza la relación visual.
+
+**Alternativas descartadas:**
+- Checkbox + botón "Entendido": dos elementos de distinto tipo, más confuso visualmente.
+- Overlay `bg-black/60`: sumado al `bg-black/40` del backdrop, generaba efecto "doble modal" demasiado oscuro.
+- Overlay `bg-transparent`: no oscurecía el contenido del modal, se veía plano.
+- Posicionar tooltip centrado con flecha centrada: la flecha no apuntaba al botón (que está a la derecha).
+- Animar el tooltip con pulse: descartado por ser distractivo.
+
+**Consecuencias:**
+- El onboarding es autónomo: se renderiza como hijo del modal pero no depende de props de posicionamiento.
+- El tooltip se mantiene responsive porque replica el layout del `ChatInput` (flex `justify-end` con spacer).
+- No hay fugas de estado entre sesiones gracias a `localStorage`.
+- Al no haber checkbox, se elimina el estado `dontShowAgain` del componente.
+
 ---
 
 ## 📝 Plantilla para nuevas entradas
