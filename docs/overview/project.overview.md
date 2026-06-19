@@ -123,6 +123,8 @@ Anotaciones breves que documentan una decisión técnica o de diseño: qué se d
 | ADR-019 | Configuración base por defecto + días laborables + horario dinámico en vistas |
 | ADR-020 | Flujo de estados de turno: transiciones, visibilidad y slot libre |
 | ADR-021 | Modelo ObraSocial: ABM por profesional y relación con Paciente |
+| ADR-022 | Exclusión de interacciones por click en calendario (MVP) |
+| ADR-023 | Chat IA como modal global en lugar de página independiente |
 
 ---
 
@@ -170,3 +172,5 @@ El uso de IA no reemplazó el criterio propio. Cada decisión fue evaluada, cues
 - Agenda sin slots fijos — duración completamente libre para cada turno (tipo Google Calendar)
 - Widget de clima configurable: selección de ciudad desde la pantalla de Configuración para que el widget muestre el clima de la localidad elegida por el profesional
 - Componente Select custom con `@base-ui/react/select` que aplique los colores de `globals.css` y reemplace los `<select>` nativos para eliminar el hover azul del dropdown en todos los browsers
+- Click en bloque libre del calendario → modal de creación con fecha y slot pre-cargados
+- Click en día del calendario mensual → navegación a vista semanal de esa semana

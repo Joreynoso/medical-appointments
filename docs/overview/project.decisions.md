@@ -494,6 +494,30 @@ La confirmación de cancelación es inline dentro del modal de detalle (botón "
 
 ---
 
+## ADR-022 — Exclusión de interacciones por click en calendario (MVP)
+
+**Fecha:** 2026-06-18
+**Estado:** Aceptada
+
+**Decisión:**
+Se eliminan del alcance del MVP las siguientes interacciones del calendario:
+- Click en bloque libre → modal de creación con fecha y slot pre-cargados
+- Click en día del calendario mensual → navegación a vista semanal
+
+Ambas se trasladan a mejoras futuras.
+
+**Por qué:**
+Son funcionalidades de navegación/UX que agregan complejidad innecesaria (sobre-ingeniería) sin aportar valor real al núcleo del producto: la gestión de turnos ya funciona correctamente desde el botón "Nuevo turno" en la Topbar y las flechas de navegación semanal. Implementarlas requería lógica extra de coordinación entre componentes, manejo de estados y rutas, cuyo beneficio no justifica el esfuerzo en esta etapa.
+
+**Alternativas descartadas:**
+- Implementarlas: demasiado complejo para el valor que aportan.
+
+**Consecuencias:**
+- El MVP se simplifica, permitiendo enfocar esfuerzos en el chat con IA (Feature 6).
+- Los 3 items quedan documentados en `project.features.md` (Won't Have) y `project.overview.md` (Mejoras futuras) para su eventual implementación post-MVP.
+
+---
+
 ## ADR-021 — Modelo ObraSocial: ABM por profesional y relación con Paciente
 
 **Fecha:** 2026-06-15
@@ -519,6 +543,34 @@ Se creó el modelo `ObraSocial` con FK a `Profesional` (per-profesional), soft d
 - Se agregó ruta `/dashboard/obras-sociales` con navegación en el sidebar.
 - El seed crea "Particular" y la asigna a todos los pacientes de prueba.
 - La migración agregó las tablas y columnas sin downtime (columna nullable, tabla nueva).
+
+---
+
+## ADR-023 — Chat IA como modal global en lugar de página independiente
+
+**Fecha:** 2026-06-18
+**Estado:** Aceptada
+
+**Decisión:**
+El chat con IA se implementa como un modal global accesible desde un botón en la Topbar (icono `Bot` con animación pulse), en lugar de una página independiente `/dashboard/chat`. El estado de la conversación persiste al abrir/cerrar el modal. La ruta `/dashboard/chat` redirige a `/dashboard`.
+
+**Por qué:**
+- El chat es una herramienta de consulta rápida que el profesional necesita tener accesible desde cualquier vista del dashboard sin perder contexto.
+- Como página independiente, obligaba a navegar fuera de la vista actual (agenda, pacientes, etc.) para hacer una consulta.
+- El modal permite consultar "al vuelo" mientras se trabaja en otra sección.
+- El botón en la Topbar con icono y pulse destaca visualmente la funcionalidad sin ser intrusivo.
+- Sigue el mismo patrón que `CrearTurnoModal` (modal global vía contexto React).
+
+**Alternativas descartadas:**
+- Página independiente `/dashboard/chat`: obliga a cambiar de contexto, menos práctico.
+- Panel lateral fijo: consume espacio horizontal valioso en el dashboard.
+- Widget flotante tipo Facebook Messenger: más complejo de implementar, menos integrado con el diseño existente.
+
+**Consecuencias:**
+- Se eliminó la navegación a `/dashboard/chat` del sidebar.
+- El botón en la Topbar está visible en todas las páginas del dashboard.
+- El estado de la conversación (mensajes) se preserva entre aperturas del modal porque `ChatShell` permanece montado en el árbol de React.
+- La ruta `/dashboard/chat` existe como redirect para no romper bookmarks existentes.
 
 ---
 

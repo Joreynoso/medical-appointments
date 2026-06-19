@@ -3,6 +3,7 @@ import { DashboardShell } from "@/components/dashboard/dashboard-shell"
 import { Topbar } from "@/components/dashboard/topbar"
 import { PageHeaderActionsProvider } from "@/components/dashboard/page-header-context"
 import { CrearTurnoProvider } from "@/components/agenda/crear-turno-context"
+import { ChatProvider } from "@/components/chat/chat-context"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "sonner"
 import { sincronizarSiEsNecesario } from "@/lib/feriados"
@@ -20,10 +21,12 @@ export default async function DashboardLayout({
       <PageHeaderActionsProvider>
         <TooltipProvider>
         <CrearTurnoProvider>
+        <ChatProvider>
         <Topbar />
         <section className="content-area flex-1 overflow-y-auto">
           {children}
         </section>
+        </ChatProvider>
         </CrearTurnoProvider>
         </TooltipProvider>
       </PageHeaderActionsProvider>

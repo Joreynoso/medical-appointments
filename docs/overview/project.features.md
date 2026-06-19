@@ -51,7 +51,6 @@
   - Datos del paciente mostrados al seleccionarlo (nombre, teléfono, obra social)
   - Opción fija "＋ Crear nuevo paciente" que abre formulario inline con nombre, teléfono y obra social (invoca Server Action `crearPaciente`)
   - Al crearse con éxito, se selecciona automáticamente el paciente en el selector
-- [ ] Crear turno desde modal al clickear un bloque libre en el calendario (fecha y slot pre-cargados)
 - [x] Modal de detalle al clickear un bloque ocupado (vista semanal):
   - Datos del turno (fecha, hora, estado con badge)
   - Datos del paciente (nombre, teléfono, notas si existen)
@@ -93,25 +92,23 @@
   - Domingo visible en el calendario para mantener la UI simétrica, pero bloqueado/deshabilitado para clicks o creación de turnos
 - [x] Feriados pintados visualmente en ambas vistas (leídos desde tabla `Feriado`, sin llamadas externas)
 - [x] Turnos visibles en el calendario con indicadores de color por estado (pendiente, confirmado, cancelado, ausente)
-- [ ] Click en bloque libre → modal de creación de turno (Feature 4)
 - [x] Click en bloque ocupado → modal de detalle del turno (Feature 4)
-- [ ] Click en día del calendario mensual → navega a la vista semanal de esa semana
 
 ---
 
 ### FEATURE 6 — Chat IA — Setup y tools base
-- [ ] Configurar Groq API en el proyecto
-- [ ] Definir system prompt base que contextualice al modelo como asistente de turnos médicos
-- [ ] Manejar historial de conversación: enviar últimos 6 mensajes (3 turnos completos) en cada request para mantener contexto sin inflar consumo de tokens
-- [ ] No llamar al LLM si una acción puede resolverse directamente con datos (los botones de acceso directo van a la tool sin pasar por el modelo)
-- [ ] Crear interfaz de chat (burbujas de mensajes, input de texto, scroll automático)
-- [ ] Botones de acceso directo visibles en el chat (disparan tools directamente sin interpretación de lenguaje natural):
+- [x] Configurar Groq API en el proyecto
+- [x] Definir system prompt base que contextualice al modelo como asistente de turnos médicos
+- [x] Manejar historial de conversación: enviar últimos 6 mensajes (3 turnos completos) en cada request para mantener contexto sin inflar consumo de tokens
+- [x] No llamar al LLM si una acción puede resolverse directamente con datos (los botones de acceso directo van a la tool sin pasar por el modelo)
+- [x] Crear interfaz de chat (modal global accesible desde la Topbar, burbujas de mensajes, input de texto, scroll automático, respuestas en Markdown)
+- [x] Botones de acceso directo visibles en el chat (disparan tools directamente sin interpretación de lenguaje natural):
   - Ver turnos de hoy
   - Ver disponibilidad
   - Consultar feriados
-- [ ] Implementar tool: `buscar_turnos` (por fecha, paciente o estado)
-- [ ] Implementar tool: `consultar_disponibilidad` (slots libres para una fecha dada)
-- [ ] El chat responde solo con datos reales de la base
+- [x] Implementar tool: `buscar_turnos` (por fecha, paciente o estado)
+- [x] Implementar tool: `consultar_disponibilidad` (slots libres para una fecha dada)
+- [x] El chat responde solo con datos reales de la base
 
 ---
 
@@ -178,6 +175,8 @@
 - Historia clínica completa
 - Configuración de días laborables por profesional (el domingo está bloqueado; en el futuro el profesional define qué días atiende)
 - Turno recurrente (repetir cada N semanas)
+- Click en bloque libre del calendario → abre modal de creación con fecha y slot pre-cargados
+- Click en día del calendario mensual → navega a la vista semanal de esa semana
 
 ---
 

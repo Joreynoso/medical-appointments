@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@plugin "@tailwindcss/typography";
 
 
 @custom-variant dark (&:is(.dark *));
@@ -163,7 +164,7 @@
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
 
-  --animate-sidebar-enter: sidebar-enter 0.4s ease-out;
+  --animate-sidebar-enter: sidebar-enter 0.5s ease-out;
   --animate-content-enter: content-enter 0.5s ease-out;
 }
 

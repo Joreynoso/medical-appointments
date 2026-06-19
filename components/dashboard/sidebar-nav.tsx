@@ -8,7 +8,6 @@ import {
   Home,
   Calendar,
   Users,
-  MessageSquare,
   Settings,
   Stethoscope,
   type LucideIcon,
@@ -25,7 +24,6 @@ const navItems: NavItem[] = [
   { href: "/dashboard/agenda", label: "Agenda", icon: Calendar },
   { href: "/dashboard/pacientes", label: "Pacientes", icon: Users },
   { href: "/dashboard/obras-sociales", label: "Obras Sociales", icon: Stethoscope },
-  { href: "/dashboard/chat", label: "Chat IA", icon: MessageSquare },
   { href: "/dashboard/configuracion", label: "Configuración", icon: Settings },
 ]
 
