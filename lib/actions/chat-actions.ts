@@ -125,6 +125,7 @@ export async function getResumenDisponibilidad(): Promise<string> {
 export async function getResumenFeriados(): Promise<string> {
   const profesional = await getCurrentProfesional()
   const año = new Date().getFullYear()
+  const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
 
   const feriados = await prisma.feriado.findMany({
     where: { fecha: getYearRange(año) },
@@ -135,8 +136,9 @@ export async function getResumenFeriados(): Promise<string> {
   if (feriados.length === 0) return `No hay feriados registrados para ${año}.`
 
   const lineas = feriados.map((f) => {
-    const fecha = f.fecha.toISOString().slice(0, 10)
-    return `- **${fecha}** — ${f.nombre}`
+    const utcStr = f.fecha.toISOString().slice(0, 10)
+    const [, m, d] = utcStr.split("-").map(Number)
+    return `- **${d} de ${meses[m - 1]}** — ${f.nombre}`
   })
 
   return [

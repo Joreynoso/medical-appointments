@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { cambiarEstadoTurno } from "@/lib/actions/turnos"
+import { buscarPacientesPorNombre } from "@/lib/paciente-search"
 
 export const cancelarTurnoTool = {
   type: "function" as const,
@@ -31,15 +32,7 @@ export const cancelarTurnoTool = {
 
     const fechaDate = new Date(args.fecha + "T00:00:00")
 
-    const pacientes = await prisma.paciente.findMany({
-      where: {
-        profesionalId: profesional.id,
-        activo: true,
-        nombre: { contains: args.paciente_nombre, mode: "insensitive" },
-      },
-      select: { id: true, nombre: true },
-      orderBy: { nombre: "asc" },
-    })
+    const pacientes = await buscarPacientesPorNombre(profesional.id, args.paciente_nombre)
 
     if (pacientes.length === 0) {
       return { esValido: false, mensaje: `No se encontró ningún paciente con el nombre "${args.paciente_nombre}".` }
@@ -118,15 +111,9 @@ export const cancelarTurnoTool = {
 
     const fechaDate = new Date(args.fecha + "T00:00:00")
 
-    const paciente = await prisma.paciente.findFirst({
-      where: {
-        profesionalId: profesional.id,
-        activo: true,
-        nombre: { contains: args.paciente_nombre, mode: "insensitive" },
-      },
-      select: { id: true, nombre: true },
-    })
-    if (!paciente) throw new Error(`Paciente "${args.paciente_nombre}" no encontrado.`)
+    const pacientes = await buscarPacientesPorNombre(profesional.id, args.paciente_nombre)
+    if (pacientes.length === 0) throw new Error(`Paciente "${args.paciente_nombre}" no encontrado.`)
+    const paciente = pacientes[0]
 
     const turno = await prisma.turno.findFirst({
       where: {

@@ -67,14 +67,6 @@ async function obtenerOCrearUsuarioClerk(): Promise<string> {
   return created.id
 }
 
-function addMinutes(hora: string, minutos: number): string {
-  const [h, m] = hora.split(":").map(Number)
-  const total = h * 60 + m + minutos
-  const hh = Math.floor(total / 60)
-  const mm = total % 60
-  return `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`
-}
-
 async function main() {
   console.log("🌱 Iniciando seed...")
 
@@ -128,49 +120,7 @@ async function main() {
   )
   console.log(`✓ ${pacientes.length} pacientes creados`)
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
-
-  const tomorrow = new Date(today)
-  tomorrow.setDate(tomorrow.getDate() + 1)
-
-  const yesterday = new Date(today)
-  yesterday.setDate(yesterday.getDate() - 1)
-
-  const twoDaysAgo = new Date(today)
-  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2)
-
-  const nextWeek = new Date(today)
-  nextWeek.setDate(nextWeek.getDate() + 7)
-
-  const turnosData = [
-    { pacienteIdx: 0, fecha: today, horaInicio: "09:00", estado: "PENDIENTE" as const },
-    { pacienteIdx: 1, fecha: today, horaInicio: "10:00", estado: "CONFIRMADO" as const },
-    { pacienteIdx: 2, fecha: today, horaInicio: "11:30", estado: "PENDIENTE" as const },
-    { pacienteIdx: 0, fecha: tomorrow, horaInicio: "09:30", estado: "PENDIENTE" as const },
-    { pacienteIdx: 3, fecha: tomorrow, horaInicio: "11:00", estado: "CONFIRMADO" as const },
-    { pacienteIdx: 4, fecha: tomorrow, horaInicio: "14:00", estado: "PENDIENTE" as const },
-    { pacienteIdx: 1, fecha: nextWeek, horaInicio: "10:00", estado: "CONFIRMADO" as const },
-    { pacienteIdx: 2, fecha: nextWeek, horaInicio: "15:00", estado: "PENDIENTE" as const },
-    { pacienteIdx: 3, fecha: yesterday, horaInicio: "09:00", estado: "CANCELADO" as const },
-    { pacienteIdx: 4, fecha: twoDaysAgo, horaInicio: "10:00", estado: "AUSENTE" as const },
-  ]
-
-  const turnos = await Promise.all(
-    turnosData.map((t) =>
-      prisma.turno.create({
-        data: {
-          profesionalId: profesional.id,
-          pacienteId: pacientes[t.pacienteIdx].id,
-          fecha: t.fecha,
-          horaInicio: t.horaInicio,
-          horaFin: addMinutes(t.horaInicio, 30),
-          estado: t.estado,
-        },
-      })
-    ),
-  )
-  console.log(`✓ ${turnos.length} turnos creados`)
+  console.log("✓ Sin turnos de prueba — se crean desde la app")
 
   console.log("")
   console.log("✅ Seed completado exitosamente")

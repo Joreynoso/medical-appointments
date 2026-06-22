@@ -130,12 +130,12 @@ A decision is relevant if it involves:
   - Mensaje vacío centrado verticalmente en el área de chat
   - Botón "No volver a mostrar" y "Entendido" en fila horizontal
   - Icono Wrench de lucide-react en tooltip (mismo que el botón)
+- Feature 8: Feriados en el chat — botón directo mejorado con año/mes opcionales. Sin tool LLM por ser redundante (ADR-026). Validación de feriados ya cubierta en tools existentes (crear_turno, consultar_disponibilidad).
 
 ### Current feature
-- Feature 7 — completa y mergeada con polish UX
+- Feature 8 — completa
 
 ### Next up
-- Feature 8 — Feriados en el chat (tool consultar_feriados)
 - Feature 9 — Filtros y mejoras en la agenda
 - Feature 13 — Tool de resumen diario
 
@@ -144,3 +144,4 @@ A decision is relevant if it involves:
 - ADR-023: Chat como modal global
 - ADR-024: Confirmación destructiva en dos fases (validate → execute)
 - ADR-025: Onboarding tooltip con overlay transparente y toolButton como referencia
+- ADR-026: Consulta de feriados sin tool LLM (botón directo mejorado)

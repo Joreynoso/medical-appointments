@@ -139,9 +139,11 @@
 ---
 
 ### FEATURE 8 — Feriados en el chat
-- [ ] Implementar tool: `consultar_feriados` ("¿es feriado esta semana?", "¿qué feriados hay en mayo?")
-- [ ] El chat advierte si se intenta crear un turno en un día feriado
-- [ ] Los datos se leen desde la tabla `Feriado` (ya cargada en Feature 2, sin llamadas externas)
+- [x] ~~Tool LLM consultar_feriados~~ Reemplazado por botón directo (ADR-026)
+- [x] El chat advierte si se intenta crear un turno en un día feriado (ya cubierto en `crear_turno.tool.ts` y `consultar_disponibilidad.tool.ts`)
+- [x] Botón directo "Consultar feriados" en ToolDropdown — siempre muestra el año actual
+- [x] Fechas formateadas en UTC para evitar corrimiento por zona horaria
+- [x] Los datos se leen desde la tabla `Feriado` (sin llamadas externas)
 
 ---
 

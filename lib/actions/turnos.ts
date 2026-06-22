@@ -131,9 +131,9 @@ export async function crearTurno(input: CrearTurnoInput) {
   })
   if (feriado) throw new Error(`No se pueden crear turnos en feriados (${feriado.nombre}).`)
 
-  const ahora = new Date()
-  const fechaHoraTurno = new Date(`${input.fecha}T${input.horaInicio}:00`)
-  if (fechaHoraTurno < ahora) throw new Error("No se pueden crear turnos en el pasado.")
+  if (input.fecha < new Date().toISOString().slice(0, 10)) {
+    throw new Error("No se pueden crear turnos en el pasado.")
+  }
 
   if (input.horaInicio < config.horarioDesde) throw new Error(`El horario de atención comienza a las ${config.horarioDesde}.`)
 

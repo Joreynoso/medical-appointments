@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma"
 import { crearTurno } from "@/lib/actions/turnos"
+import { buscarPacientesPorNombre } from "@/lib/paciente-search"
 
 function sumarMinutos(hora: string, minutos: number): string {
   const [h, m] = hora.split(":").map(Number)
@@ -45,21 +46,14 @@ export const crearTurnoTool = {
 
     const config = profesional.configuracion
 
-    const pacientes = await prisma.paciente.findMany({
-      where: {
-        profesionalId: profesional.id,
-        activo: true,
-        nombre: { contains: args.paciente_nombre, mode: "insensitive" },
-      },
-      select: { id: true, nombre: true, telefono: true },
-      orderBy: { nombre: "asc" },
-    })
+    const pacientes = await buscarPacientesPorNombre(profesional.id, args.paciente_nombre)
 
     if (pacientes.length === 0) {
       return {
         esValido: false,
         mensaje: `No se encontró ningún paciente con el nombre "${args.paciente_nombre}".`,
         pacientesSimilares: [],
+        _args: { fecha: args.fecha, hora: args.hora },
       }
     }
 
@@ -68,6 +62,7 @@ export const crearTurnoTool = {
         esValido: false,
         mensaje: `Se encontraron ${pacientes.length} pacientes con nombre similar a "${args.paciente_nombre}":`,
         pacientesSimilares: pacientes.map((p) => ({ id: p.id, nombre: p.nombre })),
+        _args: { fecha: args.fecha, hora: args.hora },
       }
     }
 
@@ -82,8 +77,9 @@ export const crearTurnoTool = {
     const feriado = await prisma.feriado.findUnique({ where: { fecha: fechaDate } })
     if (feriado) return { esValido: false, mensaje: `Es feriado (${feriado.nombre}). No se pueden crear turnos.` }
 
-    const hoyStr = new Date().toISOString().slice(0, 10)
-    if (args.fecha < hoyStr) return { esValido: false, mensaje: "No se pueden crear turnos en el pasado." }
+    if (args.fecha < new Date().toISOString().slice(0, 10)) {
+      return { esValido: false, mensaje: "No se pueden crear turnos en el pasado." }
+    }
 
     if (args.hora < config.horarioDesde) return { esValido: false, mensaje: `El horario de atención comienza a las ${config.horarioDesde}.` }
 
@@ -123,15 +119,9 @@ export const crearTurnoTool = {
     })
     if (!profesional) throw new Error("Profesional no encontrado")
 
-    const paciente = await prisma.paciente.findFirst({
-      where: {
-        profesionalId: profesional.id,
-        activo: true,
-        nombre: { contains: args.paciente_nombre, mode: "insensitive" },
-      },
-      select: { id: true, nombre: true },
-    })
-    if (!paciente) throw new Error(`Paciente "${args.paciente_nombre}" no encontrado.`)
+    const pacientes = await buscarPacientesPorNombre(profesional.id, args.paciente_nombre)
+    if (pacientes.length === 0) throw new Error(`Paciente "${args.paciente_nombre}" no encontrado.`)
+    const paciente = pacientes[0]
 
     return crearTurno({
       fecha: args.fecha,

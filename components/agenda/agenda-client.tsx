@@ -55,31 +55,6 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
   const turnosPorFecha = useMemo(() => {
     const map = new Map<string, TurnoData[]>()
 
-    function addMin(t: string, m: number) {
-      const [h, min] = t.split(":").map(Number)
-      const total = h * 60 + min + m
-      return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`
-    }
-
-    const mockPacientes = [
-      "María García", "Carlos López", "Ana Martínez", "Pedro Sánchez",
-      "Laura Fernández", "Roberto Díaz", "Sofía Torres", "Diego Ramírez",
-      "Valentina Ortiz", "Joaquín Morales",
-    ]
-    const mockEstados = ["PENDIENTE", "CONFIRMADO", "CONFIRMADO", "PENDIENTE", "AUSENTE", "CONFIRMADO", "PENDIENTE", "CONFIRMADO", "PENDIENTE", "CONFIRMADO"] as const
-    const mockKey = formatDateKey(currentDate)
-
-    const mockTurnos: TurnoData[] = mockPacientes.map((nombre, i) => ({
-      id: `mock-${i}`,
-      fecha: mockKey,
-      horaInicio: addMin("09:00", i * 30),
-      horaFin: addMin("09:00", i * 30 + 30),
-      estado: mockEstados[i],
-      notas: null,
-      paciente: { id: `mock-pac-${i}`, nombre, telefono: null, notas: null },
-    }))
-    map.set(mockKey, mockTurnos)
-
     for (const t of turnos) {
       const existing = map.get(t.fecha) ?? []
       existing.push(t)

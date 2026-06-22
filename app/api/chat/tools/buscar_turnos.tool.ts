@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma"
+import { buscarPacientesPorNombre } from "@/lib/paciente-search"
 
 function sumarMinutos(hora: string, minutos: number): string {
   const [h, m] = hora.split(":").map(Number)
@@ -24,7 +25,7 @@ export const buscarTurnosTool = {
         },
         paciente: {
           type: "string",
-          description: "Nombre del paciente a buscar (búsqueda parcial, sin distinguir mayúsculas).",
+          description: "Nombre del paciente a buscar (búsqueda parcial, sin distinguir mayúsculas ni acentos).",
           maxLength: 70,
         },
         estado: {
@@ -63,9 +64,11 @@ export const buscarTurnosTool = {
     }
 
     if (args.paciente) {
-      where.paciente = {
-        nombre: { contains: args.paciente, mode: "insensitive" },
+      const pacientes = await buscarPacientesPorNombre(profesional.id, args.paciente)
+      if (pacientes.length === 0) {
+        return { mensaje: `No se encontraron turnos para paciente "${args.paciente}".`, turnos: [] }
       }
+      where.pacienteId = { in: pacientes.map((p) => p.id) }
     }
 
     if (args.estado) {

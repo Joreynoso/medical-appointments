@@ -70,7 +70,7 @@ export function ChatShell() {
       try {
         const history = messages
           .filter((m) => m.role === "user" || m.role === "assistant")
-          .slice(-6)
+          .slice(-10)
 
         const res = await fetch("/api/chat", {
           method: "POST",
@@ -106,7 +106,7 @@ export function ChatShell() {
 
     const contextMessages = messages
       .filter((m) => m.role === "user" || m.role === "assistant")
-      .slice(-6)
+      .slice(-10)
 
     try {
       const res = await fetch("/api/chat", {

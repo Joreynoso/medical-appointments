@@ -8,7 +8,14 @@ const client = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 const MODEL = "llama-3.3-70b-versatile"
 
-const SYSTEM_PROMPT = `Eres un asistente especializado en gestión de turnos médicos. Ayudas a un profesional de la salud a consultar su agenda.
+function systemPrompt(): string {
+  const ahora = new Date()
+  const dia = ahora.toLocaleDateString("es-AR", { weekday: "long", timeZone: "UTC" })
+  const fecha = ahora.toISOString().slice(0, 10)
+  const hora = ahora.toISOString().slice(11, 16)
+  return `Hoy es ${fecha} (${dia}). Hora UTC actual: ${hora}.
+
+Eres un asistente especializado en gestión de turnos médicos. Ayudas a un profesional de la salud a consultar su agenda.
 
 REGLAS:
 - Usa la herramienta 'buscar_turnos' cuando el profesional pregunte por turnos (ej: "qué turnos tengo hoy", "mostrame la agenda", "quién viene mañana", "turnos de Juan", "dame los confirmados").
@@ -21,7 +28,9 @@ REGLAS:
 - Las fechas mostralas en formato legible: "lunes 18 de junio".
 - Si no hay turnos o disponibilidad, decilo claramente.
 - Si la consulta es ambigua, pedí más datos.
+- Cuando una herramienta devuelva '_args' en su respuesta, usá esos valores (fecha, hora, etc.) para mantener el contexto en el siguiente intento si el usuario no repite los detalles.
 - Responde siempre en español.`
+}
 
 export async function POST(req: Request) {
   try {
@@ -42,23 +51,36 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: `Tool "${name}" no encontrada.` }, { status: 400 })
       }
 
-      const result = await executor(args, userId)
+      let result: any
+      try {
+        result = await executor(args, userId)
+      } catch (e: any) {
+        return NextResponse.json({
+          message: `❌ Error al ejecutar la operación: ${e.message || "Error desconocido"}`,
+        })
+      }
 
-      const formatMessages: ChatCompletionMessageParam[] = [
-        { role: "system", content: SYSTEM_PROMPT },
-        ...contextMessages.slice(-6) as ChatCompletionMessageParam[],
-        { role: "user", content: `Resultado de la operación "${name}":\n${JSON.stringify(result)}\n\nInformá al profesional del resultado en formato Markdown.` },
-      ]
+      let formattedMessage: string
+      try {
+        const formatMessages: ChatCompletionMessageParam[] = [
+          { role: "system", content: systemPrompt() },
+          ...contextMessages.slice(-6) as ChatCompletionMessageParam[],
+          { role: "user", content: `Resultado de la operación "${name}":\n${JSON.stringify(result)}\n\nInformá al profesional del resultado en formato Markdown.` },
+        ]
 
-      const formatResponse = await client.chat.completions.create({
-        model: MODEL,
-        temperature: 0.2,
-        messages: formatMessages,
-      })
+        const formatResponse = await client.chat.completions.create({
+          model: MODEL,
+          temperature: 0.2,
+          messages: formatMessages,
+        })
+        formattedMessage = formatResponse.choices[0].message.content || "✅ Operación completada."
+      } catch (e) {
+        console.error("Error formateando resultado:", e)
+        const labels: Record<string, string> = { crear_turno: "Turno creado", cancelar_turno: "Turno cancelado" }
+        formattedMessage = `✅ ${labels[name] ?? "Operación completada"} correctamente.`
+      }
 
-      return NextResponse.json({
-        message: formatResponse.choices[0].message.content || "✅ Operación completada.",
-      })
+      return NextResponse.json({ message: formattedMessage })
     }
 
     // ── REGULAR CHAT FLOW ──
@@ -76,7 +98,7 @@ export async function POST(req: Request) {
       model: MODEL,
       temperature: 0.2,
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
+        { role: "system", content: systemPrompt() },
         ...cleanMessages,
       ],
       tools,
@@ -121,7 +143,7 @@ export async function POST(req: Request) {
         messages: [
           {
             role: "system",
-            content: SYSTEM_PROMPT
+            content: systemPrompt()
               + (allValid
                 ? "\n\n⚠️ REGLA ESTRICTA: La herramienta devolvió una VALIDACIÓN, NO una ejecución. El turno NO fue creado/cancelado. No digas que la operación se completó, que el turno fue creado, o que ya está agendado. Tu única tarea es preguntar al profesional si desea confirmar la operación (Sí / No). No respondas por el profesional."
                 : ""),
@@ -161,7 +183,7 @@ export async function POST(req: Request) {
       model: MODEL,
       temperature: 0.2,
       messages: [
-        { role: "system", content: SYSTEM_PROMPT },
+        { role: "system", content: systemPrompt() },
         ...cleanMessages,
       ],
     })

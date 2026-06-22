@@ -597,6 +597,33 @@ Las tools destructivas del chat (`crear_turno`, `cancelar_turno`) usan un flujo 
 - El frontend mantiene estado `pendingConfirmation` con los argumentos de la tool; al rechazar, se limpia y se muestra mensaje de cancelación.
 - Las tools de solo lectura (`buscar_turnos`, `consultar_disponibilidad`) siguen el flujo directo.
 
+## ADR-026 — Consulta de feriados sin tool LLM (botón directo)
+
+**Fecha:** 2026-06-22
+**Estado:** Aceptada
+
+**Decisión:**
+No se implementó la tool LLM `consultar_feriados`. El botón directo "Consultar feriados" del ToolDropdown es la única vía de consulta — siempre muestra los feriados del año actual.
+
+**Por qué:**
+- ADR-001 ya establece que los botones de acceso directo deben disparar herramientas sin pasar por el modelo para reducir requests innecesarios al LLM.
+- El botón "Consultar feriados" ya existía como acceso directo (server action directa a DB). Agregar una tool LLM duplicada sería redundante e iría contra la regla "No llamar al LLM si la acción puede resolverse directamente con datos".
+- Los feriados son datos estáticos anuales que no requieren procesamiento de lenguaje natural para consultarlos.
+- La validación de feriados al crear/cancelar turnos ya está cubierta en las tools `crear_turno.tool.ts` y `consultar_disponibilidad.tool.ts`, que verifican contra la tabla Feriado.
+- Se evaluó agregar parámetros opcionales (año/mes) al botón, pero se descartó por simplicidad: el 90% de los casos se cubre con el año completo. El dropdown se mantiene sin inputs extra.
+
+**Alternativas descartadas:**
+- Crear `consultar_feriados.tool.ts` como tool LLM: redundante con el botón directo existente, duplica lógica y genera llamadas innecesarias a Groq.
+- Parámetros año/mes en el botón directo: agregaba complejidad (diálogo previo o sub-items en dropdown) para poco beneficio.
+
+**Consecuencias:**
+- El botón siempre muestra feriados del año actual sin parámetros.
+- Las fechas se formatean desde UTC (`toISOString()`) para evitar corrimiento por zona horaria del servidor.
+- Feature 8 marcada como completada sin tool LLM.
+- Se refuerza el patrón de acceso directo para consultas que no requieren LLM.
+
+---
+
 ## ADR-025 — Onboarding tooltip con overlay y toolButton como referencia de posición
 
 **Fecha:** 2026-06-19
@@ -629,6 +656,31 @@ El onboarding del chat se implementa como un tooltip flotante que:
 - El tooltip se mantiene responsive porque replica el layout del `ChatInput` (flex `justify-end` con spacer).
 - No hay fugas de estado entre sesiones gracias a `localStorage`.
 - Al no haber checkbox, se elimina el estado `dontShowAgain` del componente.
+
+---
+
+## ADR-027 — Búsqueda de pacientes con unaccent (acentos-insensitive)
+
+**Fecha:** 2026-06-22
+**Estado:** Aceptada
+
+**Decisión:**
+Se habilitó la extensión PostgreSQL `unaccent` en Neon y se creó el helper `lib/paciente-search.ts` con la función `buscarPacientesPorNombre()` que usa `$queryRaw` con `unaccent(nombre) ILIKE unaccent(search)` para búsqueda de pacientes que ignora tanto mayúsculas/minúsculas como acentos y diacríticos.
+
+**Por qué:**
+- Prisma `mode: "insensitive"` solo ignora mayúsculas, no acentos. "Jose" no matchea "José" en la DB.
+- En un sistema de salud argentino, nombres con acentos son frecuentes (José, María, Juan José, etc.). El profesional escribe naturalmente sin acentos al dictar nombres al chat.
+- La extensión `unaccent` es la solución correcta a nivel DB: eficiente, sin cambios en el schema, sin duplicar datos.
+
+**Alternativas descartadas:**
+- Normalización en JS con `normalize('NFD')`: menos eficiente, requiere traer todos los pacientes a memoria para filtrar.
+- Campo `searchNombre` normalizado en el schema: requiere migración, duplica datos, más mantenimiento.
+
+**Consecuencias:**
+- Se creó `lib/paciente-search.ts` como helper centralizado.
+- Se actualizaron 3 tools (5 queries en total): `crear_turno`, `cancelar_turno`, `buscar_turnos`.
+- El helper es fácil de reutilizar en futuras búsquedas de pacientes.
+- `CREATE EXTENSION IF NOT EXISTS unaccent` se ejecutó una vez en Neon.
 
 ---
 
