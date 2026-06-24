@@ -11,11 +11,10 @@ type MonthViewProps = {
   feriados: Map<string, string>
   turnosPorFecha: Map<string, TurnoData[]>
   diasLaborables: number[]
-  todayFlash: boolean
   onTurnoClick?: (turno: TurnoData) => void
 }
 
-export function MonthView({ year, month, feriados, turnosPorFecha, diasLaborables, todayFlash, onTurnoClick }: MonthViewProps) {
+export function MonthView({ year, month, feriados, turnosPorFecha, diasLaborables, onTurnoClick }: MonthViewProps) {
   const weeks = getMonthGrid(year, month)
 
   return (
@@ -45,7 +44,6 @@ export function MonthView({ year, month, feriados, turnosPorFecha, diasLaborable
                 holidayName={holiday}
                 turnos={turnosDelDia}
                 diasLaborables={diasLaborables}
-                flash={todayFlash}
                 onTurnoClick={onTurnoClick}
                 className={cn(
                   "border-border",

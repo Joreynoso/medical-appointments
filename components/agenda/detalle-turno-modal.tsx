@@ -64,9 +64,10 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
     onOpenChange(false)
   }
 
-  const mostrarConfirmar = turnoData.estado === "PENDIENTE" || turnoData.estado === "CANCELADO" || turnoData.estado === "AUSENTE"
-  const mostrarCancelar = turnoData.estado === "PENDIENTE" || turnoData.estado === "CONFIRMADO"
-  const mostrarAusente = turnoData.estado === "CONFIRMADO"
+  const esPasado = turnoData.fecha < new Date().toISOString().slice(0, 10)
+  const mostrarConfirmar = (turnoData.estado === "PENDIENTE" || turnoData.estado === "CANCELADO" || turnoData.estado === "AUSENTE") && !esPasado
+  const mostrarCancelar = (turnoData.estado === "PENDIENTE" || turnoData.estado === "CONFIRMADO") && !esPasado
+  const mostrarAusente = turnoData.estado === "CONFIRMADO" && !esPasado
   const tieneAcciones = mostrarConfirmar || mostrarCancelar || mostrarAusente
 
   return (

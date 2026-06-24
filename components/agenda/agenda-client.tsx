@@ -5,11 +5,12 @@ import { MonthView } from "@/components/agenda/month-view"
 import { WeekView } from "@/components/agenda/week-view"
 import { CalendarToolbar } from "@/components/agenda/calendar-toolbar"
 import { DetalleTurnoModal } from "@/components/agenda/detalle-turno-modal"
+import { FilterModal, type FilterState } from "@/components/agenda/filter-modal"
 import { usePageHeaderActions } from "@/components/dashboard/page-header-context"
 import { useCrearTurno } from "@/components/agenda/crear-turno-context"
 import { addMonths, addWeeks, formatDateKey } from "@/components/agenda/calendar-utils"
 import { getFeriadosEnRango } from "@/lib/actions/feriados"
-import { getTurnosEnRango } from "@/lib/actions/turnos"
+import { getTurnosEnRango, cambiarEstadoTurno } from "@/lib/actions/turnos"
 import type { TurnoData, ConfigHoraria } from "@/lib/actions/turnos"
 
 type PacienteSimple = {
@@ -38,8 +39,6 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
   const { setPacientes, setObrasSociales, setRefreshRange, setOnTurnosChange } = useCrearTurno()
   const [currentDate, setCurrentDate] = useState(new Date())
   const [viewMode, setViewMode] = useState<"month" | "week">("month")
-  const [todayFlash, setTodayFlash] = useState(false)
-  const flashTimeout = useRef<ReturnType<typeof setTimeout> | null>(null)
   const loadedRange = useRef<{ desde: string; hasta: string }>({ desde: "", hasta: "" })
   const [feriados, setFeriados] = useState(() => {
     const map = new Map<string, string>()
@@ -51,17 +50,35 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
   const [turnos, setTurnos] = useState<TurnoData[]>(initialTurnos)
   const [selectedTurno, setSelectedTurno] = useState<TurnoData | null>(null)
   const [detailModalOpen, setDetailModalOpen] = useState(false)
+  const [filterOpen, setFilterOpen] = useState(false)
+  const [filters, setFilters] = useState<FilterState>({
+    pacienteQuery: "",
+    estado: null,
+  })
+
+  const turnosFiltrados = useMemo(() => {
+    let filtered = turnos
+    if (filters.pacienteQuery) {
+      const q = filters.pacienteQuery.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase()
+      filtered = filtered.filter((t) =>
+        t.paciente.nombre.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().includes(q),
+      )
+    }
+    if (filters.estado) {
+      filtered = filtered.filter((t) => t.estado === filters.estado)
+    }
+    return filtered
+  }, [turnos, filters])
 
   const turnosPorFecha = useMemo(() => {
     const map = new Map<string, TurnoData[]>()
-
-    for (const t of turnos) {
+    for (const t of turnosFiltrados) {
       const existing = map.get(t.fecha) ?? []
       existing.push(t)
       map.set(t.fecha, existing)
     }
     return map
-  }, [turnos, currentDate])
+  }, [turnosFiltrados, currentDate])
 
   const ensureFeriados = useCallback(async (year: number) => {
     if (!feriados.has(`${year}-01-01`)) {
@@ -108,21 +125,6 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
     setCurrentDate(next)
   }, [currentDate, viewMode, ensureFeriados, ensureTurnos])
 
-  const handleToday = useCallback(() => {
-    const today = new Date()
-    ensureFeriados(today.getFullYear())
-    ensureTurnos(today)
-    setCurrentDate(today)
-    setTodayFlash(true)
-    if (flashTimeout.current) clearTimeout(flashTimeout.current)
-    flashTimeout.current = setTimeout(() => setTodayFlash(false), 2000)
-  }, [ensureFeriados, ensureTurnos])
-
-  const handleTurnoClick = useCallback((turno: TurnoData) => {
-    setSelectedTurno(turno)
-    setDetailModalOpen(true)
-  }, [])
-
   const handleTurnoUpdated = useCallback(async () => {
     const year = currentDate.getFullYear()
     const month = currentDate.getMonth()
@@ -138,11 +140,16 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
     loadedRange.current = { desde, hasta }
   }, [currentDate])
 
-  useEffect(() => {
-    return () => {
-      if (flashTimeout.current) clearTimeout(flashTimeout.current)
+  const handleTurnoClick = useCallback(async (turno: TurnoData) => {
+    const hoy = new Date().toISOString().slice(0, 10)
+    if (turno.estado === "PENDIENTE" && turno.fecha < hoy) {
+      await cambiarEstadoTurno(turno.id, "AUSENTE")
+      await handleTurnoUpdated()
+      return
     }
-  }, [])
+    setSelectedTurno(turno)
+    setDetailModalOpen(true)
+  }, [handleTurnoUpdated])
 
   const { setActions } = usePageHeaderActions()
 
@@ -170,12 +177,13 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
         viewMode={viewMode}
         onPrev={handlePrev}
         onNext={handleNext}
-        onToday={handleToday}
+        onFilterClick={() => setFilterOpen(true)}
+        filterActive={!!(filters.pacienteQuery || filters.estado)}
         onViewChange={setViewMode}
       />,
     )
     return () => setActions(null)
-  }, [currentDate, viewMode, handlePrev, handleNext, handleToday, setActions])
+  }, [currentDate, viewMode, handlePrev, handleNext, filters, setActions])
 
   return (
     <>
@@ -187,7 +195,6 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
           feriados={feriados}
           turnosPorFecha={turnosPorFecha}
           diasLaborables={diasLaborables}
-          todayFlash={todayFlash}
           onTurnoClick={handleTurnoClick}
         />
       ) : (
@@ -198,7 +205,6 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
           horarioDesde={horarioDesde}
           horarioHasta={horarioHasta}
           diasLaborables={diasLaborables}
-          todayFlash={todayFlash}
           onTurnoClick={handleTurnoClick}
         />
       )}
@@ -211,6 +217,13 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
           if (!open) setSelectedTurno(null)
         }}
         onStatusChanged={handleTurnoUpdated}
+      />
+      <FilterModal
+        open={filterOpen}
+        onOpenChange={setFilterOpen}
+        filters={filters}
+        onFiltersChange={setFilters}
+        allTurnos={turnos}
       />
     </>
   )

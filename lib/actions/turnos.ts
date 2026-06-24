@@ -27,14 +27,14 @@ export async function cambiarEstadoTurno(
 
   const turno = await prisma.turno.findUnique({
     where: { id: turnoId },
-    select: { estado: true, profesionalId: true },
+    select: { estado: true, profesionalId: true, fecha: true },
   })
 
   if (!turno) throw new Error("Turno no encontrado")
   if (turno.profesionalId !== profesional.id) throw new Error("No autorizado")
 
   const transiciones: Record<string, string[]> = {
-    PENDIENTE: ["CONFIRMADO", "CANCELADO"],
+    PENDIENTE: ["CONFIRMADO", "CANCELADO", "AUSENTE"],
     CONFIRMADO: ["CANCELADO", "AUSENTE"],
     CANCELADO: ["CONFIRMADO"],
     AUSENTE: ["CONFIRMADO"],
@@ -43,6 +43,12 @@ export async function cambiarEstadoTurno(
   const permitidos = transiciones[turno.estado]
   if (!permitidos?.includes(nuevoEstado)) {
     throw new Error(`No se puede cambiar el estado de "${turno.estado}" a "${nuevoEstado}"`)
+  }
+
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  if (turno.fecha < hoy && nuevoEstado === "CANCELADO") {
+    throw new Error("No se puede cancelar un turno de una fecha pasada")
   }
 
   await prisma.turno.update({

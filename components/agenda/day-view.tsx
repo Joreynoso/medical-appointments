@@ -24,7 +24,6 @@ type DayViewProps = {
   horarioDesde: string
   horarioHasta: string
   diasLaborables: number[]
-  todayFlash: boolean
   onTurnoClick?: (turno: TurnoData) => void
 }
 
@@ -35,7 +34,6 @@ export function DayView({
   horarioDesde,
   horarioHasta,
   diasLaborables,
-  todayFlash,
   onTurnoClick,
 }: DayViewProps) {
   const days = getWeekDays(currentDate)
@@ -104,7 +102,6 @@ export function DayView({
         className={cn(
           "flex items-center justify-between bg-background border-b border-border px-3 py-2.5",
           disabled && "bg-muted",
-          isDayToday && todayFlash && "bg-primary/15 transition-all duration-700",
         )}
       >
         <button

@@ -33,13 +33,12 @@ type DayCardProps = {
   turnos?: TurnoData[]
   className?: string
   diasLaborables: number[]
-  flash?: boolean
   onTurnoClick?: (turno: TurnoData) => void
 }
 
 const diasSemana = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"]
 
-export function DayCard({ day, isHoliday, holidayName, turnos = [], className, diasLaborables, flash, onTurnoClick }: DayCardProps) {
+export function DayCard({ day, isHoliday, holidayName, turnos = [], className, diasLaborables, onTurnoClick }: DayCardProps) {
   const [maxVisibles, setMaxVisibles] = useState(TURNOS_2XL)
   const [modalOpen, setModalOpen] = useState(false)
   const disabled = !isHoliday && !diasLaborables.includes(day.date.getDay())
@@ -73,7 +72,6 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
         "bg-card hover:bg-card",
         !day.isCurrentMonth && "opacity-40",
         disabled && "bg-muted hover:bg-muted",
-        day.isToday && flash && "bg-primary/15 transition-all duration-700",
         className,
       )}
     >

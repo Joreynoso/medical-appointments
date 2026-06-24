@@ -148,9 +148,19 @@
 ---
 
 ### FEATURE 9 — Filtros y mejoras en la agenda
-- [ ] Filtrar turnos por estado en la vista semanal
-- [ ] Filtrar turnos por paciente
-- [ ] Indicador de cantidad de turnos del día en el header o en la vista mensual
+- [x] Reemplazar texto descriptivo del header por fecha actual formateada
+- [x] Repurpurar botón "Hoy" → botón "Filtrar" con icono Filter y badge destructivo cuando hay filtros activos
+- [x] Eliminar todayFlash, handleToday, flashTimeout de todos los componentes (AgendaClient, WeekView, MonthView, DayView, DayCard)
+- [x] Modal de filtros con `@base-ui/react` Dialog:
+  - Búsqueda de paciente por nombre en tiempo real (filtra mientras se escribe)
+  - Píldoras de estado single-select: Pendiente, Confirmado, Ausente (ninguno seleccionado = mostrar todos)
+  - Lista de turnos filtrados con bullet de color por estado, nombre del paciente, fecha y hora
+  - Turnos pasados (fecha < today) excluidos del modal (no del calendario)
+  - "Limpiar filtros" resetea sin cerrar el modal
+  - Cursor total de resultados
+  - Estilo consistente con CrearTurnoModal (mismo contenedor, tipografía, inputs, botones, espaciado)
+- [x] Los filtros se aplican en tiempo real al calendario (semanal y mensual) cada vez que se cambia un valor — sin botón "Aplicar"
+- [x] Seed de 13 turnos de prueba con estados varios para testear scroll y filtros
 
 ---
 

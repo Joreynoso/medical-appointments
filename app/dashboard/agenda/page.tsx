@@ -18,6 +18,12 @@ function getMonthRange(date: Date) {
 
 export default async function AgendaPage() {
   const now = new Date()
+  const fechaFormateada = now.toLocaleDateString("es-AR", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  })
   const año = now.getFullYear()
   const { desde, hasta } = getMonthRange(now)
   const [[feriadosAñoActual, feriadosAnterior, feriadosSiguiente], turnos, pacientes, obrasSociales, config] = await Promise.all([
@@ -34,7 +40,7 @@ export default async function AgendaPage() {
 
   return (
     <div className="px-4 md:px-10 pb-10">
-      <PageHeader title="Agenda" description="Gestiona tus turnos y disponibilidad" />
+      <PageHeader title="Agenda" description={fechaFormateada} />
       <AgendaClient
         initialFeriados={[...feriadosAñoActual, ...feriadosAnterior, ...feriadosSiguiente]}
         initialTurnos={turnos}

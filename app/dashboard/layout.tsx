@@ -36,7 +36,7 @@ export default async function DashboardLayout({
         toastOptions={{
           classNames: {
             closeButton:
-              "bg-card text-primary border-border",
+              "!bg-card !text-card-foreground !border-border hover:!bg-accent",
           },
         }}
         style={

@@ -684,6 +684,44 @@ Se habilitó la extensión PostgreSQL `unaccent` en Neon y se creó el helper `l
 
 ---
 
+## ADR-028 — FilterModal: tiempo real, single-select estado, sin "Hoy"
+
+**Fecha:** 2026-06-24
+**Estado:** Aceptada
+
+**Decisión:**
+Se implementó un modal de filtros (`FilterModal`) para la agenda con las siguientes características:
+1. **Filtros en tiempo real**: cada cambio en el input de paciente o en las píldoras de estado se aplica inmediatamente al calendario (vistas semanal y mensual) — no hay botón "Aplicar".
+2. **Estado single-select**: las píldoras de estado son radio-style (solo una activa a la vez), no multi-select. Click en la activa la desactiva (vuelve a "todos").
+3. **Botón "Hoy" eliminado**: se reemplazó por un botón "Filtrar" con icono `Filter`. La fecha actual ya se muestra en el header de la página, haciendo redundante la navegación "Hoy".
+4. **todayFlash eliminado**: la funcionalidad de destello visual al hacer "Hoy" se eliminó junto con el botón.
+5. **Modal estilo CrearTurnoModal**: mismo patrón de `@base-ui/react` Dialog, mismo contenedor (`rounded-xl border border-border bg-card p-6 shadow-lg`), misma tipografía y espaciado.
+6. **Turnos pasados filtrados**: en la lista de resultados del modal se excluyen turnos con fecha < today (en el calendario siguen visibles).
+7. **"Limpiar filtros" inline**: resetea paciente y estado sin cerrar el modal, para que el profesional vea inmediatamente el resultado del reset.
+
+**Por qué:**
+- Sin botón "Aplicar": el profesional ve los resultados en el calendario al instante mientras ajusta los filtros. Un botón "Aplicar" agregaría fricción innecesaria.
+- Single-select estado: el profesional solo necesita ver un estado a la vez (ej. "mostrar solo Pendientes"). Multi-select sería más complejo visualmente y no aporta valor real para este caso de uso.
+- Eliminar "Hoy": el header ya muestra la fecha actual con formato localizado (`lunes 24 de junio de 2026`). El botón "Hoy" era redundante. Reemplazarlo por "Filtrar" da más utilidad al espacio en la toolbar.
+- todayFlash: era una animación puramente decorativa sin valor funcional. Al eliminar "Hoy", se eliminó también.
+
+**Alternativas descartadas:**
+- Multi-select estado (checkboxes): más complejo visualmente, no hay caso de uso real donde el profesional necesite ver dos estados específicos a la vez.
+- Botón "Aplicar" para confirmar filtros: agregaba un paso extra sin beneficio porque el filtrado es client-side e instantáneo.
+- Mantener "Hoy" + "Filtrar" como botones separados: la toolbar se saturaba visualmente en mobile.
+- Select nativo `<select>` para estado en lugar de píldoras: las píldoras son más rápidas de usar (un click), más visibles y permiten toggle.
+
+**Consecuencias:**
+- El `FilterState` usa `estado: null | "PENDIENTE" | "CONFIRMADO" | "AUSENTE"` en lugar de array.
+- El `CalendarToolbar` ya no recibe `todayFlash` ni `handleToday`.
+- `WeekView`, `MonthView`, `DayView`, `DayCard` ya no tienen prop `todayFlash`.
+- El header de agenda ahora muestra `toLocaleDateString("es-AR", ...)`.
+- Los filtros viven en `AgendaClient` como `useState<FilterState>` y se pasan a `CalendarToolbar` y `FilterModal`.
+- El modal de filtros sincroniza estado local con los filtros aplicados al abrirse (`useEffect` en `open`).
+- Se crearon 13 turnos seed para validar el comportamiento del filtro con datos variados.
+
+---
+
 ## 📝 Plantilla para nuevas entradas
 
 ```

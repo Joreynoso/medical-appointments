@@ -1,6 +1,6 @@
 "use client"
 
-import { ChevronLeft, ChevronRight, CalendarDays } from "lucide-react"
+import { ChevronLeft, ChevronRight, Filter } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { formatMonthYear } from "@/components/agenda/calendar-utils"
 
@@ -9,7 +9,8 @@ type CalendarToolbarProps = {
   viewMode: "month" | "week"
   onPrev: () => void
   onNext: () => void
-  onToday: () => void
+  onFilterClick: () => void
+  filterActive: boolean
   onViewChange: (mode: "month" | "week") => void
 }
 
@@ -18,7 +19,8 @@ export function CalendarToolbar({
   viewMode,
   onPrev,
   onNext,
-  onToday,
+  onFilterClick,
+  filterActive,
   onViewChange,
 }: CalendarToolbarProps) {
   return (
@@ -36,12 +38,29 @@ export function CalendarToolbar({
         {formatMonthYear(currentDate)}
       </span>
 
-      <Button variant="outline" size="icon-sm" onClick={onToday} aria-label="Hoy" className="md:hidden">
-        <CalendarDays className="size-4" />
+      <Button
+        variant={filterActive ? "default" : "outline"}
+        size="icon-sm"
+        onClick={onFilterClick}
+        aria-label="Filtrar"
+        className="md:hidden relative"
+      >
+        <Filter className="size-4" />
+        {filterActive && (
+          <span className="absolute -top-1 -right-1 size-3 rounded-full bg-primary border border-background" />
+        )}
       </Button>
-      <Button variant="outline" size="sm" onClick={onToday} className="hidden md:inline-flex">
-        <CalendarDays className="size-3.5" />
-        Hoy
+      <Button
+        variant={filterActive ? "default" : "outline"}
+        size="sm"
+        onClick={onFilterClick}
+        className="hidden md:inline-flex relative"
+      >
+        <Filter className="size-3.5" />
+        Filtrar
+        {filterActive && (
+          <span className="absolute -top-1 -right-1 size-3 rounded-full bg-primary border border-background" />
+        )}
       </Button>
 
       <div className="flex overflow-hidden rounded-lg border border-border max-sm:flex-1 sm:ml-1">

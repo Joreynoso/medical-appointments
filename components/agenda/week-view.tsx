@@ -23,11 +23,10 @@ type WeekViewProps = {
   horarioDesde: string
   horarioHasta: string
   diasLaborables: number[]
-  todayFlash: boolean
   onTurnoClick?: (turno: TurnoData) => void
 }
 
-export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, horarioHasta, diasLaborables, todayFlash, onTurnoClick }: WeekViewProps) {
+export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, horarioHasta, diasLaborables, onTurnoClick }: WeekViewProps) {
   const isDesktop = useMediaQuery("(min-width: 768px)")
 
   if (!isDesktop) {
@@ -39,7 +38,6 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
         horarioDesde={horarioDesde}
         horarioHasta={horarioHasta}
         diasLaborables={diasLaborables}
-        todayFlash={todayFlash}
         onTurnoClick={onTurnoClick}
       />
     )
@@ -78,9 +76,8 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
               <div
                 key={key}
                 className={cn(
-                  "sticky top-0 z-20 bg-background border-r border-b border-border px-2 py-2 text-center transition-all duration-700",
+                  "sticky top-0 z-20 bg-background border-r border-b border-border px-2 py-2 text-center",
                   disabled && "bg-muted",
-                  day.isToday && todayFlash && "bg-primary/15",
                 )}
                 style={{ gridColumn: i + 2, gridRow: 1 }}
               >
