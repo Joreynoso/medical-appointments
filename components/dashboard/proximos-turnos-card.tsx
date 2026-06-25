@@ -26,7 +26,7 @@ export function ProximosTurnosCard({ turnos }: ProximosTurnosCardProps) {
 
   return (
     <div className="rounded-lg border border-border bg-card p-6 flex flex-col gap-5">
-      <div className="flex items-center justify-between shrink-0 gap-4">
+      <div className="flex flex-col items-start lg:flex-row lg:items-center lg:justify-between shrink-0 gap-4">
         <h3 className="text-lg font-serif text-foreground">
           Próximos turnos
         </h3>

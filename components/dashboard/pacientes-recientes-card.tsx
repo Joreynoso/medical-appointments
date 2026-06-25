@@ -48,7 +48,7 @@ export function PacientesRecientesCard({ initialPacientes, obrasSociales }: Paci
 
   return (
     <div className="rounded-lg border border-border bg-card p-6 flex flex-col gap-5 h-full">
-      <div className="flex items-center justify-between shrink-0 gap-4">
+      <div className="flex flex-col items-start lg:flex-row lg:items-center lg:justify-between shrink-0 gap-4">
         <h3 className="text-lg font-serif text-foreground">
           Pacientes recientes
         </h3>

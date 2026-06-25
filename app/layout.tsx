@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { DM_Sans, Fira_Code } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { clerkAppearance } from "@/lib/clerk-appearance";
-import { BreakpointIndicator } from "@/components/dev/breakpoint-indicator";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -32,7 +31,6 @@ export default function RootLayout({
         className={`${dmSans.variable} ${firaCode.variable} h-full antialiased dark`}
       >
         <body className="min-h-full flex flex-col font-sans">
-          <BreakpointIndicator />
           {children}
         </body>
       </html>

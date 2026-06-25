@@ -1,10 +1,9 @@
 import Link from "next/link"
-import Image from "next/image"
 
 export function WelcomeCard() {
   return (
-    <div className="rounded-lg border border-border bg-card flex flex-col lg:flex-row">
-      <div className="lg:w-3/5 flex flex-col justify-center p-8 lg:p-10 space-y-6">
+    <div className="rounded-lg border border-border bg-card flex flex-col">
+      <div className="flex flex-col justify-center p-8 lg:p-10 space-y-6">
         <h2 className="text-3xl lg:text-4xl font-serif text-foreground leading-tight">
           ¡Bienvenido a MedPilot!
         </h2>
@@ -17,14 +16,6 @@ export function WelcomeCard() {
         >
           Ir a la agenda
         </Link>
-      </div>
-      <div className="hidden lg:flex self-stretch w-2/5 relative overflow-hidden rounded-r-lg">
-        <Image
-          src="/images/bg-dashboard.png"
-          alt="Dashboard illustration"
-          fill
-          className="object-contain object-bottom"
-        />
       </div>
     </div>
   )
