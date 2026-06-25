@@ -126,7 +126,7 @@ const cards = [
 
 export default function CardsSection() {
   return (
-    <section id="caracteristicas" className="py-24">
+    <section id="caracteristicas" className="min-h-dvh py-24">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-serif text-foreground">

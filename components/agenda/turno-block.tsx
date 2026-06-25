@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/tooltip"
 import type { TurnoData } from "@/lib/actions/turnos"
 
-export const HOUR_HEIGHT = 56
+export const HOUR_HEIGHT = 80
 
 function parseTime(time: string): { hour: number; minute: number } {
   const [h, m] = time.split(":").map(Number)

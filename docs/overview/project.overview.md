@@ -76,7 +76,7 @@ Los pacientes nunca se eliminan físicamente. Se desactivan (`activo: false`). E
 Si el paciente no existe al momento de agendar, el profesional lo crea mediante un modal/diálogo rápido en la misma pantalla usando Server Actions. Al registrarse, se selecciona automáticamente en el formulario, evitando redirecciones y pérdidas de estado del calendario.
 
 ### Obra Social como catálogo por profesional
-Cada profesional gestiona su propio listado de obras sociales (ABM completo). "Particular" se crea automáticamente. Cada paciente se vincula opcionalmente a una obra social, que se muestra en la tabla de pacientes y en el formulario de creación/edición. En el modal de creación rápida de paciente (desde la agenda) también se pueden ingresar teléfono y obra social.
+Cada profesional gestiona su propio listado de obras sociales (ABM completo, comienza vacío). El profesional las agrega manualmente según su necesidad. Cada paciente se vincula opcionalmente a una obra social, que se muestra en la tabla de pacientes y en el formulario de creación/edición. En el modal de creación rápida de paciente (desde la agenda) también se pueden ingresar teléfono y obra social.
 
 ### Domingos visibles pero deshabilitados en el calendario
 Los domingos se muestran en el calendario para conservar un diseño de rejilla tradicional, simétrico y profesional, pero la interacción está deshabilitada de forma que no sea posible agendar citas en ese día.
@@ -133,7 +133,7 @@ Anotaciones breves que documentan una decisión técnica o de diseño: qué se d
 ### Qué hace la app
 - Gestión completa de turnos (crear, ver, cancelar, cambiar estado)
 - ABM de pacientes
-- ABM de obras sociales con "Particular" pre-cargada
+- ABM de obras sociales gestionado por el profesional
 - Calendario mensual y semanal con feriados pintados
 - Chat con IA para consultas y acciones rápidas
 - Auth segura para el profesional

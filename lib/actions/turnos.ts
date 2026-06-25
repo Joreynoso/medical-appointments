@@ -97,28 +97,33 @@ export type TurnosPorMesData = {
 export async function getTurnosPorMes(cantidadMeses = 6): Promise<TurnosPorMesData[]> {
   const profesional = await getCurrentProfesional()
   const ahora = new Date()
-  const meses: TurnosPorMesData[] = []
-
   const nombresMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
 
+  const inicio = new Date(ahora.getFullYear(), ahora.getMonth() - cantidadMeses + 1, 1)
+  const fin = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0)
+
+  const turnos = await prisma.turno.findMany({
+    where: {
+      profesionalId: profesional.id,
+      fecha: { gte: inicio, lte: fin },
+      estado: { not: "CANCELADO" },
+    },
+    select: { fecha: true },
+  })
+
+  const conteo: Record<string, number> = {}
+  for (const t of turnos) {
+    const key = `${t.fecha.getFullYear()}-${t.fecha.getMonth()}`
+    conteo[key] = (conteo[key] || 0) + 1
+  }
+
+  const meses: TurnosPorMesData[] = []
   for (let i = cantidadMeses - 1; i >= 0; i--) {
-    const inicio = new Date(ahora.getFullYear(), ahora.getMonth() - i, 1)
-    const fin = new Date(ahora.getFullYear(), ahora.getMonth() - i + 1, 1)
-
-    const count = await prisma.turno.count({
-      where: {
-        profesionalId: profesional.id,
-        fecha: {
-          gte: inicio,
-          lt: fin,
-        },
-        estado: { not: "CANCELADO" },
-      },
-    })
-
+    const fecha = new Date(ahora.getFullYear(), ahora.getMonth() - i, 1)
+    const key = `${fecha.getFullYear()}-${fecha.getMonth()}`
     meses.push({
-      mes: nombresMeses[inicio.getMonth()],
-      total: count,
+      mes: nombresMeses[fecha.getMonth()],
+      total: conteo[key] ?? 0,
     })
   }
 

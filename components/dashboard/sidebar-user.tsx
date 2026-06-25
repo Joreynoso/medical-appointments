@@ -16,13 +16,13 @@ export function SidebarUser() {
     return (
       <div
         className={cn(
-          "sidebar-user shrink-0 transition-[padding] duration-300 animate-pulse",
+          "sidebar-user shrink-0",
           expanded ? "px-6 pb-6 pt-6" : "flex justify-center px-0 pb-4 pt-4",
         )}
       >
         <div
           className={cn(
-            "mb-4 rounded-xl overflow-hidden",
+            "mb-4 rounded-xl overflow-hidden max-lg:hidden",
             expanded ? "block aspect-square w-full" : "hidden",
           )}
         >
@@ -45,13 +45,13 @@ export function SidebarUser() {
   return (
     <div
       className={cn(
-        "sidebar-user shrink-0 transition-[padding] duration-300",
+        "sidebar-user shrink-0",
         expanded ? "px-6 pb-6 pt-6" : "flex justify-center px-0 pb-4 pt-4",
       )}
     >
       <div
         className={cn(
-          "mb-4 rounded-xl overflow-hidden",
+          "mb-4 rounded-xl overflow-hidden max-lg:hidden",
           expanded ? "block aspect-square w-full" : "hidden",
         )}
       >

@@ -524,12 +524,12 @@ Son funcionalidades de navegación/UX que agregan complejidad innecesaria (sobre
 **Estado:** Aceptada
 
 **Decisión:**
-Se creó el modelo `ObraSocial` con FK a `Profesional` (per-profesional), soft delete (`activo`), y unique constraint `[profesionalId, nombre]`. Se agregó `obraSocialId` nullable a `Paciente` con FK `ON DELETE SET NULL` (al desactivar una obra social, los pacientes conservan su registro pero pierden la referencia). Se implementó ABM completo (página, Server Actions, componente cliente) replicando el patrón de Pacientes. Se pre-carga "Particular" por defecto en el seed.
+Se creó el modelo `ObraSocial` con FK a `Profesional` (per-profesional), soft delete (`activo`), y unique constraint `[profesionalId, nombre]`. Se agregó `obraSocialId` nullable a `Paciente` con FK `ON DELETE SET NULL` (al desactivar una obra social, los pacientes conservan su registro pero pierden la referencia). Se implementó ABM completo (página, Server Actions, componente cliente) replicando el patrón de Pacientes. El listado comienza vacío; el profesional agrega manualmente las obras sociales que necesita.
 
 **Por qué:**
 - La obra social es conceptualmente del paciente, pero en un sistema multi-tenant sin admin global, el profesional necesita gestionar su propio catálogo de obras sociales (mismo patrón que Pacientes).
 - El soft delete y `SET NULL` preservan la integridad del historial de pacientes.
-- "Particular" pre-cargada evita que el profesional tenga que crearla manualmente en su primer uso.
+- El listado comienza vacío; el profesional agrega las obras sociales que necesita.
 
 **Alternativas descartadas:**
 - ObraSocial global (sin FK a Profesional): requeriría admin global, no existe en el sistema.
@@ -541,7 +541,6 @@ Se creó el modelo `ObraSocial` con FK a `Profesional` (per-profesional), soft d
 - El formulario de Paciente ahora incluye un `<select>` de obra social.
 - La tabla de pacientes muestra la obra social en desktop y mobile.
 - Se agregó ruta `/dashboard/obras-sociales` con navegación en el sidebar.
-- El seed crea "Particular" y la asigna a todos los pacientes de prueba.
 - La migración agregó las tablas y columnas sin downtime (columna nullable, tabla nueva).
 
 ---

@@ -1,7 +1,8 @@
+import { cache } from "react"
 import { auth } from "@clerk/nextjs/server"
 import { prisma } from "@/lib/prisma"
 
-export async function getCurrentProfesional() {
+export const getCurrentProfesional = cache(async () => {
   const { userId } = await auth.protect()
 
   let profesional = await prisma.profesional.findUnique({
@@ -39,4 +40,4 @@ export async function getCurrentProfesional() {
   }
 
   return profesional
-}
+})

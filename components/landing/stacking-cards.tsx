@@ -1,5 +1,6 @@
 "use client"
 
+import { User } from "lucide-react"
 import { useEffect, useRef } from "react"
 
 interface Testimonial {
@@ -87,7 +88,7 @@ export default function StackingCards() {
   }, [])
 
   return (
-    <section ref={sectionRef} className="relative py-12 md:py-16" id="testimonios">
+    <section ref={sectionRef} className="relative min-h-dvh py-12 md:py-16" id="testimonios">
       <div className="mx-auto text-center mb-10 px-6">
         <h2 className="text-3xl sm:text-4xl font-serif text-foreground leading-snug">
           Lo que dicen nuestros
@@ -112,7 +113,9 @@ export default function StackingCards() {
             }}
           >
             <div className="flex items-center gap-5 mb-8">
-              <div className="size-16 rounded-full shrink-0 bg-primary"></div>
+              <div className="size-16 rounded-full shrink-0 bg-primary flex items-center justify-center">
+                <User className="size-8 text-primary-foreground" />
+              </div>
               <div>
                 <p className="text-xl font-semibold">
                   {t.name} {t.lastName}

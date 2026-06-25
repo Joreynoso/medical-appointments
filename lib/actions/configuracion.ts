@@ -33,8 +33,8 @@ export async function actualizarConfiguracion(input: ActualizarConfiguracionInpu
   const profesional = await getCurrentProfesional()
   const configActual = profesional.configuracion
 
-  if (input.duracionSlot < 10 || input.duracionSlot > 120) {
-    throw new Error("La duración del slot debe estar entre 10 y 120 minutos.")
+  if (![15, 30].includes(input.duracionSlot)) {
+    throw new Error("La duración del slot debe ser 15 o 30 minutos.")
   }
 
   const [hDesde, mDesde] = input.horarioDesde.split(":").map(Number)

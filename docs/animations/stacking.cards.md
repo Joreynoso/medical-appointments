@@ -32,30 +32,68 @@ Cargar GSAP y el plugin ScrollTrigger desde CDN, **antes del cierre de `</body>`
 
 La estructura es simple: una sección contenedora con N bloques `.card-sticky`, uno por tarjeta.
 
-```html
-<section class="cards-section">
+```tsx
+import { User } from "lucide-react"
 
-  <div class="card-sticky">
-    <div class="card" id="card-1">
-      <!-- contenido de la tarjeta -->
+<section className="cards-section">
+
+  <div className="card-sticky">
+    <div className="card" id="card-1">
+      <div className="flex items-center gap-5 mb-8">
+        <div className="size-16 rounded-full bg-primary flex items-center justify-center">
+          <User className="size-8 text-primary-foreground" />
+        </div>
+        <div>
+          <p className="text-xl font-semibold">María Fernández</p>
+          <p className="text-sm text-primary">Cardióloga</p>
+        </div>
+      </div>
+      <p className="text-muted-foreground">&ldquo;Testimonio aquí&rdquo;</p>
     </div>
   </div>
 
-  <div class="card-sticky">
-    <div class="card" id="card-2">
-      <!-- contenido de la tarjeta -->
+  <div className="card-sticky">
+    <div className="card" id="card-2">
+      <div className="flex items-center gap-5 mb-8">
+        <div className="size-16 rounded-full bg-primary flex items-center justify-center">
+          <User className="size-8 text-primary-foreground" />
+        </div>
+        <div>
+          <p className="text-xl font-semibold">Carlos Gutiérrez</p>
+          <p className="text-sm text-primary">Pediatra</p>
+        </div>
+      </div>
+      <p className="text-muted-foreground">&ldquo;Testimonio aquí&rdquo;</p>
     </div>
   </div>
 
-  <div class="card-sticky">
-    <div class="card" id="card-3">
-      <!-- contenido de la tarjeta -->
+  <div className="card-sticky">
+    <div className="card" id="card-3">
+      <div className="flex items-center gap-5 mb-8">
+        <div className="size-16 rounded-full bg-primary flex items-center justify-center">
+          <User className="size-8 text-primary-foreground" />
+        </div>
+        <div>
+          <p className="text-xl font-semibold">Ana Martínez</p>
+          <p className="text-sm text-primary">Dermatóloga</p>
+        </div>
+      </div>
+      <p className="text-muted-foreground">&ldquo;Testimonio aquí&rdquo;</p>
     </div>
   </div>
 
-  <div class="card-sticky">
-    <div class="card" id="card-4">
-      <!-- contenido de la tarjeta -->
+  <div className="card-sticky">
+    <div className="card" id="card-4">
+      <div className="flex items-center gap-5 mb-8">
+        <div className="size-16 rounded-full bg-primary flex items-center justify-center">
+          <User className="size-8 text-primary-foreground" />
+        </div>
+        <div>
+          <p className="text-xl font-semibold">Roberto López</p>
+          <p className="text-sm text-primary">Traumatólogo</p>
+        </div>
+      </div>
+      <p className="text-muted-foreground">&ldquo;Testimonio aquí&rdquo;</p>
     </div>
   </div>
 

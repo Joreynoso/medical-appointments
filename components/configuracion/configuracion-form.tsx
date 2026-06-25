@@ -19,7 +19,7 @@ const HORAS = Array.from({ length: 17 }, (_, i) => {
   return `${String(h).padStart(2, "0")}:00`
 })
 
-const DURACIONES = [15, 20, 25, 30, 45, 60]
+const DURACIONES = [15, 30]
 
 type ConfiguracionFormProps = {
   initialConfig: ConfiguracionData | null

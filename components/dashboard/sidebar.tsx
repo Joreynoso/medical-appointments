@@ -20,7 +20,7 @@ export function Sidebar() {
       )}
       <aside
         className={cn(
-          "sidebar fixed left-0 top-0 z-40 flex h-screen flex-col bg-sidebar text-sidebar-foreground transition-all duration-300 animate-sidebar-enter",
+          "sidebar fixed left-0 top-0 z-40 flex h-screen flex-col bg-sidebar text-sidebar-foreground transition-[width] duration-150",
           "lg:z-30 lg:translate-x-0",
           collapsed ? "lg:w-14" : "lg:w-56",
           "w-56",

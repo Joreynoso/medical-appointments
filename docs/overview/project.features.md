@@ -80,7 +80,7 @@
 - [x] Editar obra social
 - [x] Desactivar obra social (soft delete — FK `SET NULL` en pacientes vinculados)
 - [x] Búsqueda por nombre dentro del listado
-- [x] "Particular" auto-creada al listar si el profesional no tiene ninguna
+- [x] El profesional gestiona su catálogo (comienza vacío, las agrega manualmente)
 - [x] Vista responsive (tabla desktop + tarjetas mobile) mismo diseño que pacientes
 
 ---

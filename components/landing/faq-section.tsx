@@ -41,7 +41,7 @@ export default function FaqSection() {
   const baseId = useId()
 
   return (
-    <section id="faq" className="py-24">
+    <section id="faq" className="min-h-dvh py-24">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-16">
           <h2 className="text-3xl sm:text-4xl font-serif text-foreground">

@@ -17,17 +17,6 @@ export type ObraSocialListData = {
 export const listarObrasSociales = cache(async (): Promise<ObraSocialListData[]> => {
   const profesional = await getCurrentProfesional()
 
-  const existing = await prisma.obraSocial.findFirst({
-    where: { profesionalId: profesional.id, activo: true },
-    select: { id: true },
-  })
-
-  if (!existing) {
-    await prisma.obraSocial.create({
-      data: { profesionalId: profesional.id, nombre: "Particular" },
-    })
-  }
-
   return prisma.obraSocial.findMany({
     where: {
       profesionalId: profesional.id,
@@ -71,6 +60,11 @@ export async function actualizarObraSocial(id: string, data: { nombre: string })
 
 export async function desactivarObraSocial(id: string) {
   const profesional = await getCurrentProfesional()
+
+  await prisma.paciente.updateMany({
+    where: { obraSocialId: id, profesionalId: profesional.id },
+    data: { obraSocialId: null },
+  })
 
   await prisma.obraSocial.update({
     where: { id, profesionalId: profesional.id },

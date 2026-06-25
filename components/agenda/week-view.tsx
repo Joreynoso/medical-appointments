@@ -95,7 +95,7 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
                 {holiday && (
                   <Tooltip>
                     <TooltipTrigger render={
-                      <div className="mt-0.5 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground truncate max-w-20">
+                      <div className="mt-0.5 rounded bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground truncate w-full">
                         {holiday}
                       </div>
                     } />

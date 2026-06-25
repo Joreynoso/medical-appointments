@@ -25,7 +25,7 @@ export function Topbar() {
         <button
           type="button"
           onClick={openChat}
-          className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-foreground transition-all hover:bg-muted animate-pulse"
+          className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-foreground transition-all hover:bg-muted"
         >
           <Bot className="size-3.5 md:size-4 text-primary" />
           <span className="hidden md:inline">Chat IA (Besta)</span>

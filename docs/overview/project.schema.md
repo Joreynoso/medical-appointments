@@ -90,7 +90,7 @@ Obra social o prepaga que el profesional gestiona en su catálogo. Cada profesio
 **Decisiones:**
 - Per-profesional: cada profesional gestiona su propio catálogo (mismo patrón que `Paciente`).
 - `@@unique([profesionalId, nombre])` evita duplicados de nombre por profesional.
-- "Particular" se auto-crea al listar obras sociales si el profesional no tiene ninguna.
+- El listado comienza vacío; el profesional agrega manualmente las obras sociales que necesita.
 - Soft delete con `activo: false`. Al desactivar, los pacientes vinculados conservan su registro pero pierden la referencia (FK `ON DELETE SET NULL`).
 
 ---
@@ -302,5 +302,4 @@ model Feriado {
 - La tabla `Feriado` no tiene relación con `Profesional` — es global e intocable en runtime.
 - `diasLaborables` excluye domingo (0) — validado en UI y server. No se debe permitir nunca.
 - La config base se auto-crea al registrar un nuevo profesional. `getCurrentProfesional()` siempre retorna config poblada.
-- "Particular" se auto-crea para cada profesional al listar obras sociales si no tiene ninguna.
 - `ObraSocial` tiene unique compuesto `[profesionalId, nombre]` — no crear duplicados.
