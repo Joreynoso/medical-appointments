@@ -51,24 +51,24 @@ export const consultarDisponibilidadTool = {
     const diaSemana = fechaDate.getDay()
 
     if (diaSemana === 0) {
-      return { mensaje: "Los domingos no hay atención. No hay disponibilidad.", disponibles: [] }
+      return { formattedMessage: "Los domingos no hay atención. No hay disponibilidad." }
     }
 
     if (!config.diasLaborables.includes(diaSemana)) {
-      return { mensaje: "Es un día no laborable. No hay disponibilidad.", disponibles: [] }
+      return { formattedMessage: "Es un día no laborable. No hay disponibilidad." }
     }
 
     const feriado = await prisma.feriado.findUnique({
       where: { fecha: fechaDate },
     })
     if (feriado) {
-      return { mensaje: `Es feriado (${feriado.nombre}). No hay atención.`, disponibles: [] }
+      return { formattedMessage: `Es feriado (${feriado.nombre}). No hay atención.` }
     }
 
     const todosLosSlots = generarSlots(config.horarioDesde, config.horarioHasta, config.duracionSlot)
 
     if (todosLosSlots.length === 0) {
-      return { mensaje: `No hay slots definidos para este horario (${config.horarioDesde} a ${config.horarioHasta}).`, disponibles: [] }
+      return { formattedMessage: `No hay slots definidos para este horario (${config.horarioDesde} a ${config.horarioHasta}).` }
     }
 
     const ocupados = await prisma.turno.findMany({
@@ -83,11 +83,18 @@ export const consultarDisponibilidadTool = {
     const ocupadosSet = new Set(ocupados.map((t) => t.horaInicio))
     const disponibles = todosLosSlots.filter((s) => !ocupadosSet.has(s))
 
-    return {
-      mensaje: `Slots disponibles para ${fechaStr}: ${disponibles.length} de ${todosLosSlots.length}`,
-      fecha: fechaStr,
-      disponibles,
-      totalSlots: todosLosSlots.length,
-    }
+    const labelDia = fechaDate.toLocaleDateString("es-AR", { weekday: "long", day: "numeric", month: "long" })
+    const lineas = disponibles.map((s) => `- ${s} hs`)
+    const formattedMessage = disponibles.length > 0
+      ? [
+          `📅 Slots disponibles para ${labelDia}`,
+          "",
+          `Total: **${disponibles.length}** de **${todosLosSlots.length}** slots`,
+          "",
+          ...lineas,
+        ].join("\n")
+      : `No hay slots disponibles para ${labelDia}.`
+
+    return { formattedMessage }
   },
 }

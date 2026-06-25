@@ -47,16 +47,14 @@ export async function getResumenTurnosHoy(): Promise<string> {
   }
 
   const lineas = turnos.map(
-    (t) => `| ${t.horaInicio} - ${t.horaFin} | ${t.paciente.nombre} | ${badgeEstado(t.estado)} |`,
+    (t) => `- **${t.paciente.nombre}** (${t.horaInicio} - ${t.horaFin}) — ${badgeEstado(t.estado)}`,
   )
 
   return [
-    `**📅 Turnos de ${formatearFecha(hoy)}**`,
+    `📅 Turnos de ${formatearFecha(hoy)}`,
     "",
     `Total: **${turnos.length}** turno(s)`,
     "",
-    "| Hora | Paciente | Estado |",
-    "|------|----------|--------|",
     ...lineas,
   ].join("\n")
 }

@@ -89,6 +89,42 @@ export const getTurnosEnRango = cache(async (desde: string, hasta: string): Prom
   }))
 })
 
+export type TurnosPorMesData = {
+  mes: string
+  total: number
+}
+
+export async function getTurnosPorMes(cantidadMeses = 6): Promise<TurnosPorMesData[]> {
+  const profesional = await getCurrentProfesional()
+  const ahora = new Date()
+  const meses: TurnosPorMesData[] = []
+
+  const nombresMeses = ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"]
+
+  for (let i = cantidadMeses - 1; i >= 0; i--) {
+    const inicio = new Date(ahora.getFullYear(), ahora.getMonth() - i, 1)
+    const fin = new Date(ahora.getFullYear(), ahora.getMonth() - i + 1, 1)
+
+    const count = await prisma.turno.count({
+      where: {
+        profesionalId: profesional.id,
+        fecha: {
+          gte: inicio,
+          lt: fin,
+        },
+        estado: { not: "CANCELADO" },
+      },
+    })
+
+    meses.push({
+      mes: nombresMeses[inicio.getMonth()],
+      total: count,
+    })
+  }
+
+  return meses
+}
+
 export type ConfigHoraria = {
   horarioDesde: string
   horarioHasta: string
@@ -195,4 +231,46 @@ export async function getSlotsOcupadosEnFecha(fecha: string): Promise<string[]> 
     select: { horaInicio: true },
   })
   return turnos.map((t) => t.horaInicio)
+}
+
+export async function getTurnosHoy(): Promise<TurnoData[]> {
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  const maniana = new Date(hoy)
+  maniana.setDate(maniana.getDate() + 1)
+  return getTurnosEnRango(
+    hoy.toISOString().slice(0, 10),
+    maniana.toISOString().slice(0, 10),
+  )
+}
+
+export async function getProximosTurnos(limite = 10): Promise<TurnoData[]> {
+  const profesional = await getCurrentProfesional()
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+
+  const turnos = await prisma.turno.findMany({
+    where: {
+      profesionalId: profesional.id,
+      fecha: { gte: hoy },
+      estado: { not: "CANCELADO" },
+    },
+    select: {
+      id: true,
+      fecha: true,
+      horaInicio: true,
+      horaFin: true,
+      estado: true,
+      paciente: {
+        select: { id: true, nombre: true, telefono: true, notas: true },
+      },
+    },
+    orderBy: [{ fecha: "asc" }, { horaInicio: "asc" }],
+    take: limite,
+  })
+
+  return turnos.map((t) => ({
+    ...t,
+    fecha: t.fecha.toISOString().slice(0, 10),
+  }))
 }

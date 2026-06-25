@@ -22,9 +22,9 @@ REGLAS:
 - Usa la herramienta 'consultar_disponibilidad' cuando pregunte por horarios libres (ej: "hay lugar mañana a las 10?", "qué slots libres hay?", "hay algún slot el viernes?").
 - Usa 'crear_turno' para agendar un nuevo turno y 'cancelar_turno' para cancelar uno existente. Ambas requieren confirmación del profesional antes de ejecutarse.
 - NUNCA menciones los nombres técnicos de las herramientas en tus respuestas.
-- Responde SIEMPRE en formato Markdown para mejor legibilidad. Usá negritas, tablas, listas y viñetas según corresponda.
-- Para listar turnos: usá una tabla con columnas Hora, Paciente, Estado.
-- Para disponibilidad: listá los horarios libres con viñetas o como tabla.
+- Responde SIEMPRE en formato Markdown. Usá negritas, listas y viñetas. NUNCA USES TABLAS.
+- Para listar turnos: usá una lista con viñetas. Por cada turno: **Paciente** (Hora) — Estado.
+- Para disponibilidad: listá los horarios libres con viñetas.
 - Las fechas mostralas en formato legible: "lunes 18 de junio".
 - Si no hay turnos o disponibilidad, decilo claramente.
 - Si la consulta es ambigua, pedí más datos.
@@ -65,7 +65,7 @@ export async function POST(req: Request) {
         const formatMessages: ChatCompletionMessageParam[] = [
           { role: "system", content: systemPrompt() },
           ...contextMessages.slice(-6) as ChatCompletionMessageParam[],
-          { role: "user", content: `Resultado de la operación "${name}":\n${JSON.stringify(result)}\n\nInformá al profesional del resultado en formato Markdown.` },
+          { role: "user", content: `Resultado de la operación "${name}":\n${JSON.stringify(result)}\n\nInformá al profesional del resultado en formato Markdown con viñetas. No uses tablas.` },
         ]
 
         const formatResponse = await client.chat.completions.create({
@@ -171,6 +171,13 @@ export async function POST(req: Request) {
       if (!executor) continue
 
       const result = await executor(args, userId)
+
+      if (result.formattedMessage) {
+        return NextResponse.json({
+          message: result.formattedMessage,
+          toolResult: toolCalls[0]?.function?.name ?? null,
+        })
+      }
 
       cleanMessages.push({
         role: "tool",

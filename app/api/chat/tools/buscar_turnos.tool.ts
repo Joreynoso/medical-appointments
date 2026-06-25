@@ -7,6 +7,42 @@ function sumarMinutos(hora: string, minutos: number): string {
   return `${String(Math.floor(total / 60)).padStart(2, "0")}:${String(total % 60).padStart(2, "0")}`
 }
 
+function formatearFecha(fecha: Date): string {
+  const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"]
+  const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+  return `${dias[fecha.getDay()]} ${fecha.getDate()} de ${meses[fecha.getMonth()]}`
+}
+
+function badgeEstado(estado: string): string {
+  const map: Record<string, string> = {
+    PENDIENTE: "🟡 Pendiente",
+    CONFIRMADO: "🟢 Confirmado",
+    CANCELADO: "🔴 Cancelado",
+    AUSENTE: "🟠 Ausente",
+  }
+  return map[estado] ?? estado
+}
+
+function formatearTurnosLista(turnos: Array<{ fecha: string; horaInicio: string; horaFin: string; estado: string; paciente: string }>): string {
+  const fechasUnicas = [...new Set(turnos.map((t) => t.fecha))]
+  const titulo = fechasUnicas.length === 1
+    ? `📅 Turnos de ${formatearFecha(new Date(fechasUnicas[0] + "T00:00:00"))}`
+    : "📅 Turnos encontrados"
+  const lineas = turnos.map(
+    (t) => {
+      const fecha = fechasUnicas.length > 1 ? ` ${t.fecha.slice(8, 10)}/${t.fecha.slice(5, 7)} —` : ""
+      return `- **${t.paciente}**${fecha} (${t.horaInicio} - ${t.horaFin}) — ${badgeEstado(t.estado)}`
+    },
+  )
+  return [
+    titulo,
+    "",
+    `Total: **${turnos.length}** turno(s)`,
+    "",
+    ...lineas,
+  ].join("\n")
+}
+
 export const buscarTurnosTool = {
   type: "function" as const,
   function: {
@@ -98,26 +134,19 @@ export const buscarTurnosTool = {
         args.fecha_desde || args.fecha_hasta
           ? `del ${args.fecha_desde ?? "hoy"} al ${args.fecha_hasta ?? args.fecha_desde ?? "próximos días"}`
           : "hoy y próximos días"
-      return { mensaje: `No se encontraron turnos ${rango}.`, turnos: [] }
+      return { formattedMessage: `No se encontraron turnos ${rango}.` }
     }
 
+    const turnosData = turnos.map((t) => ({
+      fecha: t.fecha.toISOString().slice(0, 10),
+      horaInicio: t.horaInicio,
+      horaFin: t.horaFin,
+      estado: t.estado,
+      paciente: t.paciente.nombre,
+    }))
+
     return {
-      mensaje: `Se encontraron ${turnos.length} turno(s).`,
-      turnos: turnos.map((t) => ({
-        id: t.id,
-        fecha: t.fecha.toISOString().slice(0, 10),
-        horaInicio: t.horaInicio,
-        horaFin: t.horaFin,
-        estado: t.estado,
-        paciente: t.paciente.nombre,
-        telefono: t.paciente.telefono,
-      })),
-      consulta: {
-        desde: desde.toISOString().slice(0, 10),
-        hasta: hasta.toISOString().slice(0, 10),
-        paciente: args.paciente ?? null,
-        estado: args.estado ?? null,
-      },
+      formattedMessage: formatearTurnosLista(turnosData),
     }
   },
 }
