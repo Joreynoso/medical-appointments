@@ -48,5 +48,11 @@ export const clerkAppearance: ClerkProviderProps["appearance"] = {
     footerActionText: {
       color: "var(--muted-foreground)",
     },
+    userButtonPopoverActionButton: {
+      color: "var(--foreground)",
+    },
+    userButtonPopoverActionButtonIcon: {
+      color: "var(--foreground)",
+    },
   },
 };

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Fira_Code } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
+import { esES } from "@clerk/localizations";
 import { clerkAppearance } from "@/lib/clerk-appearance";
 import "./globals.css";
 
@@ -25,7 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider appearance={clerkAppearance}>
+    <ClerkProvider appearance={clerkAppearance} localization={esES}>
       <html
         lang="es"
         className={`${dmSans.variable} ${firaCode.variable} h-full antialiased dark`}

@@ -31,3 +31,37 @@ Al ejecutar `npx shadcn@latest init --defaults`, el comando sobrescribe `app/glo
 **Siempre hacer backup de `globals.css` antes de ejecutar `shadcn init`.** Alternativamente, ejecutar el init en un proyecto limpio y solo copiar los archivos de componentes (`components/ui/` y `lib/utils.ts`) sin dejar que sobrescriba el CSS.
 
 ---
+
+## ISSUE-002 — Clerk UserButton: texto e iconos del dropdown con mal contraste en tema oscuro
+
+**Fecha:** 2026-06-28
+**Feature:** Feature 1 — Setup del proyecto (Clerk)
+**Tarea:** Configurar idioma español en Clerk
+
+### Problema
+Los botones de acción del dropdown del `UserButton` ("Administrar cuenta" y "Cerrar sesión") mostraban el texto y los iconos con un color de muy bajo contraste sobre el fondo oscuro del popover, haciéndolos difíciles de leer.
+
+### Causa raíz
+Clerk aplica colores por defecto a los elementos del dropdown (`userButtonPopoverActionButton` y `userButtonPopoverActionButtonIcon`) que no respetan las variables CSS del tema personalizado. Aunque `colorForeground` estaba mapeado a `var(--foreground)` en las `variables` globales de apariencia, Clerk no propaga ese color a estos elementos específicos del UserButton.
+
+### Solución
+Se agregaron dos reglas en `lib/clerk-appearance.ts` dentro del objeto `elements`:
+
+```ts
+userButtonPopoverActionButton: {
+  color: "var(--foreground)",
+},
+userButtonPopoverActionButtonIcon: {
+  color: "var(--foreground)",
+},
+```
+
+- `userButtonPopoverActionButton` → color del texto de cada acción
+- `userButtonPopoverActionButtonIcon` → color del icono de cada acción
+
+Ambos apuntan a `var(--foreground)` (#c3c0b6), el color principal de párrafo del tema oscuro del proyecto.
+
+### Lección aprendida
+Los elementos del dropdown del UserButton de Clerk requieren estilizado explícito vía `elements` y no heredan automáticamente las `variables` globales de color de texto. Siempre que se personalice la apariencia de Clerk, verificar el dropdown del UserButton por separado.
+
+---
