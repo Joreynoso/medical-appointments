@@ -93,7 +93,7 @@ export default function StackingCards() {
         <h2 className="text-3xl sm:text-4xl font-serif text-foreground leading-snug">
           Lo que dicen nuestros
           <br />
-          <span className="text-primary italic">profesionales</span>
+          <span className="text-primary">profesionales</span>
         </h2>
         <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
           Médicos y especialistas de todo el país ya confían en MedPilot para

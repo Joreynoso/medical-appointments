@@ -2,12 +2,14 @@ import { buscarTurnosTool } from "./buscar_turnos.tool"
 import { consultarDisponibilidadTool } from "./consultar_disponibilidad.tool"
 import { crearTurnoTool } from "./crear_turno.tool"
 import { cancelarTurnoTool } from "./cancelar_turno.tool"
+import { listarPacientesTool } from "./listar_pacientes.tool"
 
 export const tools = [
   buscarTurnosTool,
   consultarDisponibilidadTool,
   crearTurnoTool,
   cancelarTurnoTool,
+  listarPacientesTool,
 ]
 
 export const toolExecutors: Record<string, (args: any, userId?: string) => Promise<any>> = {
@@ -15,6 +17,7 @@ export const toolExecutors: Record<string, (args: any, userId?: string) => Promi
   consultar_disponibilidad: (args, userId) => consultarDisponibilidadTool.execute(args, userId),
   crear_turno: (args, userId) => crearTurnoTool.execute(args, userId),
   cancelar_turno: (args, userId) => cancelarTurnoTool.execute(args, userId),
+  listar_pacientes: (args, userId) => listarPacientesTool.execute(args, userId),
 }
 
 export const toolValidators: Record<string, (args: any, userId?: string) => Promise<any>> = {

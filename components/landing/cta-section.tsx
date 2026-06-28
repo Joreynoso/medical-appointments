@@ -33,12 +33,12 @@ export default function CtaSection() {
           <h2 className="text-3xl sm:text-4xl font-serif text-foreground leading-snug">
             Probá cómo funciona con
             <br />
-            <span className="text-primary italic">lenguaje natural</span>
+            <span className="text-primary">lenguaje natural</span>
           </h2>
 
           <p className="text-lg text-muted-foreground max-w-lg leading-relaxed">
             Consultá tu agenda al instante sin buscar manualmente. Con nuestro
-            <span className="text-primary italic"> chat en tiempo real</span>, los
+            <span className="text-primary"> chat en tiempo real</span>, los
             profesionales pueden preguntar qué turnos tienen, ver datos de
             pacientes y gestionar su día con una simple frase.
           </p>

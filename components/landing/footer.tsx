@@ -5,8 +5,8 @@ export default function Footer() {
   return (
     <>
       {/* Giant MedPilot Text */}
-      <div className="w-screen -mx-[calc((100vw-100%)/2)] text-center select-none leading-none pt-16 pb-6 md:pb-0 overflow-hidden bg-transparent relative z-10">
-        <span className="text-[28vw] font-serif font-normal tracking-tighter block leading-[0.75] text-primary select-none whitespace-nowrap">
+      <div className="w-screen -mx-[calc((100vw-100%)/2)] text-center select-none leading-none pt-16 pb-0 overflow-hidden bg-transparent relative z-10">
+        <span className="text-[28vw] font-serif font-normal tracking-tighter block leading-[0.75] text-primary select-none whitespace-nowrap mt-0.5 md:mt-0">
           MedPilot
         </span>
       </div>
