@@ -4,6 +4,8 @@ import { NextResponse } from "next/server"
 import { auth } from "@clerk/nextjs/server"
 import { tools, toolExecutors, toolValidators, destructiveToolNames } from "./tools"
 
+type ChatMessage = { role: string; content: string; tool_call_id?: string }
+
 const client = new Groq({ apiKey: process.env.GROQ_API_KEY })
 
 const MODEL = "llama-3.3-70b-versatile"
@@ -43,21 +45,22 @@ export async function POST(req: Request) {
     const body = await req.json()
 
     // ── CONFIRM TOOL CALL (execution after user confirms) ──
-    if (body.confirmToolCall) {
-      const { name, args } = body.confirmToolCall
-      const contextMessages: { role: string; content: string }[] = body.contextMessages ?? []
+    const confirmBody = body as { confirmToolCall: { name: string; args: Record<string, unknown> }; contextMessages?: ChatMessage[] } | undefined
+    if (confirmBody?.confirmToolCall) {
+      const { name, args } = confirmBody.confirmToolCall
+      const contextMessages: ChatMessage[] = confirmBody.contextMessages ?? []
 
       const executor = toolExecutors[name]
       if (!executor) {
         return NextResponse.json({ error: `Tool "${name}" no encontrada.` }, { status: 400 })
       }
 
-      let result: any
+      let result: Record<string, unknown>
       try {
         result = await executor(args, userId)
-      } catch (e: any) {
+      } catch (e: unknown) {
         return NextResponse.json({
-          message: `❌ Error al ejecutar la operación: ${e.message || "Error desconocido"}`,
+          message: `❌ Error al ejecutar la operación: ${e instanceof Error ? e.message : "Error desconocido"}`,
         })
       }
 
@@ -85,22 +88,22 @@ export async function POST(req: Request) {
     }
 
     // ── REGULAR CHAT FLOW ──
-    const { messages } = body
+    const { messages } = body as { messages: ChatMessage[] }
 
-    const cleanMessages = messages
+    const cleanMessages: ChatMessage[] = messages
       .filter(
-        (msg: any) =>
+        (msg) =>
           msg.role === "user" ||
-          (msg.role === "assistant" && msg.content?.trim().length > 0),
+          (msg.role === "assistant" && typeof msg.content === "string" && msg.content.trim().length > 0),
       )
-      .map(({ role, content }: any) => ({ role, content }))
+      .map(({ role, content }) => ({ role, content }))
 
     const response = await client.chat.completions.create({
       model: MODEL,
       temperature: 0.2,
       messages: [
         { role: "system", content: systemPrompt() },
-        ...cleanMessages,
+        ...cleanMessages as ChatCompletionMessageParam[],
       ],
       tools,
       tool_choice: "auto",
@@ -149,7 +152,7 @@ export async function POST(req: Request) {
                 ? "\n\n⚠️ REGLA ESTRICTA: La herramienta devolvió una VALIDACIÓN, NO una ejecución. El turno NO fue creado/cancelado. No digas que la operación se completó, que el turno fue creado, o que ya está agendado. Tu única tarea es preguntar al profesional si desea confirmar la operación (Sí / No). No respondas por el profesional."
                 : ""),
           },
-          ...cleanMessages,
+          ...cleanMessages as ChatCompletionMessageParam[],
         ],
       })
 
@@ -192,7 +195,7 @@ export async function POST(req: Request) {
       temperature: 0.2,
       messages: [
         { role: "system", content: systemPrompt() },
-        ...cleanMessages,
+        ...cleanMessages as ChatCompletionMessageParam[],
       ],
     })
 

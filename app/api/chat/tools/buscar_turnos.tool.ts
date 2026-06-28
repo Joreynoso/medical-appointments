@@ -1,5 +1,17 @@
 import { prisma } from "@/lib/prisma"
+import type { Prisma, EstadoTurno } from "@prisma/client"
 import { buscarPacientesPorNombre } from "@/lib/paciente-search"
+
+type TurnoConPaciente = Prisma.TurnoGetPayload<{
+  select: {
+    id: true
+    fecha: true
+    horaInicio: true
+    horaFin: true
+    estado: true
+    paciente: { select: { id: true; nombre: true; telefono: true } }
+  }
+}>
 
 function sumarMinutos(hora: string, minutos: number): string {
   const [h, m] = hora.split(":").map(Number)
@@ -94,9 +106,10 @@ export const buscarTurnosTool = {
         ? new Date(args.fecha_desde + "T23:59:59")
         : new Date(hoy.getTime() + 6 * 24 * 60 * 60 * 1000)
 
-    const where: any = {
+    const where: Prisma.TurnoWhereInput = {
       profesionalId: profesional.id,
       fecha: { gte: desde, lte: hasta },
+      ...(args.estado ? { estado: args.estado as EstadoTurno } : {}),
     }
 
     if (args.paciente) {
@@ -107,11 +120,7 @@ export const buscarTurnosTool = {
       where.pacienteId = { in: pacientes.map((p) => p.id) }
     }
 
-    if (args.estado) {
-      where.estado = args.estado
-    }
-
-    const turnos = await prisma.turno.findMany({
+    const turnos: TurnoConPaciente[] = await prisma.turno.findMany({
       where,
       select: {
         id: true,

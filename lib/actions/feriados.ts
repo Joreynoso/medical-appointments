@@ -2,12 +2,15 @@
 
 import { cache } from "react"
 import { prisma } from "@/lib/prisma"
+import type { Prisma } from "@prisma/client"
 import { getYearRange, sincronizarSiEsNecesario } from "@/lib/feriados"
+
+type FeriadoData = Prisma.FeriadoGetPayload<{ select: { fecha: true; nombre: true } }>
 
 export const getFeriadosEnRango = cache(async (año: number) => {
   await sincronizarSiEsNecesario()
 
-  const feriados = await prisma.feriado.findMany({
+  const feriados: FeriadoData[] = await prisma.feriado.findMany({
     where: { fecha: getYearRange(año) },
     select: { fecha: true, nombre: true },
   })

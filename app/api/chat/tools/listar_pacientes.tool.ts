@@ -1,5 +1,18 @@
 import { prisma } from "@/lib/prisma"
+import type { Prisma } from "@prisma/client"
 import { buscarPacientesPorNombre } from "@/lib/paciente-search"
+
+type PacienteConOS = Prisma.PacienteGetPayload<{
+  select: {
+    id: true
+    nombre: true
+    telefono: true
+    notas: true
+    obraSocial: { select: { nombre: true } }
+    createdAt: true
+    _count: { select: { turnos: true } }
+  }
+}>
 
 export const listarPacientesTool = {
   type: "function" as const,
@@ -25,7 +38,7 @@ export const listarPacientesTool = {
     })
     if (!profesional) throw new Error("Profesional no encontrado")
 
-    const where: any = {
+    const where: Prisma.PacienteWhereInput = {
       profesionalId: profesional.id,
       activo: true,
     }
@@ -39,7 +52,7 @@ export const listarPacientesTool = {
       where.id = { in: ids }
     }
 
-    const pacientes = await prisma.paciente.findMany({
+    const pacientes: PacienteConOS[] = await prisma.paciente.findMany({
       where,
       select: {
         id: true,

@@ -52,13 +52,13 @@ export function ConfiguracionForm({ initialConfig }: ConfiguracionFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 rounded-lg border border-border p-6">
+    <form onSubmit={handleSubmit} className="space-y-8 rounded-lg border border-border p-4 sm:p-6">
       <div className="space-y-4">
         <h2 className="text-sm font-medium text-foreground">Días laborables</h2>
         <p className="text-xs text-muted-foreground">
           Seleccioná los días que atendés. Los domingos no están disponibles.
         </p>
-        <div className="flex gap-2">
+        <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
           {DIAS.map((dia) => {
             const active = diasLaborables.includes(dia.value)
             return (
@@ -66,7 +66,7 @@ export function ConfiguracionForm({ initialConfig }: ConfiguracionFormProps) {
                 key={dia.value}
                 type="button"
                 onClick={() => toggleDia(dia.value)}
-                className={`flex h-10 w-12 items-center justify-center rounded-lg text-sm font-medium transition-all ${
+                className={`flex h-10 w-full items-center justify-center rounded-lg text-sm font-medium transition-all ${
                   active
                     ? "bg-primary text-primary-foreground"
                     : "bg-muted text-muted-foreground hover:bg-muted/80"
