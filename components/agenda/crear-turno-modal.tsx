@@ -213,6 +213,7 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, 
                     <Calendar
                       mode="single"
                       selected={fecha}
+                      locale={es}
                       onSelect={(date) => {
                         setFecha(date)
                         setPopoverOpen(false)
