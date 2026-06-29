@@ -285,3 +285,57 @@ export async function getProximosTurnos(limite = 10): Promise<TurnoData[]> {
     fecha: t.fecha.toISOString().slice(0, 10),
   }))
 }
+
+export async function getTurnosAEmpezar(): Promise<{
+  dentroHorario: boolean
+  turnos: TurnoData[]
+}> {
+  const profesional = await getCurrentProfesional()
+  const config = profesional.configuracion
+  if (!config) return { dentroHorario: false, turnos: [] }
+
+  const horaActual = new Date().toLocaleTimeString("en-GB", {
+    hour: "2-digit",
+    minute: "2-digit",
+  })
+
+  if (horaActual < config.horarioDesde || horaActual >= config.horarioHasta) {
+    return { dentroHorario: false, turnos: [] }
+  }
+
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  const maniana = new Date(hoy)
+  maniana.setDate(maniana.getDate() + 1)
+
+  const desde = sumarMinutos(horaActual, -1)
+  const hasta = sumarMinutos(horaActual, 5)
+
+  const turnos = await prisma.turno.findMany({
+    where: {
+      profesionalId: profesional.id,
+      fecha: { gte: hoy, lt: maniana },
+      horaInicio: { gte: desde, lte: hasta },
+      estado: { in: ["PENDIENTE", "CONFIRMADO"] },
+    },
+    select: {
+      id: true,
+      fecha: true,
+      horaInicio: true,
+      horaFin: true,
+      estado: true,
+      paciente: {
+        select: { id: true, nombre: true, telefono: true, notas: true },
+      },
+    },
+    orderBy: { horaInicio: "asc" },
+  })
+
+  return {
+    dentroHorario: true,
+    turnos: turnos.map((t) => ({
+      ...t,
+      fecha: t.fecha.toISOString().slice(0, 10),
+    })),
+  }
+}

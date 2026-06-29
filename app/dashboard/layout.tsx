@@ -4,6 +4,7 @@ import { Topbar } from "@/components/dashboard/topbar"
 import { PageHeaderActionsProvider } from "@/components/dashboard/page-header-context"
 import { CrearTurnoProvider } from "@/components/agenda/crear-turno-context"
 import { ChatProvider } from "@/components/chat/chat-context"
+import { AppointmentAlarmProvider } from "@/components/agenda/appointment-alarm-provider"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { Toaster } from "sonner"
 import { sincronizarSiEsNecesario } from "@/lib/feriados"
@@ -22,6 +23,7 @@ export default async function DashboardLayout({
         <TooltipProvider>
         <CrearTurnoProvider>
         <ChatProvider>
+        <AppointmentAlarmProvider />
         <Topbar />
         <section className="content-area flex-1 overflow-y-auto">
           {children}
