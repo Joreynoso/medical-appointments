@@ -10,7 +10,8 @@ import { Button } from "@/components/ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar, CalendarDayButton } from "@/components/ui/calendar"
 import { crearTurno, getConfiguracionHoraria, getSlotsOcupadosEnFecha, type ConfigHoraria } from "@/lib/actions/turnos"
-import { crearPaciente } from "@/lib/actions/pacientes"
+import { crearPaciente, listarPacientes } from "@/lib/actions/pacientes"
+import { listarObrasSociales } from "@/lib/actions/obras-sociales"
 import { getFeriadosEnRango } from "@/lib/actions/feriados"
 
 type PacienteSimple = {
@@ -28,8 +29,6 @@ type ObraSocialSimple = {
 type CrearTurnoModalProps = {
   open: boolean
   onOpenChange: (open: boolean) => void
-  pacientes: PacienteSimple[]
-  obrasSociales: ObraSocialSimple[]
   onTurnoCreado: () => void
 }
 
@@ -37,7 +36,7 @@ function normalize(text: string) {
   return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")
 }
 
-export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, onTurnoCreado }: CrearTurnoModalProps) {
+export function CrearTurnoModal({ open, onOpenChange, onTurnoCreado }: CrearTurnoModalProps) {
   const [fecha, setFecha] = useState<Date>()
   const [horaInicio, setHoraInicio] = useState("")
   const [busquedaPaciente, setBusquedaPaciente] = useState("")
@@ -48,6 +47,9 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, 
 
   const [occupiedSlots, setOccupiedSlots] = useState<string[]>([])
   const [feriados, setFeriados] = useState<Map<string, string>>(new Map())
+
+  const [localPacientes, setLocalPacientes] = useState<PacienteSimple[]>([])
+  const [localObrasSociales, setLocalObrasSociales] = useState<ObraSocialSimple[]>([])
 
   useEffect(() => {
     if (fecha) {
@@ -87,6 +89,21 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, 
           setFeriados(map)
         })
         .catch(() => setFeriados(new Map()))
+      listarPacientes()
+        .then((data) => {
+          setLocalPacientes(data.map((p) => ({
+            id: p.id,
+            nombre: p.nombre,
+            telefono: p.telefono,
+            obraSocialNombre: p.obraSocial?.nombre ?? null,
+          })))
+        })
+        .catch(() => setLocalPacientes([]))
+      listarObrasSociales()
+        .then((data) => {
+          setLocalObrasSociales(data.map((o) => ({ id: o.id, nombre: o.nombre })))
+        })
+        .catch(() => setLocalObrasSociales([]))
     }
   }, [open])
 
@@ -104,8 +121,8 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, 
   }
 
   const filteredPacientes = !busquedaPaciente
-    ? pacientes
-    : pacientes.filter((p) => normalize(p.nombre).includes(normalize(busquedaPaciente)))
+    ? localPacientes
+    : localPacientes.filter((p) => normalize(p.nombre).includes(normalize(busquedaPaciente)))
 
   function resetForm() {
     setFecha(undefined)
@@ -133,13 +150,15 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, 
         telefono: nuevoPacienteTelefono.trim() || undefined,
         obraSocialId: nuevoPacienteObraSocialId || undefined,
       })
-      const obraSocialSel = obrasSociales.find((o) => o.id === nuevoPacienteObraSocialId)
-      setSelectedPaciente({
+      const obraSocialSel = localObrasSociales.find((o) => o.id === nuevoPacienteObraSocialId)
+      const nuevoPacienteSimple = {
         id: paciente.id,
         nombre: paciente.nombre,
         telefono: nuevoPacienteTelefono.trim() || null,
         obraSocialNombre: obraSocialSel?.nombre ?? null,
-      })
+      }
+      setSelectedPaciente(nuevoPacienteSimple)
+      setLocalPacientes((prev) => [...prev, nuevoPacienteSimple])
       setShowCrearPaciente(false)
       setNuevoPacienteNombre("")
       setBusquedaPaciente("")
@@ -341,7 +360,7 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, 
                         className="h-9 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
                       >
                         <option value="">Sin obra social</option>
-                        {obrasSociales.map((os) => (
+                        {localObrasSociales.map((os) => (
                           <option key={os.id} value={os.id}>
                             {os.nombre}
                           </option>

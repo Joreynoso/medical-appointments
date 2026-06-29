@@ -52,6 +52,7 @@ export async function crearPaciente(data: { nombre: string; telefono?: string; n
   })
 
   revalidatePath("/dashboard/pacientes")
+  revalidatePath("/dashboard/agenda")
   return paciente
 }
 
@@ -69,6 +70,7 @@ export async function actualizarPaciente(id: string, data: { nombre: string; tel
   })
 
   revalidatePath("/dashboard/pacientes")
+  revalidatePath("/dashboard/agenda")
   return paciente
 }
 
@@ -81,4 +83,5 @@ export async function desactivarPaciente(id: string) {
   })
 
   revalidatePath("/dashboard/pacientes")
+  revalidatePath("/dashboard/agenda")
 }

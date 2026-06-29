@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Plus, Loader2, Phone } from "lucide-react"
 import { Dialog } from "@base-ui/react"
 import { toast } from "sonner"
-import { crearPaciente } from "@/lib/actions/pacientes"
+import { crearPaciente, listarPacientes } from "@/lib/actions/pacientes"
 import { Button } from "@/components/ui/button"
 import type { PacienteListData } from "@/lib/actions/pacientes"
 import type { ObraSocialListData } from "@/lib/actions/obras-sociales"
@@ -37,6 +37,8 @@ export function PacientesRecientesCard({ initialPacientes, obrasSociales }: Paci
         notas: notas?.trim() || undefined,
         obraSocialId: obraSocialId || undefined,
       })
+      const actualizados = await listarPacientes()
+      setPacientes(actualizados)
       toast.success("Paciente creado")
       setModalOpen(false)
     } catch {

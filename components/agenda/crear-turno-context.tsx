@@ -24,6 +24,7 @@ type CrearTurnoContextType = {
   setRefreshRange: (desde: string, hasta: string) => void
   setOnTurnosChange: (cb: (turnos: TurnoData[]) => void) => void
   refreshTurnos: () => Promise<void>
+  addPaciente: (paciente: PacienteSimple) => void
 }
 
 const CrearTurnoContext = createContext<CrearTurnoContextType>({
@@ -33,6 +34,7 @@ const CrearTurnoContext = createContext<CrearTurnoContextType>({
   setRefreshRange: () => {},
   setOnTurnosChange: () => {},
   refreshTurnos: async () => {},
+  addPaciente: () => {},
 })
 
 export function useCrearTurno() {
@@ -52,6 +54,10 @@ export function CrearTurnoProvider({ children }: { children: ReactNode }) {
 
   const setOnTurnosChange = useCallback((cb: (turnos: TurnoData[]) => void) => {
     onTurnosChangeRef.current = cb
+  }, [])
+
+  const addPaciente = useCallback((paciente: PacienteSimple) => {
+    setPacientes((prev) => [...prev, paciente])
   }, [])
 
   const handleTurnoCreado = useCallback(async () => {
@@ -81,14 +87,13 @@ export function CrearTurnoProvider({ children }: { children: ReactNode }) {
         setRefreshRange,
         setOnTurnosChange,
         refreshTurnos,
+        addPaciente,
       }}
     >
       {children}
       <CrearTurnoModal
         open={modalOpen}
         onOpenChange={setModalOpen}
-        pacientes={pacientes}
-        obrasSociales={obrasSociales}
         onTurnoCreado={handleTurnoCreado}
       />
     </CrearTurnoContext.Provider>
