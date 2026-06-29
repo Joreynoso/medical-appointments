@@ -72,6 +72,8 @@ export function FilterModal({
     }
     if (localEstado) {
       list = list.filter((t) => t.estado === localEstado)
+    } else {
+      list = list.filter((t) => t.estado !== "CANCELADO")
     }
     return [...list].sort((a, b) =>
       a.fecha === b.fecha
