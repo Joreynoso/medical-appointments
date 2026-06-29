@@ -145,11 +145,12 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
                       <p className="mt-1 text-sm text-muted-foreground">
                         ¿Estás seguro de cancelar el turno de <span className="font-medium text-foreground">{turnoData.paciente.nombre}</span> del {diasSemana[diaSemana]} {format(fechaDate, "d 'de' MMMM", { locale: es })} a las {turnoData.horaInicio}?
                       </p>
-                      <div className="mt-4 flex justify-end gap-3">
+                      <div className="mt-4 flex flex-col sm:flex-row justify-end gap-3">
                         <Button
                           variant="outline"
                           disabled={accionando}
                           onClick={() => setConfirmingCancel(false)}
+                          className="w-full sm:w-auto"
                         >
                           Volver
                         </Button>
@@ -157,6 +158,7 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
                           variant="destructive"
                           disabled={accionando}
                           onClick={() => ejecutarCambioEstado("CANCELADO")}
+                          className="w-full sm:w-auto"
                         >
                           {accionando ? (
                             <>
@@ -173,12 +175,13 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
                 </div>
               ) : (
                 tieneAcciones && (
-                  <div className="flex justify-end gap-3 pt-2">
+                  <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
                     {mostrarCancelar && (
                       <Button
                         variant="outline"
                         disabled={accionando}
                         onClick={() => setConfirmingCancel(true)}
+                        className="w-full sm:w-auto"
                       >
                         <AlertTriangle className="size-4 text-destructive" />
                         Cancelar turno
@@ -189,12 +192,13 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
                         variant="outline"
                         disabled={accionando}
                         onClick={() => ejecutarCambioEstado("AUSENTE")}
+                        className="w-full sm:w-auto"
                       >
                         Marcar ausente
                       </Button>
                     )}
                     {mostrarConfirmar && (
-                      <Button disabled={accionando} onClick={() => ejecutarCambioEstado("CONFIRMADO")}>
+                      <Button disabled={accionando} onClick={() => ejecutarCambioEstado("CONFIRMADO")} className="w-full sm:w-auto">
                         {accionando ? (
                           <>
                             <Loader2 className="size-4 animate-spin" />

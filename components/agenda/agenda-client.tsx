@@ -125,6 +125,10 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
     setCurrentDate(next)
   }, [currentDate, viewMode, ensureFeriados, ensureTurnos])
 
+  const handleToday = useCallback(() => {
+    setCurrentDate(new Date())
+  }, [])
+
   const handleViewChange = useCallback((mode: "month" | "week") => {
     setViewMode(mode)
     setCurrentDate(new Date())
@@ -182,13 +186,14 @@ export function AgendaClient({ initialFeriados, initialTurnos, initialPacientes,
         viewMode={viewMode}
         onPrev={handlePrev}
         onNext={handleNext}
+        onToday={handleToday}
         onFilterClick={() => setFilterOpen(true)}
         filterActive={!!(filters.pacienteQuery || filters.estado)}
         onViewChange={handleViewChange}
       />,
     )
     return () => setActions(null)
-  }, [currentDate, viewMode, handlePrev, handleNext, filters, setActions])
+  }, [currentDate, viewMode, handlePrev, handleNext, handleToday, filters, setActions])
 
   return (
     <>
