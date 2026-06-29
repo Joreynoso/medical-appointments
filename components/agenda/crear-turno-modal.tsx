@@ -251,20 +251,43 @@ export function CrearTurnoModal({ open, onOpenChange, pacientes, obrasSociales, 
                   Hora de inicio <span className="text-destructive">*</span>
                 </label>
                 <div className="relative">
-                  <select
-                    id="hora"
-                    value={horaInicio}
-                    onChange={(e) => setHoraInicio(e.target.value)}
-                    disabled={submitting || !config}
-                    className="h-9 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-10 text-sm text-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
-                  >
-                    <option value="">Seleccionar hora</option>
-                    {generarSlots().filter((slot) => !occupiedSlots.includes(slot)).map((slot) => (
-                      <option key={slot} value={slot}>
-                        {slot}
-                      </option>
-                    ))}
-                  </select>
+                    <select
+                      id="hora"
+                      value={horaInicio}
+                      onChange={(e) => setHoraInicio(e.target.value)}
+                      disabled={submitting || !config}
+                      className="h-9 w-full appearance-none rounded-lg border border-border bg-background px-3 pr-10 text-sm text-foreground focus:border-ring focus:outline-none focus:ring-3 focus:ring-ring/50 disabled:opacity-50"
+                    >
+                      {(() => {
+                        const slotsDisponibles = generarSlots().filter((slot) => {
+                          if (occupiedSlots.includes(slot)) return false
+                          if (!fecha) return true
+                          const hoy = new Date()
+                          const hoyStr = format(hoy, "yyyy-MM-dd")
+                          if (format(fecha, "yyyy-MM-dd") !== hoyStr) return true
+                          const ahoraMin = hoy.getHours() * 60 + hoy.getMinutes()
+                          const [h, m] = slot.split(":").map(Number)
+                          return h * 60 + m > ahoraMin
+                        })
+                        if (slotsDisponibles.length === 0) {
+                          return (
+                            <option value="">
+                              {fecha ? "El horario de atención ha terminado" : "Seleccionar fecha primero"}
+                            </option>
+                          )
+                        }
+                        return (
+                          <>
+                            <option value="">Seleccionar hora</option>
+                            {slotsDisponibles.map((slot) => (
+                              <option key={slot} value={slot}>
+                                {slot}
+                              </option>
+                            ))}
+                          </>
+                        )
+                      })()}
+                    </select>
                   <Clock
                     className="pointer-events-none absolute right-2.5 top-1/2 size-4 -translate-y-1/2 text-primary"
                     aria-hidden
