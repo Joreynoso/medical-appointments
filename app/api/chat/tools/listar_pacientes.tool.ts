@@ -10,7 +10,6 @@ type PacienteConOS = Prisma.PacienteGetPayload<{
     notas: true
     obraSocial: { select: { nombre: true } }
     createdAt: true
-    _count: { select: { turnos: true } }
   }
 }>
 
@@ -61,7 +60,7 @@ export const listarPacientesTool = {
         notas: true,
         obraSocial: { select: { nombre: true } },
         createdAt: true,
-        _count: { select: { turnos: true } },
+
       },
       orderBy: { nombre: "asc" },
     })
@@ -73,8 +72,7 @@ export const listarPacientesTool = {
     const lineas = pacientes.map((p) => {
       const os = p.obraSocial ? ` — ${p.obraSocial.nombre}` : ""
       const tel = p.telefono ? ` ☎️ ${p.telefono}` : ""
-      const turnos = ` (${p._count.turnos} turno${p._count.turnos !== 1 ? "s" : ""})`
-      return `- **${p.nombre}**${os}${tel}${turnos}`
+      return `- **${p.nombre}**${os}${tel}`
     })
 
     const busquedaInfo = args.busqueda ? ` que coinciden con "${args.busqueda}"` : ""

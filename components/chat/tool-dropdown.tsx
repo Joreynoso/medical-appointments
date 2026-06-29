@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
-import { getResumenTurnosHoy, getResumenDisponibilidad, getResumenFeriados } from "@/lib/actions/chat-actions"
+import { getResumenProximosTurnos, getResumenDisponibilidad, getResumenFeriados } from "@/lib/actions/chat-actions"
 
 type ToolDropdownProps = {
   onResult: (userMessage: string, assistantMessage: string) => void
@@ -18,7 +18,7 @@ type ToolDropdownProps = {
 }
 
 const serverItems = [
-  { label: "Ver turnos de hoy", icon: Calendar, fn: getResumenTurnosHoy },
+  { label: "Ver próximos turnos", icon: Calendar, fn: getResumenProximosTurnos },
   { label: "Ver disponibilidad", icon: Clock, fn: getResumenDisponibilidad },
   { label: "Consultar feriados", icon: CalendarDays, fn: getResumenFeriados },
 ] as const

@@ -20,40 +20,48 @@ function badgeEstado(estado: string): string {
   return map[estado] ?? estado
 }
 
-export async function getResumenTurnosHoy(): Promise<string> {
+export async function getResumenProximosTurnos(): Promise<string> {
   const profesional = await getCurrentProfesional()
   const hoy = new Date()
   hoy.setHours(0, 0, 0, 0)
-  const maniana = new Date(hoy)
-  maniana.setDate(maniana.getDate() + 1)
 
   const turnos = await prisma.turno.findMany({
     where: {
       profesionalId: profesional.id,
-      fecha: { gte: hoy, lt: maniana },
+      fecha: { gte: hoy },
       estado: { not: "CANCELADO" },
     },
     select: {
+      fecha: true,
       horaInicio: true,
       horaFin: true,
       estado: true,
       paciente: { select: { nombre: true } },
     },
-    orderBy: { horaInicio: "asc" },
+    orderBy: [{ fecha: "asc" }, { horaInicio: "asc" }],
+    take: 10,
   })
 
   if (turnos.length === 0) {
-    return `**📅 ${formatearFecha(hoy)}**\n\nNo tenés turnos agendados para hoy.`
+    return "📅 No tenés turnos próximos agendados."
   }
 
-  const lineas = turnos.map(
-    (t) => `- **${t.paciente.nombre}** (${t.horaInicio} - ${t.horaFin}) — ${badgeEstado(t.estado)}`,
-  )
+  const fechasUnicas = [...new Set(turnos.map((t) => t.fecha.toISOString().slice(0, 10)))]
+  const titulo = fechasUnicas.length === 1
+    ? `📅 Próximos turnos — ${formatearFecha(turnos[0].fecha)}`
+    : "📅 Próximos turnos"
+
+  const lineas = turnos.map((t) => {
+    const fechaStr = fechasUnicas.length > 1
+      ? ` ${t.fecha.toISOString().slice(8, 10)}/${t.fecha.toISOString().slice(5, 7)} —`
+      : ""
+    return `- **${t.paciente.nombre}**${fechaStr} (${t.horaInicio} - ${t.horaFin}) — ${badgeEstado(t.estado)}`
+  })
 
   return [
-    `📅 Turnos de ${formatearFecha(hoy)}`,
+    titulo,
     "",
-    `Total: **${turnos.length}** turno(s)`,
+    `Mostrando **${turnos.length}** de hasta 10 turno(s)`,
     "",
     ...lineas,
   ].join("\n")

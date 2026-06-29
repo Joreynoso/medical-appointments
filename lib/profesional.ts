@@ -19,24 +19,36 @@ export const getCurrentProfesional = cache(async () => {
     const email = clerkUser.email_addresses?.[0]?.email_address ?? ""
     const nombre = [clerkUser.first_name, clerkUser.last_name].filter(Boolean).join(" ") || email.split("@")[0]
 
-    profesional = await prisma.profesional.upsert({
-      where: { clerkId: userId },
-      create: {
-        clerkId: userId,
-        nombre,
-        email,
-        configuracion: {
-          create: {
-            duracionSlot: 30,
-            horarioDesde: "08:00",
-            horarioHasta: "19:00",
-            diasLaborables: [1, 2, 3, 4, 5, 6],
+    const existingByEmail = await prisma.profesional.findUnique({
+      where: { email },
+    })
+
+    if (existingByEmail) {
+      profesional = await prisma.profesional.update({
+        where: { email },
+        data: { clerkId: userId, nombre },
+        include: { configuracion: true },
+      })
+    } else {
+      profesional = await prisma.profesional.upsert({
+        where: { clerkId: userId },
+        create: {
+          clerkId: userId,
+          nombre,
+          email,
+          configuracion: {
+            create: {
+              duracionSlot: 30,
+              horarioDesde: "08:00",
+              horarioHasta: "19:00",
+              diasLaborables: [1, 2, 3, 4, 5, 6],
+            },
           },
         },
-      },
-      update: { nombre },
-      include: { configuracion: true },
-    })
+        update: { nombre },
+        include: { configuracion: true },
+      })
+    }
   }
 
   return profesional
