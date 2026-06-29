@@ -180,6 +180,7 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
                         disabled={accionando}
                         onClick={() => setConfirmingCancel(true)}
                       >
+                        <AlertTriangle className="size-4 text-destructive" />
                         Cancelar turno
                       </Button>
                     )}

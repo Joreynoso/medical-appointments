@@ -23,6 +23,7 @@ type CrearTurnoContextType = {
   setObrasSociales: (obrasSociales: ObraSocialSimple[]) => void
   setRefreshRange: (desde: string, hasta: string) => void
   setOnTurnosChange: (cb: (turnos: TurnoData[]) => void) => void
+  refreshTurnos: () => Promise<void>
 }
 
 const CrearTurnoContext = createContext<CrearTurnoContextType>({
@@ -31,6 +32,7 @@ const CrearTurnoContext = createContext<CrearTurnoContextType>({
   setObrasSociales: () => {},
   setRefreshRange: () => {},
   setOnTurnosChange: () => {},
+  refreshTurnos: async () => {},
 })
 
 export function useCrearTurno() {
@@ -61,6 +63,15 @@ export function CrearTurnoProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
+  const refreshTurnos = useCallback(async () => {
+    const { desde, hasta } = refreshRangeRef.current
+    const cb = onTurnosChangeRef.current
+    if (desde && hasta && cb) {
+      const data = await getTurnosEnRango(desde, hasta)
+      cb(data)
+    }
+  }, [])
+
   return (
     <CrearTurnoContext.Provider
       value={{
@@ -69,6 +80,7 @@ export function CrearTurnoProvider({ children }: { children: ReactNode }) {
         setObrasSociales,
         setRefreshRange,
         setOnTurnosChange,
+        refreshTurnos,
       }}
     >
       {children}

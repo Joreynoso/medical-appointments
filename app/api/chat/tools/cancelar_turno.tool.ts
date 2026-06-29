@@ -30,7 +30,8 @@ export const cancelarTurnoTool = {
     })
     if (!profesional) return { esValido: false, mensaje: "Profesional no encontrado." }
 
-    const fechaDate = new Date(args.fecha + "T00:00:00")
+    const fechaDesde = new Date(args.fecha + "T00:00:00")
+    const fechaHasta = new Date(args.fecha + "T23:59:59")
 
     const pacientes = await buscarPacientesPorNombre(profesional.id, args.paciente_nombre)
 
@@ -52,7 +53,7 @@ export const cancelarTurnoTool = {
       where: {
         profesionalId: profesional.id,
         pacienteId: paciente.id,
-        fecha: fechaDate,
+        fecha: { gte: fechaDesde, lte: fechaHasta },
         estado: { in: ["PENDIENTE", "CONFIRMADO"] },
       },
       select: {
@@ -109,7 +110,8 @@ export const cancelarTurnoTool = {
     })
     if (!profesional) throw new Error("Profesional no encontrado")
 
-    const fechaDate = new Date(args.fecha + "T00:00:00")
+    const fechaDesde = new Date(args.fecha + "T00:00:00")
+    const fechaHasta = new Date(args.fecha + "T23:59:59")
 
     const pacientes = await buscarPacientesPorNombre(profesional.id, args.paciente_nombre)
     if (pacientes.length === 0) throw new Error(`Paciente "${args.paciente_nombre}" no encontrado.`)
@@ -119,7 +121,7 @@ export const cancelarTurnoTool = {
       where: {
         profesionalId: profesional.id,
         pacienteId: paciente.id,
-        fecha: fechaDate,
+        fecha: { gte: fechaDesde, lte: fechaHasta },
         estado: { in: ["PENDIENTE", "CONFIRMADO"] },
       },
       select: { id: true, horaInicio: true },

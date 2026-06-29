@@ -6,6 +6,7 @@ import { ChatInput } from "./chat-input"
 import { ToolDropdown } from "./tool-dropdown"
 import { ChatOnboarding } from "./chat-onboarding"
 import { Button } from "@/components/ui/button"
+import { useCrearTurno } from "@/components/agenda/crear-turno-context"
 
 type Message = {
   id: string
@@ -21,6 +22,7 @@ type ToolCall = {
 let msgCounter = 0
 
 export function ChatShell() {
+  const { refreshTurnos } = useCrearTurno()
   const [messages, setMessages] = useState<Message[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [pendingConfirmation, setPendingConfirmation] = useState<ToolCall | null>(null)
@@ -125,13 +127,14 @@ export function ChatShell() {
 
       const data = await res.json()
       addMessage("assistant", data.message ?? "✅ Operación completada.")
+      refreshTurnos()
     } catch {
       addMessage("assistant", "❌ Error de conexión. Intentalo de nuevo.")
     } finally {
       setPendingConfirmation(null)
       setIsLoading(false)
     }
-  }, [pendingConfirmation, messages, addMessage])
+  }, [pendingConfirmation, messages, addMessage, refreshTurnos])
 
   const handleReject = useCallback(() => {
     addMessage("assistant", "❌ Operación cancelada.")

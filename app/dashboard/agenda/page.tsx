@@ -40,7 +40,7 @@ export default async function AgendaPage() {
 
   return (
     <div className="px-4 md:px-10 pb-10">
-      <PageHeader title="Agenda" description={fechaFormateada} />
+      <PageHeader title="Agenda" description={`${fechaFormateada} (Hoy)`} />
       <AgendaClient
         initialFeriados={[...feriadosAñoActual, ...feriadosAnterior, ...feriadosSiguiente]}
         initialTurnos={turnos}
