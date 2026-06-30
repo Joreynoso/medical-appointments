@@ -51,7 +51,7 @@ export function PacientesRecientesCard({ initialPacientes, obrasSociales }: Paci
   return (
     <div className="rounded-lg border border-border bg-card p-6 flex flex-col gap-5 h-full">
       <div className="flex flex-col items-start lg:flex-row lg:items-center lg:justify-between shrink-0 gap-4">
-        <h3 className="text-lg font-serif text-foreground">
+        <h3 className="text-lg font-sans text-foreground">
           Pacientes recientes
         </h3>
         <Button
@@ -108,7 +108,7 @@ export function PacientesRecientesCard({ initialPacientes, obrasSociales }: Paci
           <Dialog.Popup className="fixed inset-0 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
               <div className="mb-6 flex items-center justify-between">
-                <Dialog.Title className="text-lg font-serif text-foreground">
+                <Dialog.Title className="text-lg font-sans text-foreground">
                   Nuevo paciente
                 </Dialog.Title>
                 <button type="button" onClick={() => setModalOpen(false)} className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">

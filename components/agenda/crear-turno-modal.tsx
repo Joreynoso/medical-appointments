@@ -202,7 +202,7 @@ export function CrearTurnoModal({ open, onOpenChange, onTurnoCreado }: CrearTurn
         <Dialog.Popup className="fixed inset-0 z-50 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
           <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
             <div className="mb-6 flex items-center justify-between">
-              <Dialog.Title className="text-lg font-serif text-foreground">
+              <Dialog.Title className="text-lg font-sans text-foreground">
                 Nuevo turno
               </Dialog.Title>
               <button type="button" onClick={cerrar} className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">

@@ -129,7 +129,7 @@ export default function CardsSection() {
     <section id="caracteristicas" className="min-h-dvh py-24">
       <div className="max-w-7xl mx-auto px-6">
         <div className="text-center mb-16">
-          <h2 className="text-3xl sm:text-4xl font-serif text-foreground">
+          <h2 className="text-3xl sm:text-4xl font-sans text-foreground">
             Todo lo que necesitás
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">

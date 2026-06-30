@@ -6,7 +6,7 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-grid pointer-events-none" />
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 md:py-32 grid md:grid-cols-[1fr_1.1fr] gap-12 md:gap-16 items-center">
         <div className="hero-text space-y-10">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif text-foreground leading-[1.05]">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans text-foreground leading-[1.05] tracking-tighter">
             Tu agenda médica, potenciada con{" "}
             <span className="text-primary">inteligencia artificial.</span>
           </h1>
@@ -36,7 +36,7 @@ export default function HeroSection() {
           <img
             src="/images/bg-dark.png"
             alt="MedPilot dashboard preview"
-            className="object-cover w-full h-full"
+            className="object-contain w-full h-full"
           />
         </div>
       </div>

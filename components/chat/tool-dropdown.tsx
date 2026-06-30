@@ -42,10 +42,7 @@ export function ToolDropdown({ onResult, onSend, disabled }: ToolDropdownProps) 
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger
-        disabled={disabled}
-        className="flex size-9 shrink-0 cursor-pointer items-center justify-center rounded-full border border-border text-foreground transition-colors hover:bg-muted disabled:opacity-50"
-      >
+      <DropdownMenuTrigger disabled={disabled} className="flex size-9 shrink-0 items-center justify-center rounded-full bg-muted text-foreground transition-colors hover:bg-muted/80 disabled:opacity-50">
         <Wrench className="size-4" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="min-w-48">

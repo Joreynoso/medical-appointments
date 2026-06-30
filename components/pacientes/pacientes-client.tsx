@@ -190,7 +190,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
         </button>
       </div>
 
-      <div className="hidden md:block rounded-lg border border-border">
+      <div className="hidden md:block rounded-lg border border-border bg-card">
         {filteredPacientes.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">
@@ -332,7 +332,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
           <Dialog.Popup className="fixed inset-0 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
               <div className="mb-6 flex items-center justify-between">
-                <Dialog.Title className="text-lg font-serif text-foreground">
+                <Dialog.Title className="text-lg font-sans text-foreground">
                   {modalMode === "crear" ? "Nuevo paciente" : "Editar paciente"}
                 </Dialog.Title>
                 <button type="button" onClick={cerrarModal} className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground">
@@ -433,7 +433,7 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
           <AlertDialog.Backdrop className="fixed inset-0 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
           <AlertDialog.Popup className="fixed inset-0 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg">
-              <AlertDialog.Title className="text-lg font-serif text-foreground">
+              <AlertDialog.Title className="text-lg font-sans text-foreground">
                 Desactivar paciente
               </AlertDialog.Title>
               <AlertDialog.Description className="mt-2 text-sm text-muted-foreground">

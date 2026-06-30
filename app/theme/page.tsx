@@ -24,7 +24,7 @@ const colors = [
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="space-y-4">
-      <h2 className="text-lg font-serif text-foreground border-b border-border pb-2">{title}</h2>
+      <h2 className="text-lg font-sans text-foreground border-b border-border pb-2">{title}</h2>
       {children}
     </section>
   );
@@ -45,7 +45,7 @@ export default function ThemePage() {
     <div className="min-h-screen bg-background text-foreground">
       <nav className="sticky top-0 z-50 bg-sidebar border-b border-sidebar-border shadow-sm">
         <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
-          <Link href="/" className="font-serif text-sidebar-foreground hover:text-sidebar-primary transition-colors">
+          <Link href="/" className="font-sans text-sidebar-foreground hover:text-sidebar-primary transition-colors">
             medical<span className="text-sidebar-accent">.appointments</span>
           </Link>
           <span className="text-sm text-sidebar-foreground/60 font-mono">Theme Guide</span>
@@ -54,7 +54,7 @@ export default function ThemePage() {
 
       <div className="max-w-5xl mx-auto px-6 py-10 space-y-12">
         <header className="space-y-2">
-          <h1 className="text-2xl font-serif tracking-tight">Guía de Estilos</h1>
+          <h1 className="text-2xl font-sans tracking-tight">Guía de Estilos</h1>
           <p className="text-muted-foreground">
             Paleta completa del tema basada en Catppuccin Mocha (dark) / Latte (light).
             Todas las clases usan las variables CSS definidas en <code className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono">globals.css</code>.
@@ -72,7 +72,7 @@ export default function ThemePage() {
         <Section title="Tipografía">
           <div className="grid md:grid-cols-3 gap-6">
             <div className="space-y-3 p-4 rounded-lg border border-border bg-card">
-              <p className="text-sm text-muted-foreground font-mono">font-sans (DM Sans)</p>
+              <p className="text-sm text-muted-foreground font-mono">font-sans (Inter)</p>
               <p className="text-base">Body text regular</p>
               <p className="text-sm text-muted-foreground">Body text muted</p>
               <p className="text-xs text-muted-foreground">Small / caption</p>
@@ -85,18 +85,18 @@ export default function ThemePage() {
               />
             </div>
             <div className="space-y-3 p-4 rounded-lg border border-border bg-card">
-              <p className="text-sm text-muted-foreground font-mono">font-serif (Georgia)</p>
-              <h1 className="text-4xl font-serif">H1 Título</h1>
-              <h2 className="text-3xl font-serif">H2 Título</h2>
-              <h3 className="text-2xl font-serif">H3 Título</h3>
-              <h4 className="text-xl font-serif">H4 Título</h4>
-              <p className="text-lg font-serif">Cuerpo serif</p>
+              <p className="text-sm text-muted-foreground font-mono">font-sans (Inter) — Títulos</p>
+              <h1 className="text-4xl font-sans">H1 Título</h1>
+              <h2 className="text-3xl font-sans">H2 Título</h2>
+              <h3 className="text-2xl font-sans">H3 Título</h3>
+              <h4 className="text-xl font-sans">H4 Título</h4>
+              <p className="text-lg font-sans">Cuerpo</p>
             </div>
             <div className="space-y-3 p-4 rounded-lg border border-border bg-card">
               <p className="text-sm text-muted-foreground font-mono">font-mono (Fira Code)</p>
               <p className="font-mono text-lg">const theme = &quot;catppuccin&quot;;</p>
               <p className="font-mono text-base">function App() {`{`} return null; {`}`}</p>
-              <p className="font-mono text-sm text-muted-foreground">--primary: #cba6f7;</p>
+              <p className="font-mono text-sm text-muted-foreground">--primary: #1c2f40;</p>
               <p className="font-mono text-xs text-muted-foreground">npm run dev</p>
             </div>
           </div>
@@ -124,14 +124,14 @@ export default function ThemePage() {
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             <div className="rounded-xl border border-border bg-card shadow-sm">
               <div className="p-5 space-y-3">
-                <h3 className="text-lg font-serif">Card title</h3>
+                <h3 className="text-lg font-sans">Card title</h3>
                 <p className="text-sm text-muted-foreground">This is a default card with border, background, and shadow.</p>
                 <button className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity">Action</button>
               </div>
             </div>
             <div className="rounded-xl border border-border bg-primary/5 shadow-sm">
               <div className="p-5 space-y-3">
-                <h3 className="text-lg font-serif text-primary">Primary card</h3>
+                <h3 className="text-lg font-sans text-primary">Primary card</h3>
                 <p className="text-sm text-muted-foreground">Card with a subtle primary background tint.</p>
                 <button className="px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-xs font-medium hover:opacity-90 transition-opacity">Action</button>
               </div>
@@ -139,7 +139,7 @@ export default function ThemePage() {
             <div className="rounded-xl border border-border bg-card shadow-sm">
               <div className="h-32 bg-muted rounded-t-xl flex items-center justify-center text-muted-foreground text-sm">Image placeholder</div>
               <div className="p-5 space-y-3">
-                <h3 className="text-lg font-serif">Card with image</h3>
+                <h3 className="text-lg font-sans">Card with image</h3>
                 <p className="text-sm text-muted-foreground">Card with a top hero image area.</p>
               </div>
             </div>
@@ -218,21 +218,21 @@ export default function ThemePage() {
             <div className="flex items-start gap-3 p-4 rounded-lg bg-primary/10 border border-primary/20">
               <span className="text-primary text-lg leading-none mt-0.5">i</span>
               <div>
-                <p className="text-sm font-serif">Información</p>
+                <p className="text-sm font-sans">Información</p>
                 <p className="text-sm text-muted-foreground">Mensaje informativo para el usuario.</p>
               </div>
             </div>
             <div className="flex items-start gap-3 p-4 rounded-lg bg-destructive/10 border border-destructive/20">
               <span className="text-destructive text-lg leading-none mt-0.5">!</span>
               <div>
-                <p className="text-sm font-serif">Error</p>
+                <p className="text-sm font-sans">Error</p>
                 <p className="text-sm text-muted-foreground">Algo salió mal. Intenta de nuevo.</p>
               </div>
             </div>
             <div className="flex items-start gap-3 p-4 rounded-lg bg-accent/10 border border-accent/20">
               <span className="text-accent text-lg leading-none mt-0.5">✓</span>
               <div>
-                <p className="text-sm font-serif">Éxito</p>
+                <p className="text-sm font-sans">Éxito</p>
                 <p className="text-sm text-muted-foreground">La operación se completó correctamente.</p>
               </div>
             </div>
@@ -244,9 +244,9 @@ export default function ThemePage() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="bg-muted border-b border-border">
-                  <th className="text-left px-4 py-3 font-serif">Name</th>
-                  <th className="text-left px-4 py-3 font-serif">Role</th>
-                  <th className="text-left px-4 py-3 font-serif">Status</th>
+                  <th className="text-left px-4 py-3 font-sans">Name</th>
+                  <th className="text-left px-4 py-3 font-sans">Role</th>
+                  <th className="text-left px-4 py-3 font-sans">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -305,7 +305,7 @@ export default function ThemePage() {
         </Section>
 
         <footer className="border-t border-border pt-8 pb-4 text-center text-sm text-muted-foreground">
-          <p className="font-serif">Medical Appointments — Catppuccin Theme</p>
+          <p className="font-sans">Medical Appointments — Catppuccin Theme</p>
           <p className="text-xs mt-1">Light / Dark via <code className="bg-muted px-1 rounded text-xs font-mono">.dark</code> class</p>
         </footer>
       </div>

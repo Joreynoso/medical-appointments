@@ -19,10 +19,10 @@ const estadoLabel: Record<string, string> = {
 }
 
 const estadoBadge: Record<string, string> = {
-  PENDIENTE: "bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-950/30 dark:text-amber-400 dark:border-amber-800",
-  CONFIRMADO: "bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/30 dark:text-emerald-400 dark:border-emerald-800",
-  CANCELADO: "bg-red-50 text-red-700 border-red-200 dark:bg-red-950/30 dark:text-red-400 dark:border-red-800",
-  AUSENTE: "bg-gray-50 text-gray-700 border-gray-200 dark:bg-gray-950/30 dark:text-gray-400 dark:border-gray-800",
+  PENDIENTE: "bg-ring/20 text-ring border-ring/60",
+  CONFIRMADO: "bg-primary/20 text-primary border-primary/60",
+  CANCELADO: "bg-destructive/20 text-destructive border-destructive/60",
+  AUSENTE: "bg-muted-foreground/20 text-muted-foreground border-muted-foreground/60",
 }
 
 type DetalleTurnoModalProps = {
@@ -77,7 +77,7 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
         <Dialog.Popup className="fixed inset-0 z-50 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
           <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
             <div className="mb-6 flex items-center justify-between">
-              <Dialog.Title className="text-lg font-serif text-foreground">
+              <Dialog.Title className="text-lg font-sans text-foreground">
                 Detalle del turno
               </Dialog.Title>
               <button

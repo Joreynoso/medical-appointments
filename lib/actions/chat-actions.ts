@@ -12,10 +12,10 @@ function formatearFecha(fecha: Date): string {
 
 function badgeEstado(estado: string): string {
   const map: Record<string, string> = {
-    PENDIENTE: "🟡 Pendiente",
-    CONFIRMADO: "🟢 Confirmado",
-    CANCELADO: "🔴 Cancelado",
-    AUSENTE: "🟠 Ausente",
+    PENDIENTE: "Pendiente",
+    CONFIRMADO: "Confirmado",
+    CANCELADO: "Cancelado",
+    AUSENTE: "Ausente",
   }
   return map[estado] ?? estado
 }
@@ -43,13 +43,13 @@ export async function getResumenProximosTurnos(): Promise<string> {
   })
 
   if (turnos.length === 0) {
-    return "📅 No tenés turnos próximos agendados."
+    return "No tenés turnos próximos agendados."
   }
 
   const fechasUnicas = [...new Set(turnos.map((t) => t.fecha.toISOString().slice(0, 10)))]
   const titulo = fechasUnicas.length === 1
-    ? `📅 Próximos turnos — ${formatearFecha(turnos[0].fecha)}`
-    : "📅 Próximos turnos"
+    ? `Próximos turnos — ${formatearFecha(turnos[0].fecha)}`
+    : "Próximos turnos"
 
   const lineas = turnos.map((t) => {
     const fechaStr = fechasUnicas.length > 1
@@ -114,13 +114,13 @@ export async function getResumenDisponibilidad(): Promise<string> {
   }
 
   if (slots.length === 0) {
-    return `**📋 Disponibilidad de ${formatearFecha(hoy)}**\n\nNo hay slots libres para hoy.`
+    return `**Disponibilidad de ${formatearFecha(hoy)}**\n\nNo hay slots libres para hoy.`
   }
 
   const lineas = slots.map((s) => `- ${s} hs`)
 
   return [
-    `**📋 Disponibilidad de ${formatearFecha(hoy)}**`,
+    `**Disponibilidad de ${formatearFecha(hoy)}**`,
     "",
     `Slots libres: **${slots.length}**`,
     "",
@@ -148,7 +148,7 @@ export async function getResumenFeriados(): Promise<string> {
   })
 
   return [
-    `**📆 Feriados ${año}**`,
+    `**Feriados ${año}**`,
     "",
     `Total: **${feriados.length}** feriado(s)`,
     "",

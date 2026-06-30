@@ -91,6 +91,6 @@
 ## Diseño y tema
 
 - **Tipografía:** DM Sans (sans), Georgia (headings), Fira Code (mono)
-- **Paleta:** Catppuccin Mocha (solo dark, sin switcher de tema)
+- **Paleta:** Personalizada (light theme con acentos dorados, sin switcher de tema)
 - **Radius base:** `0.5rem`
 - **Idioma:** Español (es-AR)

@@ -13,8 +13,8 @@ export const clerkAppearance: ClerkProviderProps["appearance"] = {
     colorBorder: "var(--border)",
     colorRing: "var(--ring)",
     colorDanger: "var(--destructive)",
-    colorSuccess: "#40a02b",
-    colorWarning: "#fe640b",
+    colorSuccess: "var(--success)",
+    colorWarning: "var(--warning)",
     colorShadow: "var(--shadow-color)",
     borderRadius: "var(--radius)",
     fontFamily: "var(--font-sans)",
@@ -36,7 +36,7 @@ export const clerkAppearance: ClerkProviderProps["appearance"] = {
       boxShadow: "var(--shadow-md)",
     },
     headerTitle: {
-      fontFamily: "var(--font-serif)",
+      fontFamily: "var(--font-sans)",
       fontWeight: 400,
     },
     headerSubtitle: {

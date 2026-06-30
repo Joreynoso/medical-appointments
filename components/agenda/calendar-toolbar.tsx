@@ -1,7 +1,6 @@
 "use client"
 
 import { ChevronLeft, ChevronRight, Filter } from "lucide-react"
-import { Button } from "@/components/ui/button"
 import { formatMonthYear } from "@/components/agenda/calendar-utils"
 
 type CalendarToolbarProps = {
@@ -13,6 +12,15 @@ type CalendarToolbarProps = {
   onFilterClick: () => void
   filterActive: boolean
   onViewChange: (mode: "month" | "week") => void
+}
+
+function viewBtnCls(active: boolean) {
+  return [
+    "inline-flex h-7 items-center rounded-lg border px-3 text-xs font-medium transition-colors",
+    active
+      ? "border-primary bg-primary text-primary-foreground"
+      : "border-border text-muted-foreground hover:text-foreground",
+  ].join(" ")
 }
 
 export function CalendarToolbar({
@@ -27,73 +35,77 @@ export function CalendarToolbar({
 }: CalendarToolbarProps) {
   return (
     <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full">
-      <div className="flex items-center justify-between sm:justify-start gap-2">
+      <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
         <div className="flex items-center gap-1">
-          <Button variant="outline" size="icon-sm" onClick={onPrev} aria-label="Anterior">
+          <button
+            type="button"
+            onClick={onPrev}
+            aria-label="Anterior"
+            className="inline-flex size-7 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
+          >
             <ChevronLeft className="size-4" />
-          </Button>
-          <Button variant="outline" size="icon-sm" onClick={onNext} aria-label="Siguiente">
+          </button>
+          <button
+            type="button"
+            onClick={onNext}
+            aria-label="Siguiente"
+            className="inline-flex size-7 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
+          >
             <ChevronRight className="size-4" />
-          </Button>
-          <Button variant="outline" size="sm" onClick={onToday} className="max-sm:text-xs max-sm:h-7 max-sm:px-2">
-            Hoy
-          </Button>
+          </button>
         </div>
 
         <span className="text-center text-xs sm:text-sm font-medium text-foreground sm:min-w-[130px]">
           {formatMonthYear(currentDate)}
         </span>
 
-        <Button
-          variant={filterActive ? "default" : "outline"}
-          size="icon-sm"
+        <button
+          type="button"
           onClick={onFilterClick}
           aria-label="Filtrar"
-          className="sm:hidden relative"
+          className="inline-flex size-7 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted transition-colors sm:hidden relative"
         >
           <Filter className="size-4" />
           {filterActive && (
             <span className="absolute -top-1 -right-1 size-3 rounded-full bg-primary border border-background" />
           )}
-        </Button>
+        </button>
       </div>
 
-      <div className="flex items-center gap-2 w-full sm:w-auto">
-        <Button
-          variant={filterActive ? "default" : "outline"}
-          size="sm"
+      <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap sm:ml-auto">
+        <button
+          type="button"
           onClick={onFilterClick}
-          className="hidden sm:inline-flex relative"
+          className="inline-flex h-7 items-center gap-1 rounded-lg border border-border px-2.5 text-[0.8rem] font-medium text-foreground hover:bg-muted transition-colors hidden sm:inline-flex relative"
         >
           <Filter className="size-3.5" />
           Filtrar
           {filterActive && (
             <span className="absolute -top-1 -right-1 size-3 rounded-full bg-primary border border-background" />
           )}
-        </Button>
+        </button>
 
-        <div className="flex overflow-hidden rounded-lg border border-border flex-1 sm:flex-none sm:ml-1">
+        <span className="hidden sm:block text-muted-foreground/40">|</span>
+
+        <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => onViewChange("month")}
-            className={[
-              "px-3 py-1.5 text-xs font-medium transition-all flex-1 sm:flex-none",
-              viewMode === "month"
-                ? "bg-primary text-primary-foreground"
-                : "bg-background text-muted-foreground hover:text-foreground",
-            ].join(" ")}
+            className={viewBtnCls(viewMode === "month")}
           >
             Mes
           </button>
           <button
             type="button"
+            onClick={onToday}
+            className="inline-flex h-7 items-center rounded-lg border border-border px-3 text-xs font-medium text-foreground hover:bg-muted transition-colors"
+          >
+            Hoy
+          </button>
+          <button
+            type="button"
             onClick={() => onViewChange("week")}
-            className={[
-              "px-3 py-1.5 text-xs font-medium transition-all flex-1 sm:flex-none",
-              viewMode === "week"
-                ? "bg-primary text-primary-foreground"
-                : "bg-background text-muted-foreground hover:text-foreground",
-            ].join(" ")}
+            className={viewBtnCls(viewMode === "week")}
           >
             Sem
           </button>

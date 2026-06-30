@@ -31,7 +31,7 @@ export function CerrarSesionModal({ open, onOpenChange }: CerrarSesionModalProps
                 <LogOut className="size-6 text-destructive" />
               </div>
               <div>
-                <Dialog.Title className="text-lg font-serif text-foreground">
+                <Dialog.Title className="text-lg font-sans text-foreground">
                   Cerrar sesión
                 </Dialog.Title>
                 <p className="mt-1 text-sm text-muted-foreground">

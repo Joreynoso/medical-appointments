@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { DM_Sans, Fira_Code } from "next/font/google";
+import { Inter, Fira_Code } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { esES } from "@clerk/localizations";
 import { clerkAppearance } from "@/lib/clerk-appearance";
 import "./globals.css";
 
-const dmSans = DM_Sans({
+const inter = Inter({
   variable: "--font-sans",
   subsets: ["latin"],
+  style: ["normal"],
 });
 
 const firaCode = Fira_Code({
@@ -29,7 +30,7 @@ export default function RootLayout({
     <ClerkProvider appearance={clerkAppearance} localization={esES}>
       <html
         lang="es"
-        className={`${dmSans.variable} ${firaCode.variable} h-full antialiased dark`}
+        className={`${inter.variable} ${firaCode.variable} h-full antialiased dark`}
       >
         <body className="min-h-full flex flex-col font-sans">
           {children}

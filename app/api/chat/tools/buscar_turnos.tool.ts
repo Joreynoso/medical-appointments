@@ -27,10 +27,10 @@ function formatearFecha(fecha: Date): string {
 
 function badgeEstado(estado: string): string {
   const map: Record<string, string> = {
-    PENDIENTE: "🟡 Pendiente",
-    CONFIRMADO: "🟢 Confirmado",
-    CANCELADO: "🔴 Cancelado",
-    AUSENTE: "🟠 Ausente",
+    PENDIENTE: "Pendiente",
+    CONFIRMADO: "Confirmado",
+    CANCELADO: "Cancelado",
+    AUSENTE: "Ausente",
   }
   return map[estado] ?? estado
 }
@@ -38,8 +38,8 @@ function badgeEstado(estado: string): string {
 function formatearTurnosLista(turnos: Array<{ fecha: string; horaInicio: string; horaFin: string; estado: string; paciente: string }>): string {
   const fechasUnicas = [...new Set(turnos.map((t) => t.fecha))]
   const titulo = fechasUnicas.length === 1
-    ? `📅 Turnos de ${formatearFecha(new Date(fechasUnicas[0] + "T00:00:00"))}`
-    : "📅 Turnos encontrados"
+    ? `Turnos de ${formatearFecha(new Date(fechasUnicas[0] + "T00:00:00"))}`
+    : "Turnos encontrados"
   const lineas = turnos.map(
     (t) => {
       const fecha = fechasUnicas.length > 1 ? ` ${t.fecha.slice(8, 10)}/${t.fecha.slice(5, 7)} —` : ""

@@ -16,9 +16,9 @@ function formatearFecha(fecha: string): string {
 }
 
 const colorEstado: Record<string, string> = {
-  PENDIENTE: "bg-amber-400",
-  CONFIRMADO: "bg-emerald-500",
-  AUSENTE: "bg-gray-400",
+  PENDIENTE: "bg-ring",
+  CONFIRMADO: "bg-primary",
+  AUSENTE: "bg-muted-foreground",
 }
 
 export function ProximosTurnosCard({ turnos }: ProximosTurnosCardProps) {
@@ -27,7 +27,7 @@ export function ProximosTurnosCard({ turnos }: ProximosTurnosCardProps) {
   return (
     <div className="rounded-lg border border-border bg-card p-6 flex flex-col gap-5">
       <div className="flex flex-col items-start lg:flex-row lg:items-center lg:justify-between shrink-0 gap-4">
-        <h3 className="text-lg font-serif text-foreground">
+        <h3 className="text-lg font-sans text-foreground">
           Próximos turnos
         </h3>
         <Button
@@ -54,7 +54,7 @@ export function ProximosTurnosCard({ turnos }: ProximosTurnosCardProps) {
                 key={t.id}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-md hover:bg-muted/50 transition-colors"
               >
-                <span className={`size-2 shrink-0 rounded-full ${colorEstado[t.estado] ?? "bg-gray-400"}`} />
+                <span className={`size-2 shrink-0 rounded-full ${colorEstado[t.estado] ?? "bg-muted-foreground"}`} />
                 <span className="flex-1 text-sm text-foreground truncate">
                   {t.paciente.nombre}
                 </span>

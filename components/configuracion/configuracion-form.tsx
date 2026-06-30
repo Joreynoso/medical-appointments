@@ -51,7 +51,7 @@ export function ConfiguracionForm({ initialConfig }: ConfiguracionFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 rounded-lg border border-border p-4 sm:p-6">
+    <form onSubmit={handleSubmit} className="space-y-8 rounded-lg border border-border bg-card p-4 sm:p-6">
       <div className="space-y-4">
         <h2 className="text-sm font-medium text-foreground">Días laborables</h2>
         <p className="text-xs text-muted-foreground">

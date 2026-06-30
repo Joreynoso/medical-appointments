@@ -17,11 +17,11 @@ export function SidebarHeader() {
       )}
     >
       <div className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary shrink-0">
-        <Calendar className="size-5 text-primary" />
+        <Calendar className="size-5 text-sidebar-primary-foreground" />
       </div>
       <span
         className={cn(
-          "font-heading text-base text-sidebar-foreground overflow-hidden transition-all duration-300",
+          "font-heading text-base font-semibold text-sidebar-foreground overflow-hidden transition-all duration-300",
           expanded ? "w-auto opacity-100" : "w-0 opacity-0",
         )}
       >

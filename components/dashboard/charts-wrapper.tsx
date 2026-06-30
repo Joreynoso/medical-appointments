@@ -42,7 +42,7 @@ export async function ChartsWrapper() {
   return (
     <>
       <div className="rounded-lg border border-border bg-card p-6 flex flex-col gap-5">
-        <h3 className="text-lg font-serif text-foreground shrink-0">
+        <h3 className="text-lg font-sans text-foreground shrink-0">
           Turnos por día
         </h3>
         <div className="flex-1 min-h-0">
@@ -50,7 +50,7 @@ export async function ChartsWrapper() {
         </div>
       </div>
       <div className="rounded-lg border border-border bg-card p-6 flex flex-col gap-5">
-        <h3 className="text-lg font-serif text-foreground shrink-0">
+        <h3 className="text-lg font-sans text-foreground shrink-0">
           Turnos por mes
         </h3>
         <div className="flex-1 min-h-0">

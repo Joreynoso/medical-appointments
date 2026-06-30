@@ -90,7 +90,7 @@ export default function StackingCards() {
   return (
     <section ref={sectionRef} className="relative min-h-dvh py-12 md:py-16" id="testimonios">
       <div className="mx-auto text-center mb-10 px-6">
-        <h2 className="text-3xl sm:text-4xl font-serif text-foreground leading-snug">
+        <h2 className="text-3xl sm:text-4xl font-sans text-foreground leading-snug">
           Lo que dicen nuestros
           <br />
           <span className="text-primary">profesionales</span>

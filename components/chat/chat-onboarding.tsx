@@ -18,7 +18,7 @@ export function ChatOnboarding({ onDismiss, toolButton }: ChatOnboardingProps) {
 
   return (
     <div
-      className={`absolute inset-0 z-50 flex flex-col bg-black/40 transition-opacity duration-300 ${
+      className={`absolute inset-0 z-50 flex flex-col transition-opacity duration-300 ${
         visible ? "opacity-100" : "opacity-0"
       }`}
     >
@@ -29,8 +29,8 @@ export function ChatOnboarding({ onDismiss, toolButton }: ChatOnboardingProps) {
           visible ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"
         }`}
       >
-        <div className="relative max-w-xs rounded-xl border border-border bg-popover p-4 text-center shadow-lg -mr-[3px]">
-          <p className="text-sm text-card-foreground leading-relaxed">
+        <div className="relative max-w-xs rounded-xl border border-white/20 bg-primary p-4 text-center shadow-lg -mr-[3px]">
+          <p className="text-sm text-primary-foreground leading-relaxed">
             Usá el botón{" "}
             <span className="inline-flex items-center gap-1 font-medium">
               <Wrench className="size-3.5" />
@@ -41,18 +41,18 @@ export function ChatOnboarding({ onDismiss, toolButton }: ChatOnboardingProps) {
           <div className="mt-3 flex items-center justify-center gap-3">
             <button
               onClick={() => { localStorage.setItem("chat_onboarding", "true"); onDismiss() }}
-              className="rounded-lg border border-border px-4 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted"
+              className="rounded-lg border border-white/30 px-4 py-1.5 text-xs font-medium text-primary-foreground/80 transition-colors hover:bg-white/10"
             >
               No volver a mostrar
             </button>
             <button
               onClick={onDismiss}
-              className="rounded-lg bg-primary px-4 py-1.5 text-xs font-medium text-primary-foreground transition-colors hover:opacity-90"
+              className="rounded-lg bg-primary-foreground px-4 py-1.5 text-xs font-medium text-primary transition-colors hover:opacity-90"
             >
               Entendido
             </button>
           </div>
-          <div className="absolute -bottom-[5px] size-2.5 rotate-45 border-b border-r border-border bg-popover right-[63px]" />
+          <div className="absolute -bottom-[5px] size-2.5 rotate-45 border-b border-r border-white/20 bg-primary right-[63px]" />
         </div>
       </div>
 

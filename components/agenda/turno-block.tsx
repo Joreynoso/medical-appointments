@@ -30,10 +30,10 @@ function getTurnoHeight(horaInicio: string, horaFin: string, startHour: number):
 }
 
 const estadoBorder: Record<string, string> = {
-  PENDIENTE: "border-l-amber-400",
-  CONFIRMADO: "border-l-emerald-500",
-  CANCELADO: "border-l-red-400",
-  AUSENTE: "border-l-gray-400",
+  PENDIENTE: "border-l-ring",
+  CONFIRMADO: "border-l-primary",
+  CANCELADO: "border-l-destructive",
+  AUSENTE: "border-l-muted-foreground",
 }
 
 type TurnoBlockProps = {
@@ -48,7 +48,7 @@ export function TurnoBlock({ turno, startHour, onClick }: TurnoBlockProps) {
       <TooltipTrigger render={
         <div
           className={cn(
-            "absolute left-0.5 right-0.5 rounded-md border-l-2 bg-muted/50 px-2 py-1",
+            "absolute left-0.5 right-0.5 rounded-md border-l-2 bg-muted px-2 py-1",
             "overflow-hidden cursor-pointer hover:opacity-90 transition-opacity",
             "pointer-events-auto",
             estadoBorder[turno.estado],

@@ -29,9 +29,9 @@ const estadoLabel: Record<string, string> = {
 }
 
 const estadoBullet: Record<string, string> = {
-  PENDIENTE: "bg-amber-400",
-  CONFIRMADO: "bg-emerald-500",
-  AUSENTE: "bg-gray-400",
+  PENDIENTE: "bg-ring",
+  CONFIRMADO: "bg-primary",
+  AUSENTE: "bg-muted-foreground",
 }
 
 const inputCls =
@@ -101,7 +101,7 @@ export function FilterModal({
         <Dialog.Popup className="fixed inset-0 z-50 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
           <div className="flex w-full max-w-md flex-col rounded-xl border border-border bg-card p-6 shadow-lg max-h-[90vh]">
             <div className="mb-6 flex items-center justify-between shrink-0">
-              <Dialog.Title className="text-lg font-serif text-foreground">
+              <Dialog.Title className="text-lg font-sans text-foreground">
                 Filtros
               </Dialog.Title>
               <button

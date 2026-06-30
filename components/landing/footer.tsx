@@ -6,7 +6,7 @@ export default function Footer() {
     <>
       {/* Giant MedPilot Text */}
       <div className="w-screen -mx-[calc((100vw-100%)/2)] text-center select-none leading-none pt-16 pb-0 overflow-hidden bg-transparent relative z-10">
-        <span className="text-[28vw] font-serif font-normal tracking-tighter block leading-[0.75] text-primary select-none whitespace-nowrap mt-0.5 md:mt-0">
+        <span className="text-[28vw] font-sans font-normal tracking-tighter block leading-[0.75] text-primary select-none whitespace-nowrap mt-0.5 md:mt-0">
           MedPilot
         </span>
       </div>
@@ -16,7 +16,7 @@ export default function Footer() {
         <div className="max-w-7xl mx-auto px-6 w-full flex flex-col md:flex-row justify-between items-start gap-12 mt-8">
           {/* Columna izquierda: Marca y descripción */}
           <div className="flex flex-col gap-4 max-w-md">
-            <Link href="/" className="font-serif text-xl text-foreground">
+            <Link href="/" className="font-sans text-xl text-foreground">
               MedPilot
             </Link>
             <p className="text-sm text-foreground leading-relaxed font-sans">
@@ -37,7 +37,7 @@ export default function Footer() {
 
           {/* Columna derecha: Enlaces del navbar */}
           <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-serif text-foreground">
+            <h3 className="text-sm font-sans text-foreground">
               Navegación
             </h3>
             <ul className="flex flex-col gap-3 text-sm text-foreground font-sans">

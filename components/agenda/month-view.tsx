@@ -18,12 +18,12 @@ export function MonthView({ year, month, feriados, turnosPorFecha, diasLaborable
   const weeks = getMonthGrid(year, month)
 
   return (
-    <div className="border border-border rounded-xl overflow-hidden">
+    <div className="border border-border rounded-xl overflow-hidden bg-card">
       <div className="grid grid-cols-7">
         {Array.from({ length: 7 }, (_, i) => (
           <div
             key={i}
-            className="border-b border-border px-2 py-2 text-center text-[10px] 2xl:text-xs font-medium text-muted-foreground"
+            className="border-b border-border bg-card px-2 py-2 text-center text-[10px] 2xl:text-xs font-medium text-foreground"
           >
             {getDayName(i)}
           </div>

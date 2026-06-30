@@ -71,7 +71,7 @@ export const listarPacientesTool = {
 
     const lineas = pacientes.map((p) => {
       const os = p.obraSocial ? ` — ${p.obraSocial.nombre}` : ""
-      const tel = p.telefono ? ` ☎️ ${p.telefono}` : ""
+      const tel = p.telefono ? ` — Tel: ${p.telefono}` : ""
       return `- **${p.nombre}**${os}${tel}`
     })
 
@@ -79,7 +79,7 @@ export const listarPacientesTool = {
 
     return {
       formattedMessage: [
-        `👤 Pacientes activos${busquedaInfo}:`,
+        `Pacientes activos${busquedaInfo}:`,
         "",
         `Total: **${pacientes.length}** paciente(s)`,
         "",

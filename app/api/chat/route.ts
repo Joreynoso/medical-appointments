@@ -25,7 +25,7 @@ REGLAS:
 - Usa 'listar_pacientes' cuando pregunte por el listado de pacientes (ej: "mostrame mis pacientes", "quiénes son mis pacientes", "dame el listado de pacientes").
 - Usa 'crear_turno' para agendar un nuevo turno y 'cancelar_turno' para cancelar uno existente. Ambas requieren confirmación del profesional antes de ejecutarse.
 - NUNCA menciones los nombres técnicos de las herramientas en tus respuestas.
-- Responde SIEMPRE en formato Markdown. Usá negritas, listas y viñetas. NUNCA USES TABLAS.
+- Responde SIEMPRE en formato Markdown. Usá negritas, listas y viñetas. NUNCA USES TABLAS. NO uses emojis ni íconos (❌, ✅, ⏳, etc.); solo texto plano formateado.
 - Para listar turnos: usá una lista con viñetas. Por cada turno: **Paciente** (Hora) — Estado.
 - Para disponibilidad: listá los horarios libres con viñetas.
 - Las fechas mostralas en formato legible: "lunes 18 de junio".
@@ -60,7 +60,7 @@ export async function POST(req: Request) {
         result = await executor(args, userId)
       } catch (e: unknown) {
         return NextResponse.json({
-          message: `❌ Error al ejecutar la operación: ${e instanceof Error ? e.message : "Error desconocido"}`,
+          message: `Error al ejecutar la operación: ${e instanceof Error ? e.message : "Error desconocido"}`,
         })
       }
 
@@ -77,11 +77,11 @@ export async function POST(req: Request) {
           temperature: 0.2,
           messages: formatMessages,
         })
-        formattedMessage = formatResponse.choices[0].message.content || "✅ Operación completada."
+        formattedMessage = formatResponse.choices[0].message.content || "Operación completada."
       } catch (e) {
         console.error("Error formateando resultado:", e)
         const labels: Record<string, string> = { crear_turno: "Turno creado", cancelar_turno: "Turno cancelado" }
-        formattedMessage = `✅ ${labels[name] ?? "Operación completada"} correctamente.`
+        formattedMessage = `${labels[name] ?? "Operación completada"} correctamente.`
       }
 
       return NextResponse.json({ message: formattedMessage })
@@ -149,7 +149,7 @@ export async function POST(req: Request) {
             role: "system",
             content: systemPrompt()
               + (allValid
-                ? "\n\n⚠️ REGLA ESTRICTA: La herramienta devolvió una VALIDACIÓN, NO una ejecución. El turno NO fue creado/cancelado. No digas que la operación se completó, que el turno fue creado, o que ya está agendado. Tu única tarea es preguntar al profesional si desea confirmar la operación (Sí / No). No respondas por el profesional."
+                ? "\n\nREGLA ESTRICTA: La herramienta devolvió una VALIDACIÓN, NO una ejecución. El turno NO fue creado/cancelado. No digas que la operación se completó, que el turno fue creado, o que ya está agendado. Tu única tarea es preguntar al profesional si desea confirmar la operación (Sí / No). No respondas por el profesional."
                 : ""),
           },
           ...cleanMessages as ChatCompletionMessageParam[],

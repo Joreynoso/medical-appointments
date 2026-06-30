@@ -87,7 +87,7 @@ export const consultarDisponibilidadTool = {
     const lineas = disponibles.map((s) => `- ${s} hs`)
     const formattedMessage = disponibles.length > 0
       ? [
-          `📅 Slots disponibles para ${labelDia}`,
+          `Slots disponibles para ${labelDia}`,
           "",
           `Total: **${disponibles.length}** de **${todosLosSlots.length}** slots`,
           "",

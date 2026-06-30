@@ -34,7 +34,7 @@ export function ChatInput({ onSend, disabled, toolButton }: ChatInputProps) {
   }
 
   return (
-    <div className="flex items-end gap-3 bg-background px-6 pt-1 pb-4">
+    <div className="flex items-center gap-3 bg-background px-6 py-3">
       <textarea
         ref={textareaRef}
         value={input}
@@ -45,14 +45,16 @@ export function ChatInput({ onSend, disabled, toolButton }: ChatInputProps) {
         disabled={disabled}
         className="flex-1 resize-none rounded-lg border border-border bg-muted px-3 py-2.5 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring disabled:opacity-50"
       />
-      {toolButton}
-      <button
-        onClick={handleSubmit}
-        disabled={!input.trim() || disabled}
-        className="flex size-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
-      >
-        <Send className="size-4" />
-      </button>
+      <div className="flex shrink-0 items-center gap-3">
+        {toolButton}
+        <button
+          onClick={handleSubmit}
+          disabled={!input.trim() || disabled}
+          className="flex size-9 items-center justify-center rounded-full bg-primary text-primary-foreground transition-colors hover:bg-primary/90 disabled:opacity-50"
+        >
+          <Send className="size-4" />
+        </button>
+      </div>
     </div>
   )
 }

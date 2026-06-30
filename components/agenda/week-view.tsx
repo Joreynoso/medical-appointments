@@ -55,7 +55,7 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
   }
 
   return (
-    <div className="border border-border rounded-xl overflow-hidden">
+    <div className="border border-border rounded-xl overflow-hidden bg-card">
       <div
         className="grid relative"
         style={{
@@ -65,7 +65,7 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
       >
           {/* ── Header row ── */}
           <div
-            className="sticky top-0 z-20 bg-background border-r border-b border-border"
+            className="sticky top-0 z-20 bg-card border-r border-b border-border"
             style={{ gridColumn: 1, gridRow: 1 }}
           />
           {days.map((day, i) => {
@@ -76,7 +76,7 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
               <div
                 key={key}
                 className={cn(
-                  "sticky top-0 z-20 bg-background border-r border-b border-border px-2 py-2 text-center",
+                  "sticky top-0 z-20 bg-card border-r border-b border-border px-2 py-2 text-center",
                   disabled && "bg-muted",
                 )}
                 style={{ gridColumn: i + 2, gridRow: 1 }}

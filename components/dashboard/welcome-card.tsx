@@ -4,7 +4,7 @@ export function WelcomeCard() {
   return (
     <div className="rounded-lg border border-border bg-card flex flex-col">
       <div className="flex flex-col justify-center p-8 lg:p-10 space-y-6">
-        <h2 className="text-3xl lg:text-4xl font-serif text-foreground leading-tight">
+        <h2 className="text-3xl lg:text-4xl font-sans text-foreground leading-tight">
           ¡Bienvenido a MedPilot!
         </h2>
         <p className="text-muted-foreground leading-relaxed text-base lg:text-lg max-w-md">
