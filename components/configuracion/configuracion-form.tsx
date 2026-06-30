@@ -41,14 +41,13 @@ export function ConfiguracionForm({ initialConfig }: ConfiguracionFormProps) {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setSubmitting(true)
-    try {
-      await actualizarConfiguracion({ duracionSlot, horarioDesde, horarioHasta, diasLaborables })
+    const result = await actualizarConfiguracion({ duracionSlot, horarioDesde, horarioHasta, diasLaborables })
+    if (result.success) {
       toast.success("Configuración guardada")
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Error al guardar configuración")
-    } finally {
-      setSubmitting(false)
+    } else {
+      toast.error(result.error)
     }
+    setSubmitting(false)
   }
 
   return (

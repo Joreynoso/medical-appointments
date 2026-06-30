@@ -148,3 +148,39 @@ Cuando un usuario se elimina de Clerk y se registra de nuevo con el mismo email,
 - Los props de redirect de los componentes `<SignIn>`/`<SignUp>` no resuelven problemas de validación del token: atacan el síntoma (la ruta de destino) pero no la causa (el token no se verifica).
 
 ---
+
+## ISSUE-004 — Clerk SignIn: botón social de Google con texto oscuro ilegible en tema oscuro
+
+**Fecha:** 2026-06-30
+**Feature:** Feature 1 — Setup del proyecto (Clerk)
+**Tarea:** Estilizar botón social de Google en SignIn
+
+### Problema
+El botón "Continuar con Google" del componente `<SignIn>` de Clerk mostraba el texto en color negro o muy oscuro, haciéndolo ilegible sobre el fondo oscuro del formulario de inicio de sesión.
+
+### Causa raíz
+Clerk no propaga `colorForeground` (mapeado a `var(--foreground)`) al texto del botón social (`socialButtonsBlockButtonText`). Tampoco aplica automáticamente el fondo del tema al botón (`socialButtonsBlockButton`). Al igual que con los elementos del UserButton dropdown (ISSUE-002), Clerk requiere estilizado explícito vía `elements` para estos componentes.
+
+### Solución
+Se agregaron dos reglas en `lib/clerk-appearance.ts` dentro del objeto `elements`:
+
+```ts
+socialButtonsBlockButton: {
+  backgroundColor: "var(--card)",
+  borderColor: "var(--border)",
+},
+socialButtonsBlockButtonText: {
+  color: "var(--foreground)",
+},
+```
+
+- `socialButtonsBlockButton` → fondo oscuro `var(--card)` (#262624) y borde `var(--border)` (#3e3e38) para integrarse visualmente al formulario
+- `socialButtonsBlockButtonText` → color claro `var(--foreground)` (#c3c0b6) para legibilidad
+
+### Archivos modificados
+- `lib/clerk-appearance.ts` — `socialButtonsBlockButton` y `socialButtonsBlockButtonText` en `elements`
+
+### Lección aprendida
+Los botones sociales de Clerk (Google, etc.) no heredan las variables globales de color de texto ni de fondo. Siempre que se personalice la apariencia de Clerk, verificar explícitamente `socialButtonsBlockButton` y `socialButtonsBlockButtonText` además de los elementos del UserButton.
+
+---
