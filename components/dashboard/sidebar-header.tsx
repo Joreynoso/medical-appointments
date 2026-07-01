@@ -16,12 +16,12 @@ export function SidebarHeader() {
         expanded ? "gap-3 px-6 pt-7 pb-6" : "justify-center px-0 pt-7 pb-6",
       )}
     >
-      <div className="flex size-9 items-center justify-center rounded-xl bg-sidebar-primary shrink-0">
-        <Calendar className="size-5 text-sidebar-primary-foreground" />
+      <div className="flex size-9 items-center justify-center rounded-xl bg-primary shrink-0">
+        <Calendar className="size-5 text-primary-foreground" />
       </div>
       <span
         className={cn(
-          "font-heading text-base font-semibold text-sidebar-foreground overflow-hidden transition-all duration-300",
+          "font-heading text-base font-semibold text-foreground overflow-hidden transition-all duration-300",
           expanded ? "w-auto opacity-100" : "w-0 opacity-0",
         )}
       >

@@ -76,16 +76,16 @@ export function SidebarUser() {
             expanded ? "block" : "hidden",
           )}
         >
-          <p className="truncate text-sm font-medium text-sidebar-foreground">
+          <p className="truncate text-sm font-medium text-foreground">
             {user.fullName || user.emailAddresses[0]?.emailAddress}
           </p>
-          <p className="truncate text-xs text-sidebar-foreground/50">
+          <p className="truncate text-xs text-foreground/50">
             {user.emailAddresses[0]?.emailAddress}
           </p>
         </div>
         <button
           onClick={() => setModalOpen(true)}
-          className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-sidebar-foreground/40 transition-colors hover:bg-sidebar-accent/10 hover:text-sidebar-foreground"
+          className="flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-lg text-foreground/40 transition-colors hover:bg-accent/10 hover:text-foreground"
           aria-label="Cerrar sesión"
         >
           <LogOut className="size-4" />

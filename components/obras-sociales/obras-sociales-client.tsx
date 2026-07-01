@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useCallback, useEffect } from "react"
-import { Search, Plus, Pencil, Trash2, Loader2, ChevronLeft, ChevronRight } from "lucide-react"
+import { Search, Plus, Pencil, Trash2, Loader2, Users, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Dialog, AlertDialog } from "@base-ui/react"
@@ -11,7 +11,9 @@ import {
   actualizarObraSocial,
   desactivarObraSocial,
 } from "@/lib/actions/obras-sociales"
+import { listarPacientes } from "@/lib/actions/pacientes"
 import type { ObraSocialListData } from "@/lib/actions/obras-sociales"
+import type { PacienteListData } from "@/lib/actions/pacientes"
 
 type ModalMode = "crear" | "editar" | null
 
@@ -35,6 +37,10 @@ export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClien
   const [obraSocialToDelete, setObraSocialToDelete] = useState<ObraSocialListData | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [currentPage, setCurrentPage] = useState(1)
+  const [pacientesModalOpen, setPacientesModalOpen] = useState(false)
+  const [obraSocialPacientes, setObraSocialPacientes] = useState<PacienteListData[]>([])
+  const [obraSocialNombre, setObraSocialNombre] = useState("")
+  const [loadingPacientes, setLoadingPacientes] = useState(false)
 
   const filtered = !busqueda
     ? obrasSociales
@@ -112,6 +118,21 @@ export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClien
     setDeleteDialogOpen(true)
   }
 
+  async function verPacientes(item: ObraSocialListData) {
+    setObraSocialNombre(item.nombre)
+    setPacientesModalOpen(true)
+    setLoadingPacientes(true)
+    try {
+      const todos = await listarPacientes()
+      setObraSocialPacientes(todos.filter((p) => p.obraSocialId === item.id))
+    } catch {
+      toast.error("Error al cargar pacientes")
+      setObraSocialPacientes([])
+    } finally {
+      setLoadingPacientes(false)
+    }
+  }
+
   async function handleEliminar() {
     if (!obraSocialToDelete) return
     try {
@@ -174,7 +195,7 @@ export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClien
         </button>
       </div>
 
-      <div className="hidden md:block rounded-lg border border-border bg-card">
+      <div className="hidden md:block rounded-lg border border-[#CBDEEC] bg-card shadow-[4px_0_30px_-6px_#E8EFF6]">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">
@@ -208,8 +229,19 @@ export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClien
                   <td className="px-6 py-3 text-sm font-medium text-foreground">
                     {item.nombre}
                   </td>
-                  <td className="px-6 py-3 text-sm text-muted-foreground">
-                    {item._count.pacientes}
+                  <td className="px-6 py-3">
+                    {item._count.pacientes > 0 ? (
+                      <button
+                        type="button"
+                        onClick={() => verPacientes(item)}
+                        className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-sm font-medium text-primary transition-all hover:bg-primary/10 active:scale-95"
+                      >
+                        <Users className="size-3.5" />
+                        {item._count.pacientes}
+                      </button>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">0</span>
+                    )}
                   </td>
                   <td className="px-6 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
@@ -257,16 +289,27 @@ export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClien
           paginated.map((item) => (
             <div
               key={item.id}
-              className="rounded-lg border border-border bg-card p-4 min-h-[84px]"
+              className="rounded-lg border border-[#CBDEEC] bg-card p-4 min-h-[84px] shadow-[4px_0_30px_-6px_#E8EFF6]"
             >
               <div className="flex items-start justify-between gap-2 h-full">
                 <div className="min-w-0 flex-1 flex flex-col justify-center">
                   <p className="text-sm font-medium text-foreground truncate">
                     {item.nombre}
                   </p>
-                  <p className="mt-0.5 text-xs text-muted-foreground">
-                    {item._count.pacientes} paciente{(item._count.pacientes !== 1) ? "s" : ""}
-                  </p>
+                  {item._count.pacientes > 0 ? (
+                    <button
+                      type="button"
+                      onClick={() => verPacientes(item)}
+                      className="mt-0.5 inline-flex items-center gap-1 text-xs font-medium text-primary transition-all hover:underline"
+                    >
+                      <Users className="size-3" />
+                      {item._count.pacientes} paciente{(item._count.pacientes !== 1) ? "s" : ""}
+                    </button>
+                  ) : (
+                    <p className="mt-0.5 text-xs text-muted-foreground">
+                      0 pacientes
+                    </p>
+                  )}
                 </div>
                 <div className="flex shrink-0 gap-1 items-start">
                   <button
@@ -342,6 +385,60 @@ export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClien
                   </Button>
                 </div>
               </form>
+            </div>
+          </Dialog.Popup>
+        </Dialog.Portal>
+      </Dialog.Root>
+
+      <Dialog.Root open={pacientesModalOpen} onOpenChange={setPacientesModalOpen}>
+        <Dialog.Portal>
+          <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+          <Dialog.Popup className="fixed inset-0 z-50 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
+            <div className="w-full max-w-sm rounded-xl border border-border bg-card p-5 shadow-lg max-h-[70vh] flex flex-col">
+              <div className="flex items-center justify-between shrink-0 mb-2">
+                <Dialog.Title className="text-sm font-semibold text-foreground">
+                  Pacientes de {obraSocialNombre}
+                </Dialog.Title>
+                <button
+                  type="button"
+                  onClick={() => setPacientesModalOpen(false)}
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+              <div className="h-px bg-border/50 mb-3" />
+              <div className="overflow-y-auto flex-1 -mx-1 px-1">
+                {loadingPacientes ? (
+                  <div className="flex items-center justify-center gap-2 py-8 text-sm text-muted-foreground">
+                    <Loader2 className="size-4 animate-spin" />
+                    Cargando pacientes...
+                  </div>
+                ) : obraSocialPacientes.length === 0 ? (
+                  <p className="py-8 text-center text-sm text-muted-foreground">
+                    No hay pacientes con esta obra social
+                  </p>
+                ) : (
+                  <div className="space-y-1">
+                    {obraSocialPacientes.map((p) => (
+                      <div
+                        key={p.id}
+                        className="flex items-center gap-3 rounded-lg px-3 py-2.5 hover:bg-muted/50 transition-colors"
+                      >
+                        <span className="size-2 shrink-0 rounded-full bg-primary/60" />
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-medium text-foreground truncate">
+                            {p.nombre}
+                          </p>
+                          {p.telefono && (
+                            <p className="text-xs text-muted-foreground truncate">{p.telefono}</p>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </Dialog.Popup>
         </Dialog.Portal>

@@ -10,7 +10,7 @@ type TurnosPorDiaProps = {
 const chartConfig = {
   turnos: {
     label: "Turnos",
-    color: "var(--chart-1)",
+    color: "var(--primary)",
   },
 }
 

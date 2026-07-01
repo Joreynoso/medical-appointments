@@ -53,7 +53,7 @@ export function SidebarNav() {
                 : "justify-center mx-auto size-9",
               active
                 ? "bg-primary/10 text-primary"
-                : "text-sidebar-foreground/60 hover:bg-sidebar-accent/5 hover:text-sidebar-foreground",
+                : "text-foreground/60 hover:bg-accent/10 hover:text-foreground",
             )}
           >
             <Icon className="size-4 shrink-0" />
