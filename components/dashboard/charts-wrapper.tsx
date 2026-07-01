@@ -41,7 +41,7 @@ export async function ChartsWrapper() {
 
   return (
     <>
-      <div className="rounded-lg bg-card p-6 flex flex-col gap-5 border border-[#CBDEEC] shadow-[4px_0_30px_-6px_#E8EFF6]">
+      <div className="rounded-lg bg-card p-6 flex flex-col gap-5 border border-border shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none">
         <h3 className="text-lg font-sans text-foreground shrink-0">
           Turnos por día
         </h3>
@@ -49,7 +49,7 @@ export async function ChartsWrapper() {
           <TurnosPorDiaChart data={turnosPorDia} />
         </div>
       </div>
-      <div className="rounded-lg bg-card p-6 flex flex-col gap-5 border border-[#CBDEEC] shadow-[4px_0_30px_-6px_#E8EFF6]">
+      <div className="rounded-lg bg-card p-6 flex flex-col gap-5 border border-border shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none">
         <h3 className="text-lg font-sans text-foreground shrink-0">
           Turnos por mes
         </h3>

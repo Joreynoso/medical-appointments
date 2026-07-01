@@ -87,8 +87,8 @@ export function DayCard({ day, isHoliday, holidayName, turnos = [], className, d
         "group relative flex aspect-square w-full flex-col p-1.5 md:p-2 2xl:p-3 transition-all",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         "bg-card hover:bg-card",
-        isOtherMonth && "bg-muted cursor-not-allowed opacity-100 hover:bg-muted",
-        disabled && "bg-muted hover:bg-muted",
+        isOtherMonth && "bg-muted dark:bg-muted-deeper cursor-not-allowed opacity-100 hover:bg-muted dark:hover:bg-muted-deeper",
+        disabled && "bg-muted dark:bg-muted-deeper hover:bg-muted dark:hover:bg-muted-deeper",
         className,
       )}
     >

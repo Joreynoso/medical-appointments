@@ -2,7 +2,7 @@ import { ImageIcon, BarChart3 } from "lucide-react"
 
 export function WelcomeSkeleton() {
   return (
-    <div className="rounded-lg bg-card border border-[#CBDEEC] shadow-[4px_0_30px_-6px_#E8EFF6] flex flex-col lg:flex-row animate-pulse">
+    <div className="rounded-lg bg-card border border-border shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none flex flex-col lg:flex-row animate-pulse">
       <div className="lg:w-3/5 flex flex-col justify-center p-6 space-y-4">
         <div className="h-9 bg-muted rounded w-3/4" />
         <div className="h-5 bg-muted rounded w-full" />
@@ -19,7 +19,7 @@ export function WelcomeSkeleton() {
 
 export function ProximosTurnosSkeleton() {
   return (
-    <div className="rounded-lg bg-card border border-[#CBDEEC] shadow-[4px_0_30px_-6px_#E8EFF6] p-6 flex flex-col gap-5 animate-pulse">
+    <div className="rounded-lg bg-card border border-border shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none p-6 flex flex-col gap-5 animate-pulse">
       <div className="flex items-center justify-between shrink-0 gap-4">
         <div className="h-5 bg-muted rounded w-32" />
         <div className="h-8 bg-muted rounded w-28" />
@@ -40,7 +40,7 @@ export function ProximosTurnosSkeleton() {
 
 export function PacientesSkeleton() {
   return (
-    <div className="rounded-lg bg-card border border-[#CBDEEC] shadow-[4px_0_30px_-6px_#E8EFF6] p-6 flex flex-col gap-5 animate-pulse">
+    <div className="rounded-lg bg-card border border-border shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none p-6 flex flex-col gap-5 animate-pulse">
       <div className="flex items-center justify-between shrink-0 gap-4">
         <div className="h-5 bg-muted rounded w-36" />
         <div className="h-8 bg-muted rounded w-28" />
@@ -63,7 +63,7 @@ export function PacientesSkeleton() {
 
 export function ChartSkeleton() {
   return (
-    <div className="rounded-lg bg-card border border-[#CBDEEC] shadow-[4px_0_30px_-6px_#E8EFF6] p-6 flex flex-col gap-5 animate-pulse">
+    <div className="rounded-lg bg-card border border-border shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none p-6 flex flex-col gap-5 animate-pulse">
       <div className="h-5 bg-muted rounded w-28" />
       <div className="flex-1 min-h-0 flex items-center justify-center">
         <BarChart3 className="size-12 text-muted-foreground/20" />

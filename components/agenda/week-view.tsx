@@ -77,7 +77,7 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
                 key={key}
                 className={cn(
                   "sticky top-0 z-20 bg-card border-r border-b border-border px-2 py-2 text-center",
-                  disabled && "bg-muted",
+                  disabled && "bg-muted dark:bg-muted-deeper",
                 )}
                 style={{ gridColumn: i + 2, gridRow: 1 }}
               >
@@ -134,7 +134,7 @@ export function WeekView({ currentDate, feriados, turnosPorFecha, horarioDesde, 
                   key={`cell-${key}-${hour}`}
                   className={cn(
                     "border-r border-b border-border",
-                    disabled && "bg-muted",
+                    disabled && "bg-muted dark:bg-muted-deeper",
                   )}
                   style={{
                     gridColumn: di + 2,

@@ -1,7 +1,7 @@
 "use client"
 
-import { useState } from "react"
-import { Loader2, Save } from "lucide-react"
+import { useEffect, useState } from "react"
+import { Loader2, Moon, Save, Sun } from "lucide-react"
 import { toast } from "sonner"
 import { actualizarConfiguracion, type ConfiguracionData } from "@/lib/actions/configuracion"
 
@@ -31,6 +31,26 @@ export function ConfiguracionForm({ initialConfig }: ConfiguracionFormProps) {
   const [horarioHasta, setHorarioHasta] = useState(initialConfig?.horarioHasta ?? "19:00")
   const [diasLaborables, setDiasLaborables] = useState<number[]>(initialConfig?.diasLaborables ?? [1, 2, 3, 4, 5, 6])
   const [submitting, setSubmitting] = useState(false)
+  const [dark, setDark] = useState(false)
+
+  useEffect(() => {
+    const stored = localStorage.getItem("theme")
+    if (stored === "dark") {
+      setDark(true)
+      document.documentElement.classList.add("dark")
+    }
+  }, [])
+
+  function toggleTheme() {
+    const next = !dark
+    const img = new Image()
+    img.src = next ? "/images/bg-dark.png" : "/images/bg-ligth.png"
+    img.onload = img.onerror = () => {
+      setDark(next)
+      document.documentElement.classList.toggle("dark", next)
+      localStorage.setItem("theme", next ? "dark" : "light")
+    }
+  }
 
   function toggleDia(dia: number) {
     setDiasLaborables((prev) =>
@@ -51,7 +71,7 @@ export function ConfiguracionForm({ initialConfig }: ConfiguracionFormProps) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-8 rounded-lg border border-[#CBDEEC] bg-card p-4 sm:p-6 shadow-[4px_0_30px_-6px_#E8EFF6]">
+    <form onSubmit={handleSubmit} className="space-y-8 rounded-lg border border-border bg-card p-4 sm:p-6 shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none">
       <div className="space-y-4">
         <h2 className="text-sm font-medium text-foreground">Días laborables</h2>
         <p className="text-xs text-muted-foreground">
@@ -129,6 +149,26 @@ export function ConfiguracionForm({ initialConfig }: ConfiguracionFormProps) {
             No se puede cambiar si hay turnos pendientes o confirmados a futuro.
           </p>
         </div>
+      </div>
+
+      <div className="space-y-4">
+        <h2 className="text-sm font-medium text-foreground">Apariencia</h2>
+        <p className="text-xs text-muted-foreground">
+          Alterná entre modo claro y oscuro.
+        </p>
+        <button
+          type="button"
+          onClick={toggleTheme}
+          className="inline-flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-background px-4 py-3 text-sm text-foreground transition-all hover:bg-muted"
+        >
+          {dark ? <Moon className="size-5" /> : <Sun className="size-5" />}
+          <div className="text-left">
+            <p className="font-medium">{dark ? "Modo oscuro" : "Modo claro"}</p>
+            <p className="text-xs text-muted-foreground">
+              {dark ? "Activado" : "Desactivado"}
+            </p>
+          </div>
+        </button>
       </div>
 
       <button

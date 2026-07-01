@@ -195,7 +195,7 @@ export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClien
         </button>
       </div>
 
-      <div className="hidden md:block rounded-lg border border-[#CBDEEC] bg-card shadow-[4px_0_30px_-6px_#E8EFF6]">
+      <div className="hidden md:block rounded-lg border border-border bg-card shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none">
         {filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12">
             <p className="text-sm text-muted-foreground">
@@ -289,7 +289,7 @@ export function ObrasSocialesClient({ initialObrasSociales }: ObrasSocialesClien
           paginated.map((item) => (
             <div
               key={item.id}
-              className="rounded-lg border border-[#CBDEEC] bg-card p-4 min-h-[84px] shadow-[4px_0_30px_-6px_#E8EFF6]"
+              className="rounded-lg border border-border bg-card p-4 min-h-[84px] shadow-[4px_0_30px_-6px_#E8EFF6] dark:shadow-none"
             >
               <div className="flex items-start justify-between gap-2 h-full">
                 <div className="min-w-0 flex-1 flex flex-col justify-center">

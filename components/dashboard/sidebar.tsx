@@ -20,7 +20,7 @@ export function Sidebar() {
       )}
       <aside
         className={cn(
-          "sidebar fixed left-0 top-0 z-40 flex h-screen flex-col bg-white text-foreground shadow-[4px_0_30px_-6px_#E8EFF6] transition-[width] duration-150",
+          "sidebar fixed left-0 top-0 z-40 flex h-screen flex-col bg-white text-foreground shadow-[4px_0_30px_-6px_#E8EFF6] dark:bg-sidebar dark:shadow-none transition-[width] duration-150",
           "lg:z-30 lg:translate-x-0",
           collapsed ? "lg:w-14" : "lg:w-56",
           "w-56",
@@ -32,7 +32,7 @@ export function Sidebar() {
           <button
             onClick={toggleCollapsed}
             className={cn(
-              "flex size-6 items-center justify-center rounded-full border border-border bg-white text-foreground/60 transition-all hover:text-foreground",
+              "flex size-6 items-center justify-center rounded-full border border-border bg-white dark:bg-sidebar text-foreground/60 transition-all hover:text-foreground",
               collapsed ? "" : "ml-auto -mr-3",
             )}
             aria-label={collapsed ? "Expandir sidebar" : "Colapsar sidebar"}

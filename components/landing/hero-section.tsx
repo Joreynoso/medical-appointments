@@ -34,9 +34,14 @@ export default function HeroSection() {
 
         <div className="hero-image relative aspect-[4/3] w-full rounded-2xl overflow-hidden">
           <img
+            src="/images/bg-ligth.png"
+            alt="MedPilot dashboard preview"
+            className="object-contain w-full h-full dark:hidden"
+          />
+          <img
             src="/images/bg-dark.png"
             alt="MedPilot dashboard preview"
-            className="object-contain w-full h-full"
+            className="object-contain w-full h-full hidden dark:block"
           />
         </div>
       </div>

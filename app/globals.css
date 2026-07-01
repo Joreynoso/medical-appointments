@@ -18,6 +18,7 @@
   --secondary: #f3f4f6;
   --secondary-foreground: #7a6030;
   --muted: #f9fafb;
+  --muted-deeper: #e5e7eb;
   --muted-foreground: #6b7280;
   --accent: #d6e4f0;
   --accent-foreground: #1e3a8a;
@@ -74,6 +75,7 @@
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
+  --color-muted-deeper: var(--muted-deeper, var(--muted));
   --color-muted-foreground: var(--muted-foreground);
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
@@ -125,6 +127,60 @@
   }
 }
 
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--muted-foreground);
+}
+
+.dark {
+  --background: #1c2433;
+  --foreground: #e5e5e5;
+  --card: #2a3040;
+  --muted-deeper: #1f2638;
+  --card-foreground: #e5e5e5;
+  --popover: #262b38;
+  --popover-foreground: #e5e5e5;
+  --primary: #a68446;
+  --primary-foreground: #ffffff;
+  --secondary: #d9d9d9;
+  --secondary-foreground: #4b5563;
+  --muted: #2a303e;
+  --muted-foreground: #a3a3a3;
+  --accent: #2a3656;
+  --accent-foreground: #a68446;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: #3d4354;
+  --input: #3d4354;
+  --ring: #d9b36c;
+  --chart-1: #86a7c8;
+  --chart-2: #e6a08f;
+  --chart-3: #5a7ca6;
+  --chart-4: #466494;
+  --chart-5: #334c82;
+  --sidebar: #2a303f;
+  --sidebar-foreground: #e5e5e5;
+  --sidebar-primary: #e05d38;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #2a3656;
+  --sidebar-accent-foreground: #bfdbfe;
+  --sidebar-border: #3d4354;
+  --sidebar-ring: #e05d38;
+}
+
 .inverted-footer {
   --background: #1c2f40;
   --foreground: #f4f5f7;
@@ -143,6 +199,26 @@
   --border: rgba(255, 255, 255, 0.15);
   --input: rgba(255, 255, 255, 0.2);
   --ring: #a68446;
+}
+
+.dark .inverted-footer {
+  --background: #A68446;
+  --foreground: #ffffff;
+  --card: #a68446;
+  --card-foreground: #ffffff;
+  --popover: #a68446;
+  --popover-foreground: #ffffff;
+  --secondary: #ffffff;
+  --secondary-foreground: #a68446;
+  --muted: rgba(255, 255, 255, 0.15);
+  --muted-foreground: #ffffff;
+  --accent: rgba(255, 255, 255, 0.2);
+  --accent-foreground: #ffffff;
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.2);
+  --input: rgba(255, 255, 255, 0.25);
+  --ring: #ffffff;
 }
 
 .text-inverted-bg {

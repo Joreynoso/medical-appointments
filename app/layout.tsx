@@ -30,9 +30,24 @@ export default function RootLayout({
     <ClerkProvider appearance={clerkAppearance} localization={esES}>
       <html
         lang="es"
-        className={`${inter.variable} ${firaCode.variable} h-full antialiased dark`}
+        className={`${inter.variable} ${firaCode.variable} h-full antialiased`}
+        suppressHydrationWarning
       >
         <body className="min-h-full flex flex-col font-sans">
+          <script
+            dangerouslySetInnerHTML={{
+              __html: `
+                (function() {
+                  try {
+                    var theme = localStorage.getItem("theme");
+                    if (theme === "dark") {
+                      document.documentElement.classList.add("dark");
+                    }
+                  } catch(e) {}
+                })();
+              `,
+            }}
+          />
           {children}
         </body>
       </html>

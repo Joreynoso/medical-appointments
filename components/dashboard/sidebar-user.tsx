@@ -27,9 +27,14 @@ export function SidebarUser() {
           )}
         >
           <img
+            src="/images/bg-ligth.png"
+            alt="MedPilot preview"
+            className="object-cover w-full h-full dark:hidden"
+          />
+          <img
             src="/images/bg-dark.png"
             alt="MedPilot preview"
-            className="object-cover w-full h-full"
+            className="object-cover w-full h-full hidden dark:block"
           />
         </div>
       </div>
@@ -56,9 +61,14 @@ export function SidebarUser() {
         )}
       >
         <img
+          src="/images/bg-ligth.png"
+          alt="MedPilot preview"
+          className="object-cover w-full h-full dark:hidden"
+        />
+        <img
           src="/images/bg-dark.png"
           alt="MedPilot preview"
-          className="object-cover w-full h-full"
+          className="object-cover w-full h-full hidden dark:block"
         />
       </div>
       <div
