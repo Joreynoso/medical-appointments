@@ -136,3 +136,12 @@ export function formatDateKey(date: Date): string {
 export function isSunday(date: Date): boolean {
   return date.getDay() === 0
 }
+
+export function esTurnoPasado(fecha: string, horaFin: string): boolean {
+  const ahora = new Date()
+  const hoy = ahora.toISOString().slice(0, 10)
+  if (fecha < hoy) return true
+  if (fecha > hoy) return false
+  const [h, m] = horaFin.split(":").map(Number)
+  return h * 60 + m <= ahora.getHours() * 60 + ahora.getMinutes()
+}

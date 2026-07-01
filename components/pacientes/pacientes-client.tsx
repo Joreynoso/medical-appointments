@@ -207,19 +207,19 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
           <table className="w-full">
             <thead>
               <tr className="border-b border-border">
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Nombre
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Teléfono
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Obra Social
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Notas
                 </th>
-                <th className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-muted-foreground">
                   Acciones
                 </th>
               </tr>
@@ -227,19 +227,19 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
             <tbody className="divide-y divide-border">
               {paginatedPacientes.map((paciente) => (
                 <tr key={paciente.id} className="group hover:bg-muted/50">
-                  <td className="px-4 py-3 text-sm font-medium text-foreground">
+                  <td className="px-6 py-3 text-sm font-medium text-foreground">
                     {paciente.nombre}
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">
+                  <td className="px-6 py-3 text-sm text-muted-foreground">
                     {paciente.telefono || "—"}
                   </td>
-                  <td className="px-4 py-3 text-sm text-muted-foreground">
+                  <td className="px-6 py-3 text-sm text-muted-foreground">
                     {paciente.obraSocial?.nombre || "—"}
                   </td>
-                  <td className="max-w-xs truncate px-4 py-3 text-sm text-muted-foreground">
+                  <td className="max-w-xs truncate px-6 py-3 text-sm text-muted-foreground">
                     {paciente.notas || "—"}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-6 py-3 text-right">
                     <div className="flex items-center justify-end gap-1">
                       <Button
                         variant="ghost"
@@ -328,8 +328,8 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
 
       <Dialog.Root open={modalOpen} onOpenChange={setModalOpen}>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
-          <Dialog.Popup className="fixed inset-0 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
+          <Dialog.Backdrop className="fixed inset-0 z-50 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+          <Dialog.Popup className="fixed inset-0 z-50 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <div className="w-full max-w-md rounded-xl border border-border bg-card p-6 shadow-lg">
               <div className="mb-6 flex items-center justify-between">
                 <Dialog.Title className="text-lg font-sans text-foreground">
@@ -430,8 +430,8 @@ export function PacientesClient({ initialPacientes, obrasSociales }: PacientesCl
 
       <AlertDialog.Root open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <AlertDialog.Portal>
-          <AlertDialog.Backdrop className="fixed inset-0 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
-          <AlertDialog.Popup className="fixed inset-0 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
+          <AlertDialog.Backdrop className="fixed inset-0 z-50 bg-black/40 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
+          <AlertDialog.Popup className="fixed inset-0 z-50 flex items-center justify-center p-4 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95">
             <div className="w-full max-w-sm rounded-xl border border-border bg-card p-6 shadow-lg">
               <AlertDialog.Title className="text-lg font-sans text-foreground">
                 Desactivar paciente

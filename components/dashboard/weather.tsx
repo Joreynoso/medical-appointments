@@ -57,23 +57,28 @@ export function Weather() {
   useEffect(() => {
     const controller = new AbortController()
 
-    async function fetchWeather() {
+    async function fetchWeather(retries = 2): Promise<void> {
       try {
         const res = await fetch(
           "https://api.open-meteo.com/v1/forecast?latitude=-28.47&longitude=-65.79&current=temperature_2m,weather_code&timezone=auto",
           { signal: controller.signal },
         )
-        if (!res.ok) throw new Error("Failed to fetch")
+        if (!res.ok) throw new Error(`HTTP ${res.status}`)
         const data = await res.json()
+        if (!data.current) throw new Error("Respuesta sin datos actuales")
         setWeather({
           temperature: Math.round(data.current.temperature_2m),
           weatherCode: data.current.weather_code,
         })
         setError(false)
-      } catch {
-        if (!controller.signal.aborted) {
-          setError(true)
+      } catch (err) {
+        if (controller.signal.aborted) return
+        if (retries > 0) {
+          await new Promise((r) => setTimeout(r, 2000))
+          return fetchWeather(retries - 1)
         }
+        console.error("[Weather] Error al obtener clima:", err)
+        setError(true)
       } finally {
         if (!controller.signal.aborted) {
           setLoading(false)

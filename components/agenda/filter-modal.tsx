@@ -29,8 +29,8 @@ const estadoLabel: Record<string, string> = {
 }
 
 const estadoBullet: Record<string, string> = {
-  PENDIENTE: "bg-ring",
-  CONFIRMADO: "bg-primary",
+  PENDIENTE: "bg-yellow-500",
+  CONFIRMADO: "bg-green-500",
   AUSENTE: "bg-muted-foreground",
 }
 

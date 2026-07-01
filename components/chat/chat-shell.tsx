@@ -117,6 +117,7 @@ export function ChatShell() {
         body: JSON.stringify({
           confirmToolCall: pendingConfirmation,
           contextMessages,
+          timezoneOffset: new Date().getTimezoneOffset(),
         }),
       })
 

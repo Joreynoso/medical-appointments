@@ -43,7 +43,7 @@ type PageHeaderProps = {
 
 export function PageHeader({ title, description }: PageHeaderProps) {
   return (
-    <section className="page-header flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between py-6 md:py-8">
+    <section className="page-header flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between py-6 md:py-8">
       <div className="page-header-content">
         <h1 className="text-xl font-sans text-foreground">
           {title}

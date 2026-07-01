@@ -55,14 +55,10 @@ export function DayView({
   }, [currentDate])
 
   useEffect(() => {
-    if (!isToday(currentDay.date)) return
-    const hour = new Date().getHours()
-    const row = hour - startHour
-    if (row > 0 && scrollRef.current) {
-      const top = row * HOUR_HEIGHT - 60
-      scrollRef.current.scrollTo({ top, behavior: "smooth" })
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = 0
     }
-  }, [dayIndex, currentDay.date, startHour])
+  }, [dayIndex, currentDay.date])
 
   const isLaborable = useCallback(
     (day: Date) => {
@@ -97,10 +93,10 @@ export function DayView({
   const goNext = useCallback(() => setDayIndex((i) => Math.min(6, i + 1)), [])
 
   return (
-    <div className="border border-border rounded-xl overflow-hidden">
+    <div className="border border-border rounded-xl overflow-hidden bg-card">
       <div
         className={cn(
-          "flex items-center justify-between bg-background border-b border-border px-3 py-2.5",
+          "flex items-center justify-between bg-card border-b border-border px-3 py-2.5",
           disabled && "bg-muted",
         )}
       >

@@ -6,6 +6,7 @@ import {
   TooltipTrigger,
   TooltipContent,
 } from "@/components/ui/tooltip"
+import { esTurnoPasado } from "@/components/agenda/calendar-utils"
 import type { TurnoData } from "@/lib/actions/turnos"
 
 export const HOUR_HEIGHT = 80
@@ -29,11 +30,20 @@ function getTurnoHeight(horaInicio: string, horaFin: string, startHour: number):
   return Math.max(18, duration * (HOUR_HEIGHT / 60))
 }
 
-const estadoBorder: Record<string, string> = {
-  PENDIENTE: "border-l-ring",
-  CONFIRMADO: "border-l-primary",
-  CANCELADO: "border-l-destructive",
-  AUSENTE: "border-l-muted-foreground",
+function getTurnoClasses(turno: TurnoData): string {
+  if (esTurnoPasado(turno.fecha, turno.horaFin)) {
+    return "bg-muted/60 border border-muted-foreground/30"
+  }
+  switch (turno.estado) {
+    case "PENDIENTE":
+      return "bg-yellow-500/20 border border-yellow-500/60"
+    case "CONFIRMADO":
+      return "bg-green-500/20 border border-green-500/60"
+    case "CANCELADO":
+      return "bg-destructive/20 border border-destructive/60"
+    case "AUSENTE":
+      return "bg-muted-foreground/20 border border-muted-foreground/60"
+  }
 }
 
 type TurnoBlockProps = {
@@ -48,10 +58,10 @@ export function TurnoBlock({ turno, startHour, onClick }: TurnoBlockProps) {
       <TooltipTrigger render={
         <div
           className={cn(
-            "absolute left-0.5 right-0.5 rounded-md border-l-2 bg-muted px-2 py-1",
-            "overflow-hidden cursor-pointer hover:opacity-90 transition-opacity",
+            "absolute left-0.5 right-0.5 rounded-md px-2 py-1",
+            "flex items-center overflow-hidden cursor-pointer hover:opacity-90 transition-opacity",
             "pointer-events-auto",
-            estadoBorder[turno.estado],
+            getTurnoClasses(turno),
           )}
           style={{
             top: getTurnoTop(turno.horaInicio, startHour),

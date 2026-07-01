@@ -26,22 +26,13 @@ export function AppointmentAlarmProvider() {
 
       const minutos = calcularMinutosPara(turno.horaInicio)
 
-      toast.custom(
-        () => (
-          <div className="flex items-start gap-3 rounded-lg border border-border bg-card p-4 shadow-lg">
-            <Bell className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-            <div className="flex min-w-0 flex-col gap-0.5">
-              <p className="text-sm font-medium text-card-foreground">
-                {turno.paciente.nombre}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                Próximo turno a las {turno.horaInicio}
-                {minutos > 0 ? ` (en ${minutos} min)` : " (ahora)"}
-              </p>
-            </div>
-          </div>
-        ),
-        { duration: 15000 },
+      toast(
+        turno.paciente.nombre,
+        {
+          icon: <Bell className="h-5 w-5 text-primary" />,
+          description: `Próximo turno a las ${turno.horaInicio}${minutos > 0 ? ` (en ${minutos} min)` : " (ahora)"}`,
+          duration: 15000,
+        },
       )
     }
   }, [])

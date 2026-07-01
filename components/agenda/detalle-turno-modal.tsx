@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { Dialog } from "@base-ui/react"
 import { Button } from "@/components/ui/button"
 import { cambiarEstadoTurno } from "@/lib/actions/turnos"
+import { esTurnoPasado } from "@/components/agenda/calendar-utils"
 import type { TurnoData } from "@/lib/actions/turnos"
 
 const estadoLabel: Record<string, string> = {
@@ -18,9 +19,11 @@ const estadoLabel: Record<string, string> = {
   AUSENTE: "Ausente",
 }
 
+const badgePasado = "bg-muted/60 text-muted-foreground border-muted-foreground/30"
+
 const estadoBadge: Record<string, string> = {
-  PENDIENTE: "bg-ring/20 text-ring border-ring/60",
-  CONFIRMADO: "bg-primary/20 text-primary border-primary/60",
+  PENDIENTE: "bg-yellow-500/20 text-yellow-600 border-yellow-500/60",
+  CONFIRMADO: "bg-green-500/20 text-green-600 border-green-500/60",
   CANCELADO: "bg-destructive/20 text-destructive border-destructive/60",
   AUSENTE: "bg-muted-foreground/20 text-muted-foreground border-muted-foreground/60",
 }
@@ -64,7 +67,7 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
     onOpenChange(false)
   }
 
-  const esPasado = turnoData.fecha < new Date().toISOString().slice(0, 10)
+  const esPasado = esTurnoPasado(turnoData.fecha, turnoData.horaFin)
   const mostrarConfirmar = (turnoData.estado === "PENDIENTE" || turnoData.estado === "CANCELADO" || turnoData.estado === "AUSENTE") && !esPasado
   const mostrarCancelar = (turnoData.estado === "PENDIENTE" || turnoData.estado === "CONFIRMADO") && !esPasado
   const mostrarAusente = turnoData.estado === "CONFIRMADO" && !esPasado
@@ -108,7 +111,7 @@ export function DetalleTurnoModal({ turno, open, onOpenChange, onStatusChanged }
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className={cn("inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium", estadoBadge[turnoData.estado])}>
+                  <span className={cn("inline-flex items-center rounded-md border px-2.5 py-0.5 text-xs font-medium", esPasado ? badgePasado : estadoBadge[turnoData.estado])}>
                     {estadoLabel[turnoData.estado]}
                   </span>
                 </div>

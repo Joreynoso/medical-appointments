@@ -6,26 +6,26 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-grid pointer-events-none" />
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-12 md:py-32 grid md:grid-cols-[1fr_1.1fr] gap-12 md:gap-16 items-center">
         <div className="hero-text space-y-10">
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans text-foreground leading-[1.05] tracking-tighter">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-sans font-semibold text-foreground leading-[1.05] tracking-tighter text-center md:text-left">
             Tu agenda médica, potenciada con{" "}
             <span className="text-primary">inteligencia artificial.</span>
           </h1>
 
-          <p className="text-lg sm:text-xl text-muted-foreground max-w-lg">
+          <p className="text-base sm:text-lg text-muted-foreground max-w-lg text-center md:text-left">
             Gestiona turnos de forma simple, visual y eficiente. Sin
             complicaciones, sin dobles agendas, sin esfuerzo.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-4 items-center md:items-start">
             <Link
               href="/dashboard"
-              className="inline-flex px-6 py-3 rounded-full bg-primary text-primary-foreground font-medium text-lg hover:opacity-90 transition-opacity text-center"
+              className="inline-flex px-5 py-2.5 sm:px-6 sm:py-3 rounded-full bg-primary text-primary-foreground font-medium text-base sm:text-lg hover:opacity-90 transition-opacity text-center"
             >
               Comenzar ahora
             </Link>
             <Link
               href="#"
-              className="inline-flex px-6 py-3 rounded-full border border-border text-foreground font-medium text-lg hover:bg-muted transition-colors text-center"
+              className="inline-flex px-5 py-2.5 sm:px-6 sm:py-3 rounded-full border border-border text-foreground font-medium text-base sm:text-lg hover:bg-muted transition-colors text-center"
             >
               Más información
             </Link>

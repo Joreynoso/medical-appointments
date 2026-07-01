@@ -34,31 +34,24 @@ export function CalendarToolbar({
   onViewChange,
 }: CalendarToolbarProps) {
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center gap-2 w-full">
-      <div className="flex items-center justify-between sm:justify-start gap-2 w-full sm:w-auto">
-        <div className="flex items-center gap-1">
-          <button
-            type="button"
-            onClick={onPrev}
-            aria-label="Anterior"
-            className="inline-flex size-7 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
-          >
-            <ChevronLeft className="size-4" />
-          </button>
-          <button
-            type="button"
-            onClick={onNext}
-            aria-label="Siguiente"
-            className="inline-flex size-7 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
-          >
-            <ChevronRight className="size-4" />
-          </button>
-        </div>
-
-        <span className="text-center text-xs sm:text-sm font-medium text-foreground sm:min-w-[130px]">
-          {formatMonthYear(currentDate)}
-        </span>
-
+    <div className="flex items-center gap-2 w-full">
+      <div className="flex items-center gap-1">
+        <button
+          type="button"
+          onClick={onPrev}
+          aria-label="Anterior"
+          className="inline-flex size-7 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
+        >
+          <ChevronLeft className="size-4" />
+        </button>
+        <button
+          type="button"
+          onClick={onNext}
+          aria-label="Siguiente"
+          className="inline-flex size-7 items-center justify-center rounded-lg border border-border text-foreground hover:bg-muted transition-colors"
+        >
+          <ChevronRight className="size-4" />
+        </button>
         <button
           type="button"
           onClick={onFilterClick}
@@ -72,11 +65,15 @@ export function CalendarToolbar({
         </button>
       </div>
 
-      <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap sm:ml-auto">
+      <span className="text-center text-xs sm:text-sm font-medium text-foreground sm:min-w-[130px] max-sm:hidden">
+        {formatMonthYear(currentDate)}
+      </span>
+
+      <div className="flex items-center gap-2 ml-auto">
         <button
           type="button"
           onClick={onFilterClick}
-          className="inline-flex h-7 items-center gap-1 rounded-lg border border-border px-2.5 text-[0.8rem] font-medium text-foreground hover:bg-muted transition-colors hidden sm:inline-flex relative"
+          className="inline-flex h-7 items-center gap-1 rounded-lg border border-border px-2.5 text-[0.8rem] font-medium text-foreground hover:bg-muted transition-colors max-sm:hidden relative"
         >
           <Filter className="size-3.5" />
           Filtrar
@@ -85,7 +82,7 @@ export function CalendarToolbar({
           )}
         </button>
 
-        <span className="hidden sm:block text-muted-foreground/40">|</span>
+        <span className="max-sm:hidden text-muted-foreground/40">|</span>
 
         <div className="flex items-center gap-2">
           <button

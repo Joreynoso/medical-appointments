@@ -28,7 +28,8 @@ export function Topbar() {
           className="inline-flex cursor-pointer items-center gap-1.5 rounded-full border border-border px-3 md:px-4 py-1.5 md:py-2 text-xs md:text-sm font-medium text-foreground transition-all hover:bg-muted"
         >
           <Bot className="size-3.5 md:size-4 text-primary" />
-          <span className="hidden md:inline">Chat IA (Besta)</span>
+          <span className="md:hidden">Chat</span>
+          <span className="hidden md:inline">Chat IA (Beta)</span>
         </button>
         <button
           type="button"

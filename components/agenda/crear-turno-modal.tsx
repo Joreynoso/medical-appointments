@@ -50,6 +50,7 @@ export function CrearTurnoModal({ open, onOpenChange, onTurnoCreado }: CrearTurn
 
   const [localPacientes, setLocalPacientes] = useState<PacienteSimple[]>([])
   const [localObrasSociales, setLocalObrasSociales] = useState<ObraSocialSimple[]>([])
+  const [loadingPacientes, setLoadingPacientes] = useState(false)
 
   useEffect(() => {
     if (fecha) {
@@ -76,6 +77,7 @@ export function CrearTurnoModal({ open, onOpenChange, onTurnoCreado }: CrearTurn
 
   useEffect(() => {
     if (open) {
+      setLoadingPacientes(true)
       getConfiguracionHoraria()
         .then(setConfig)
         .catch(() => {})
@@ -89,21 +91,19 @@ export function CrearTurnoModal({ open, onOpenChange, onTurnoCreado }: CrearTurn
           setFeriados(map)
         })
         .catch(() => setFeriados(new Map()))
-      listarPacientes()
-        .then((data) => {
+      Promise.all([
+        listarPacientes().then((data) => {
           setLocalPacientes(data.map((p) => ({
             id: p.id,
             nombre: p.nombre,
             telefono: p.telefono,
             obraSocialNombre: p.obraSocial?.nombre ?? null,
           })))
-        })
-        .catch(() => setLocalPacientes([]))
-      listarObrasSociales()
-        .then((data) => {
+        }).catch(() => setLocalPacientes([])),
+        listarObrasSociales().then((data) => {
           setLocalObrasSociales(data.map((o) => ({ id: o.id, nombre: o.nombre })))
-        })
-        .catch(() => setLocalObrasSociales([]))
+        }).catch(() => setLocalObrasSociales([])),
+      ]).finally(() => setLoadingPacientes(false))
     }
   }, [open])
 
@@ -183,6 +183,7 @@ export function CrearTurnoModal({ open, onOpenChange, onTurnoCreado }: CrearTurn
         fecha: fechaStr,
         horaInicio,
         pacienteId: selectedPaciente.id,
+        timezoneOffset: new Date().getTimezoneOffset(),
       })
       toast.success("Turno creado")
       resetForm()
@@ -406,7 +407,12 @@ export function CrearTurnoModal({ open, onOpenChange, onTurnoCreado }: CrearTurn
                       />
                     </div>
                     <div className="max-h-48 overflow-y-auto rounded-lg border border-border">
-                      {filteredPacientes.length === 0 ? (
+                      {loadingPacientes ? (
+                        <div className="flex items-center justify-center gap-2 px-3 py-4 text-sm text-muted-foreground">
+                          <Loader2 className="size-4 animate-spin" />
+                          Cargando pacientes...
+                        </div>
+                      ) : filteredPacientes.length === 0 ? (
                         <div className="px-3 py-4 text-center text-sm text-muted-foreground">
                           {busquedaPaciente ? "No se encontraron pacientes" : "No hay pacientes disponibles"}
                         </div>

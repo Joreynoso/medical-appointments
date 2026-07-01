@@ -14,18 +14,20 @@ export const tools = [
 
 type ToolResult = Record<string, unknown>
 
-type Executor = (args: Record<string, unknown>, userId?: string) => Promise<ToolResult>
+type ExecutorOptions = { timezoneOffset?: number }
+
+type Executor = (args: Record<string, unknown>, userId?: string, options?: ExecutorOptions) => Promise<ToolResult>
 
 export const toolExecutors: Record<string, Executor> = {
-  buscar_turnos: (args, userId) =>
+  buscar_turnos: (args, userId, options) =>
     buscarTurnosTool.execute(args as Parameters<typeof buscarTurnosTool.execute>[0], userId),
-  consultar_disponibilidad: (args, userId) =>
+  consultar_disponibilidad: (args, userId, options) =>
     consultarDisponibilidadTool.execute(args as Parameters<typeof consultarDisponibilidadTool.execute>[0], userId),
-  crear_turno: (args, userId) =>
-    crearTurnoTool.execute(args as Parameters<typeof crearTurnoTool.execute>[0], userId),
-  cancelar_turno: (args, userId) =>
+  crear_turno: (args, userId, options) =>
+    crearTurnoTool.execute(args as Parameters<typeof crearTurnoTool.execute>[0], userId, options),
+  cancelar_turno: (args, userId, options) =>
     cancelarTurnoTool.execute(args as Parameters<typeof cancelarTurnoTool.execute>[0], userId),
-  listar_pacientes: (args, userId) =>
+  listar_pacientes: (args, userId, options) =>
     listarPacientesTool.execute(args as Parameters<typeof listarPacientesTool.execute>[0], userId),
 }
 

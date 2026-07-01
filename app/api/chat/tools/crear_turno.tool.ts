@@ -113,7 +113,7 @@ export const crearTurnoTool = {
     }
   },
 
-  execute: async (args: { paciente_nombre: string; fecha: string; hora: string }, userId?: string) => {
+  execute: async (args: { paciente_nombre: string; fecha: string; hora: string }, userId?: string, options?: { timezoneOffset?: number }) => {
     const profesional = await prisma.profesional.findUnique({
       where: { clerkId: userId },
     })
@@ -127,6 +127,7 @@ export const crearTurnoTool = {
       fecha: args.fecha,
       horaInicio: args.hora,
       pacienteId: paciente.id,
+      timezoneOffset: options?.timezoneOffset,
     })
   },
 }

@@ -45,10 +45,11 @@ export async function POST(req: Request) {
     const body = await req.json()
 
     // ── CONFIRM TOOL CALL (execution after user confirms) ──
-    const confirmBody = body as { confirmToolCall: { name: string; args: Record<string, unknown> }; contextMessages?: ChatMessage[] } | undefined
+    const confirmBody = body as { confirmToolCall: { name: string; args: Record<string, unknown> }; contextMessages?: ChatMessage[]; timezoneOffset?: number } | undefined
     if (confirmBody?.confirmToolCall) {
       const { name, args } = confirmBody.confirmToolCall
       const contextMessages: ChatMessage[] = confirmBody.contextMessages ?? []
+      const timezoneOffset = confirmBody.timezoneOffset
 
       const executor = toolExecutors[name]
       if (!executor) {
@@ -57,7 +58,7 @@ export async function POST(req: Request) {
 
       let result: Record<string, unknown>
       try {
-        result = await executor(args, userId)
+        result = await executor(args, userId, { timezoneOffset })
       } catch (e: unknown) {
         return NextResponse.json({
           message: `Error al ejecutar la operación: ${e instanceof Error ? e.message : "Error desconocido"}`,

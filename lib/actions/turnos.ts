@@ -160,6 +160,7 @@ type CrearTurnoInput = {
   fecha: string
   horaInicio: string
   pacienteId: string
+  timezoneOffset?: number
 }
 
 export async function crearTurno(input: CrearTurnoInput) {
@@ -178,13 +179,33 @@ export async function crearTurno(input: CrearTurnoInput) {
   })
   if (feriado) throw new Error(`No se pueden crear turnos en feriados (${feriado.nombre}).`)
 
-  const hoy = new Date().toISOString().slice(0, 10)
-  if (input.fecha < hoy) {
+  const ahora = new Date()
+
+  let hoyLocal: string
+  let horaActualLocal: string
+
+  if (input.timezoneOffset !== undefined) {
+    const offsetMs = input.timezoneOffset * 60 * 1000
+    const ahoraLocal = new Date(ahora.getTime() - offsetMs)
+
+    const año = ahoraLocal.getUTCFullYear()
+    const mes = String(ahoraLocal.getUTCMonth() + 1).padStart(2, "0")
+    const dia = String(ahoraLocal.getUTCDate()).padStart(2, "0")
+    hoyLocal = `${año}-${mes}-${dia}`
+
+    const horas = String(ahoraLocal.getUTCHours()).padStart(2, "0")
+    const minutos = String(ahoraLocal.getUTCMinutes()).padStart(2, "0")
+    horaActualLocal = `${horas}:${minutos}`
+  } else {
+    hoyLocal = ahora.toISOString().slice(0, 10)
+    horaActualLocal = ahora.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
+  }
+
+  if (input.fecha < hoyLocal) {
     throw new Error("No se pueden crear turnos en el pasado.")
   }
 
-  const horaActual = new Date().toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })
-  if (input.fecha === hoy && input.horaInicio <= horaActual) {
+  if (input.fecha === hoyLocal && input.horaInicio <= horaActualLocal) {
     throw new Error("No se pueden crear turnos en un horario que ya pasó.")
   }
 
